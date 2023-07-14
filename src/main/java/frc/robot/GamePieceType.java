@@ -5,7 +5,7 @@
 package frc.robot;
 
 /** Add your docs here. */
-public enum GamePieceType2 {
+public enum GamePieceType {
     CUBE,
     CONE;
 

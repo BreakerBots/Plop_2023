@@ -18,17 +18,17 @@ import frc.robot.BreakerLib.util.logging.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.commands.rumble.DoublePulseRumble;
 import frc.robot.commands.rumble.TriplePulseRumble;
-import frc.robot.subsystems.OffseasionBotDrive;
+import frc.robot.subsystems.Drive;
 
 public class TeleopBalanceChargingStation extends CommandBase {
   /** Creates a new OffseasionBotBalanceChargeingStation. */
-  private OffseasionBotDrive drive;
+  private Drive drive;
   private BreakerPigeon2 imu;
   private boolean endOnBalance, enableTimeout;
   private BreakerTeleopSwerveDriveController driveController;
   private BreakerXboxController driverController;
   private final Timer timer = new Timer();
-  public TeleopBalanceChargingStation(OffseasionBotDrive drive, BreakerPigeon2 imu, BreakerTeleopSwerveDriveController driveController, BreakerXboxController driverController, boolean endOnBalance, boolean enableTimeout) {
+  public TeleopBalanceChargingStation(Drive drive, BreakerPigeon2 imu, BreakerTeleopSwerveDriveController driveController, BreakerXboxController driverController, boolean endOnBalance, boolean enableTimeout) {
     this.drive = drive;
     this.imu = imu;
     this.enableTimeout = enableTimeout;

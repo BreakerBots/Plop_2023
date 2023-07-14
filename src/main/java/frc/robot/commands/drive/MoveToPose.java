@@ -15,17 +15,17 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.BreakerLib.util.logging.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
-import frc.robot.subsystems.OffseasionBotDrive;
+import frc.robot.subsystems.Drive;
 import frc.robot.Constants.DriveConstants;
 
 public class MoveToPose extends CommandBase {
   /** Creates a new MoveToPose. */
   private Pose2d goal;
-  private OffseasionBotDrive drivetrain;
+  private Drive drivetrain;
   private double maxLinearVel;
   private final Timer timer = new Timer();
 
-  public MoveToPose(Pose2d goal, double maxLinearVel, OffseasionBotDrive drivetrain) {
+  public MoveToPose(Pose2d goal, double maxLinearVel, Drive drivetrain) {
     addRequirements(drivetrain);
   }
 

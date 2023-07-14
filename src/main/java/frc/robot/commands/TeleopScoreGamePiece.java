@@ -24,14 +24,14 @@ import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ScoreingConstants;
 import frc.robot.commands.drive.MoveToPose;
-import frc.robot.commands.elevator.ElevatorMoveToHight;
-import frc.robot.commands.intake.EjectGamePiece;
+import frc.robot.commands.elevatorintakeassembly.elevator.ElevatorMoveToHight;
+import frc.robot.commands.elevatorintakeassembly.intake.EjectGamePiece;
 import frc.robot.commands.rumble.DoublePulseRumble;
 import frc.robot.commands.rumble.SinglePulseRumble;
 import frc.robot.commands.rumble.TriplePulseRumble;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.OffseasionBotDrive;
+import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Elevator.ElevatorTarget;
 
 public class TeleopScoreGamePiece extends CommandBase {
@@ -39,11 +39,11 @@ public class TeleopScoreGamePiece extends CommandBase {
   private Node selectedNode;
   private OperatorControlPad operatorControlPad;
   private BreakerXboxController driverController;
-  private OffseasionBotDrive drivetrain;
+  private Drive drivetrain;
   private Elevator elevator;
   private Intake intake;
   private SequentialCommandGroup scoreingSequince;
-  public TeleopScoreGamePiece(OperatorControlPad operatorControlPad, BreakerXboxController driverController, OffseasionBotDrive drivetrain, Elevator elevator, Intake intake) {
+  public TeleopScoreGamePiece(OperatorControlPad operatorControlPad, BreakerXboxController driverController, Drive drivetrain, Elevator elevator, Intake intake) {
     this.operatorControlPad = operatorControlPad;
     this.driverController = driverController;
     this.drivetrain = drivetrain;

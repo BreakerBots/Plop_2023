@@ -13,15 +13,15 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.BreakerLib.devices.sensors.imu.ctre.BreakerPigeon2;
 import frc.robot.BreakerLib.util.logging.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
-import frc.robot.subsystems.OffseasionBotDrive;
+import frc.robot.subsystems.Drive;
 
-public class OffseasionBotBalanceChargeingStation extends CommandBase {
+public class BalanceChargeingStation extends CommandBase {
   /** Creates a new OffseasionBotBalanceChargeingStation. */
-  private OffseasionBotDrive drive;
+  private Drive drive;
   private BreakerPigeon2 imu;
   private boolean endOnBalance, enableTimeout;
   private final Timer timer = new Timer();
-  public OffseasionBotBalanceChargeingStation(OffseasionBotDrive drive, BreakerPigeon2 imu, boolean endOnBalance, boolean enableTimeout) {
+  public BalanceChargeingStation(Drive drive, BreakerPigeon2 imu, boolean endOnBalance, boolean enableTimeout) {
     this.drive = drive;
     this.imu = imu;
     this.enableTimeout = enableTimeout;

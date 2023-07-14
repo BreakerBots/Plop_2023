@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -165,17 +166,48 @@ public class OperatorControlPad {
     public Optional<Node> getSelectedScoringNode() {
         int colOrd = 0;
         NodeHeight height = NodeHeight.HIGH;
-        if (scoringCommandRequestTrigger.getAsBoolean()) {
+        Optional<Alliance> ally = AllianceManager.getAlliance();
+        if (scoringCommandRequestTrigger.getAsBoolean() && ally.isPresent()) {
+            if (ally.get() == Alliance.Blue) {
 
-            if (leftNodeGroupButton.getAsBoolean()) {
-                colOrd = ScoreingConstants.LEFT_NODE_GROUP_CENTRAL_COULMN_ORDINAL;
-            } else if (centerNodeGroupButton.getAsBoolean()) {
-                colOrd = ScoreingConstants.CENTER_NODE_GROUP_CENTRAL_COULMN_ORDINAL;
-            } else if (rightNodeGroupButton.getAsBoolean()) {
-                colOrd = ScoreingConstants.RIGHT_NODE_GROUP_CENTRAL_COULMN_ORDINAL;
+                if (leftNodeGroupButton.getAsBoolean()) {
+                    colOrd = ScoreingConstants.BLUE_LEFT_NODE_GROUP_CENTRAL_COULMN_ORDINAL;
+                } else if (centerNodeGroupButton.getAsBoolean()) {
+                    colOrd = ScoreingConstants.BLUE_CENTER_NODE_GROUP_CENTRAL_COULMN_ORDINAL;
+                } else if (rightNodeGroupButton.getAsBoolean()) {
+                    colOrd = ScoreingConstants.BLUE_RIGHT_NODE_GROUP_CENTRAL_COULMN_ORDINAL;
+                } else {
+                    return Optional.empty();
+                }
+
+                if (leftNodeSelectedTrigger.getAsBoolean()) {
+                    colOrd--;
+                } else if (rightNodeSelectedTrigger.getAsBoolean()) {
+                    colOrd++;
+                } else {
+                    return Optional.empty();
+                }
+
             } else {
-                return Optional.empty();
+                if (leftNodeGroupButton.getAsBoolean()) {
+                    colOrd = ScoreingConstants.RED_LEFT_NODE_GROUP_CENTRAL_COULMN_ORDINAL;
+                } else if (centerNodeGroupButton.getAsBoolean()) {
+                    colOrd = ScoreingConstants.RED_CENTER_NODE_GROUP_CENTRAL_COULMN_ORDINAL;
+                } else if (rightNodeGroupButton.getAsBoolean()) {
+                    colOrd = ScoreingConstants.RED_RIGHT_NODE_GROUP_CENTRAL_COULMN_ORDINAL;
+                } else {
+                    return Optional.empty();
+                }
+
+                if (leftNodeSelectedTrigger.getAsBoolean()) {
+                    colOrd++;
+                } else if (rightNodeSelectedTrigger.getAsBoolean()) {
+                    colOrd--;
+                } else {
+                    return Optional.empty();
+                }
             }
+            
 
             if (highNodeSelectedTrigger.getAsBoolean()) {
                 height = NodeHeight.HIGH;

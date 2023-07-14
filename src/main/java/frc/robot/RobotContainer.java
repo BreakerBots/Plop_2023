@@ -19,21 +19,25 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.BreakerLib.devices.sensors.imu.ctre.BreakerPigeon2;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController;
-import frc.robot.commands.IntakeFromDoubleSubstation;
-import frc.robot.commands.IntakeFromGround;
-import frc.robot.commands.IntakeFromSingleSubstation;
-import frc.robot.commands.StowElevatorIntakeAssembly;
+import frc.robot.BreakerLib.util.robot.BreakerRobotConfig;
+import frc.robot.BreakerLib.util.robot.BreakerRobotManager;
+import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
 import frc.robot.commands.TeleopScoreGamePiece;
 import frc.robot.commands.drive.TeleopBalanceChargingStation;
 import frc.robot.commands.drive.TeleopSnapDriveToCardinalHeading;
 import frc.robot.commands.drive.TeleopSnapDriveToCardinalHeading.SwerveCardinal;
-import frc.robot.commands.intake.EjectGamePiece;
-import frc.robot.commands.intake.SetIntakeRollerState;
-import frc.robot.commands.intake.SetIntakeRollerState.IntakeRollerStateRequest;
+import frc.robot.commands.elevatorintakeassembly.IntakeFromDoubleSubstation;
+import frc.robot.commands.elevatorintakeassembly.IntakeFromGround;
+import frc.robot.commands.elevatorintakeassembly.IntakeFromSingleSubstation;
+import frc.robot.commands.elevatorintakeassembly.StowElevatorIntakeAssembly;
+import frc.robot.commands.elevatorintakeassembly.intake.EjectGamePiece;
+import frc.robot.commands.elevatorintakeassembly.intake.SetIntakeRollerState;
+import frc.robot.commands.elevatorintakeassembly.intake.SetIntakeRollerState.IntakeRollerStateRequest;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.OffseasionBotDrive;
+import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Vision;
+import static frc.robot.Constants.AutonomousConstants.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -48,7 +52,7 @@ public class RobotContainer {
     private static final Vision visionSys = new Vision();
     private static final BreakerPigeon2 imuSys = new BreakerPigeon2(MiscConstants.IMU_ID, MiscConstants.CANIVORE_1);
 
-    private static final OffseasionBotDrive drivetrainSys = new OffseasionBotDrive(imuSys, visionSys);
+    private static final Drive drivetrainSys = new Drive(imuSys, visionSys);
     private static final Elevator elevatorSys = new Elevator();
     private static final Intake intakeSys = new Intake();
   
@@ -62,6 +66,7 @@ public class RobotContainer {
     configureBindings();
     configureAutonomousActionMap();
     configureIMU();
+    configureRobotManager();
   }
 
   public void configureIMU() {
@@ -98,16 +103,16 @@ public class RobotContainer {
     .onTrue(new StowElevatorIntakeAssembly(elevatorSys, intakeSys, true));
 
     //intake from ground, (driver controls: X = cube, Y = cone) (operator controls: 14 = cube, 15 = cone)
-    driverControllerSys.getButtonY().or(operatorControlPadSys.getIntakeGroundConeButton()).onTrue(new IntakeFromGround(elevatorSys, intakeSys, true, GamePieceType2.CONE));
-    driverControllerSys.getButtonX().or(operatorControlPadSys.getIntakeGroundCubeButton()).toggleOnTrue(teleopDriveController).onTrue(new IntakeFromGround(elevatorSys, intakeSys, true, GamePieceType2.CUBE));
+    driverControllerSys.getButtonY().or(operatorControlPadSys.getIntakeGroundConeButton()).onTrue(new IntakeFromGround(elevatorSys, intakeSys, true, GamePieceType.CONE));
+    driverControllerSys.getButtonX().or(operatorControlPadSys.getIntakeGroundCubeButton()).toggleOnTrue(teleopDriveController).onTrue(new IntakeFromGround(elevatorSys, intakeSys, true, GamePieceType.CUBE));
 
     //intake from single sub, (operator controls: 9 = cube, 10 = cone)
-    operatorControlPadSys.getIntakeSingleSubstationConeButton().onTrue(new IntakeFromSingleSubstation(elevatorSys, intakeSys, true, GamePieceType2.CONE));
-    operatorControlPadSys.getIntakeSingleSubstationCubeButton().onTrue(new IntakeFromSingleSubstation(elevatorSys, intakeSys, true, GamePieceType2.CUBE));
+    operatorControlPadSys.getIntakeSingleSubstationConeButton().onTrue(new IntakeFromSingleSubstation(elevatorSys, intakeSys, true, GamePieceType.CONE));
+    operatorControlPadSys.getIntakeSingleSubstationCubeButton().onTrue(new IntakeFromSingleSubstation(elevatorSys, intakeSys, true, GamePieceType.CUBE));
 
     //intake from double sub, (operator controls: 4 = cube, 5 = cone)
-    operatorControlPadSys.getIntakeDoubleSubstationConeButton().onTrue(new IntakeFromDoubleSubstation(elevatorSys, intakeSys, true, GamePieceType2.CONE));
-    operatorControlPadSys.getIntakeDoubleSubstationCubeButton().onTrue(new IntakeFromDoubleSubstation(elevatorSys, intakeSys, true, GamePieceType2.CUBE));
+    operatorControlPadSys.getIntakeDoubleSubstationConeButton().onTrue(new IntakeFromDoubleSubstation(elevatorSys, intakeSys, true, GamePieceType.CONE));
+    operatorControlPadSys.getIntakeDoubleSubstationCubeButton().onTrue(new IntakeFromDoubleSubstation(elevatorSys, intakeSys, true, GamePieceType.CUBE));
 
     //intake roller controls, (driver controls: A = intake, B = stop) (operator controls: 19 = extake)
     driverControllerSys.getButtonA().onTrue(new SetIntakeRollerState(intakeSys, IntakeRollerStateRequest.INTAKE));
@@ -123,8 +128,19 @@ public class RobotContainer {
   }
 
   private void configureAutonomousActionMap() {
-    AutonomousConstants.AUTONOMOUS_ACTION_MAP.put("EJECT_GAME_PIECE", new EjectGamePiece(intakeSys));
+    AUTONOMOUS_ACTION_MAP.put("EJECT_GAME_PIECE", new EjectGamePiece(intakeSys));
+    AUTONOMOUS_ACTION_MAP.put("INTAKE_CONE_FROM_GROUND", new IntakeFromGround(elevatorSys, intakeSys, false, GamePieceType.CONE));
+    AUTONOMOUS_ACTION_MAP.put("INTAKE_CUBE_FROM_GROUND", new IntakeFromGround(elevatorSys, intakeSys, false, GamePieceType.CUBE));
+    AUTONOMOUS_ACTION_MAP.put("STOW", new StowElevatorIntakeAssembly(elevatorSys, intakeSys, false));
+    AUTONOMOUS_ACTION_MAP.put("", teleopDriveController);
     
+  }
+
+  private void configureRobotManager() {
+    BreakerRobotConfig robotConfig = new BreakerRobotConfig(new BreakerRobotStartConfig(5104, "BreakerBots",
+    "Plop", 2023, "v1", "Roman Abrahamson"));
+    
+    BreakerRobotManager.setup(drivetrainSys, robotConfig);
   }
 
   /**

@@ -12,17 +12,17 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController;
 import frc.robot.BreakerLib.util.logging.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
-import frc.robot.subsystems.OffseasionBotDrive;
+import frc.robot.subsystems.Drive;
 
 public class TeleopSnapDriveToCardinalHeading extends CommandBase {
   /** Creates a new SnapDriveToCardinal. */
   private SwerveCardinal cardinal;
-  private OffseasionBotDrive drive;
+  private Drive drive;
   private BreakerTeleopSwerveDriveController teleopDriveController;
   private PIDController pid;
   private double maxAngVel;
   private final Timer timer = new Timer();
-  public TeleopSnapDriveToCardinalHeading(SwerveCardinal cardinal, OffseasionBotDrive drive, BreakerTeleopSwerveDriveController teleopDriveController) {
+  public TeleopSnapDriveToCardinalHeading(SwerveCardinal cardinal, Drive drive, BreakerTeleopSwerveDriveController teleopDriveController) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.cardinal = cardinal;
     this.drive = drive;

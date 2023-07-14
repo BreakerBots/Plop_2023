@@ -6,15 +6,15 @@ package frc.robot.commands.drive;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.BreakerLib.util.logging.BreakerLog;
-import frc.robot.subsystems.OffseasionBotDrive;
+import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Vision;
 
 public class SetOdometryToVisionMeasurment extends CommandBase {
   /** Creates a new SetOdometryToVisionMeasurment. */
-  private OffseasionBotDrive drivetrain;
+  private Drive drivetrain;
   private Vision vision;
   private boolean waitForTargets, poseReset = false;
-  public SetOdometryToVisionMeasurment(OffseasionBotDrive drivetrain, Vision vision, boolean waitForTargets) {
+  public SetOdometryToVisionMeasurment(Drive drivetrain, Vision vision, boolean waitForTargets) {
     this.drivetrain = drivetrain;
     this.vision = vision;
     this.waitForTargets = waitForTargets;

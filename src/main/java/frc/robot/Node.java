@@ -11,7 +11,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 
  /** Add your docs here. */
 public enum Node {
-    //-------------------- LEFT GROUP --------------------
+    //-------------------- BLUE LEFT GROUP --------------------
     C0_L(NodeCoulmn.C0, NodeHeight.LOW, NodeType.HYBRID),
     C0_M(NodeCoulmn.C0, NodeHeight.MID, NodeType.CONE),
     C0_H(NodeCoulmn.C0, NodeHeight.HIGH, NodeType.CONE),
@@ -23,7 +23,7 @@ public enum Node {
     C2_L(NodeCoulmn.C2, NodeHeight.LOW, NodeType.HYBRID),
     C2_M(NodeCoulmn.C2, NodeHeight.MID, NodeType.CONE),
     C2_H(NodeCoulmn.C2, NodeHeight.HIGH, NodeType.CONE),
-    //-------------------- CENTER GROUP --------------------
+    //-------------------- BLUE CENTER GROUP --------------------
     C3_L(NodeCoulmn.C3, NodeHeight.LOW, NodeType.HYBRID),
     C3_M(NodeCoulmn.C3, NodeHeight.MID, NodeType.CONE),
     C3_H(NodeCoulmn.C3, NodeHeight.HIGH, NodeType.CONE),
@@ -35,7 +35,7 @@ public enum Node {
     C5_L(NodeCoulmn.C5, NodeHeight.LOW, NodeType.HYBRID),
     C5_M(NodeCoulmn.C5, NodeHeight.MID, NodeType.CONE),
     C5_H(NodeCoulmn.C5, NodeHeight.HIGH, NodeType.CONE),
-    //-------------------- RIGHT GROUP --------------------
+    //-------------------- BLUE RIGHT GROUP --------------------
     C6_L(NodeCoulmn.C6, NodeHeight.LOW, NodeType.HYBRID),
     C6_M(NodeCoulmn.C6, NodeHeight.MID, NodeType.CONE),
     C6_H(NodeCoulmn.C6, NodeHeight.HIGH, NodeType.CONE),
@@ -82,7 +82,7 @@ public enum Node {
         return Optional.empty();
     }
     public enum NodeCoulmn {
-        C0(new Pose2d()),
+        C0(new Pose2d()), //Far left for blue driver, far right for red
         C1(new Pose2d()),
         C2(new Pose2d()),
         C3(new Pose2d()),

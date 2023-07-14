@@ -9,6 +9,8 @@ import java.util.Optional;
 
 import edu.wpi.first.math.geometry.Pose2d;
 
+import static frc.robot.Constants.ScoreingConstants.*;
+
  /** Add your docs here. */
 public enum Node {
     //-------------------- BLUE LEFT GROUP --------------------
@@ -82,15 +84,15 @@ public enum Node {
         return Optional.empty();
     }
     public enum NodeCoulmn {
-        C0(new Pose2d()), //Far left for blue driver, far right for red
-        C1(new Pose2d()),
-        C2(new Pose2d()),
-        C3(new Pose2d()),
-        C4(new Pose2d()),
-        C5(new Pose2d()),
-        C6(new Pose2d()),
-        C7(new Pose2d()),
-        C8(new Pose2d());
+        C0(C0_BASE_ALLIGNMENT_POSE), //Far left for blue driver, far right for red
+        C1(C1_BASE_ALLIGNMENT_POSE),
+        C2(C2_BASE_ALLIGNMENT_POSE),
+        C3(C3_BASE_ALLIGNMENT_POSE),
+        C4(C4_BASE_ALLIGNMENT_POSE),
+        C5(C5_BASE_ALLIGNMENT_POSE),
+        C6(C6_BASE_ALLIGNMENT_POSE),
+        C7(C7_BASE_ALLIGNMENT_POSE),
+        C8(C8_BASE_ALLIGNMENT_POSE);
         private Pose2d blueBaseAllignmentPose;
         private NodeCoulmn(Pose2d blueBaseAllignmentPose) {
             this.blueBaseAllignmentPose = blueBaseAllignmentPose;

@@ -46,7 +46,7 @@ public class BalanceChargeingStation extends CommandBase {
     ChassisSpeeds fieldRelSpds = BreakerMath.fromRobotRelativeSpeeds(robotRelSpeeds, drive.getOdometryPoseMeters().getRotation());
     fieldRelSpds.vyMetersPerSecond = 0.0;
     drive.move(fieldRelSpds, DriveConstants.AUTO_BALANCE_MOVEMENT_PREFERENCES);
-    if (timer.hasElapsed(DriveConstants.AUTO_BALANCE_TIMEOUT_SEC)) {
+    if (enableTimeout && timer.hasElapsed(DriveConstants.AUTO_BALANCE_TIMEOUT_SEC)) {
       this.cancel();
     }
   }

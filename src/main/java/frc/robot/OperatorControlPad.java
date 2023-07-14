@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
@@ -51,7 +52,6 @@ public class OperatorControlPad {
         rightHighNodeButton = new JoystickButton(hid, port);
         rightMidNodeButton = new JoystickButton(hid, port);
         rightLowNodeButton = new JoystickButton(hid, port);
-
 
       
         leftNodeSelectedTrigger = leftHighNodeButton.or(leftMidNodeButton).or(leftLowNodeButton);

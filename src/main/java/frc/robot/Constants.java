@@ -16,6 +16,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -254,6 +255,7 @@ public final class Constants {
 
   public static class FieldConstants {
       public static final double FIELD_LENGTH_X = 16.4846;
+
   }
 
   public static class VisionConstants {
@@ -284,7 +286,7 @@ public final class Constants {
   public static final class PoseEstimationConstants {
       public static final double ENCODER_ODOMETRY_STANDARD_DEVATION_X_METERS = 0.15;
       public static final double ENCODER_ODOMETRY_STANDARD_DEVATION_Y_METERS = 0.15;
-      public static final double ENCODER_ODOMETRY_STANDARD_DEVATION_HEADING_RADIANS = Math.toRadians(0.5);
+      public static final double ENCODER_ODOMETRY_STANDARD_DEVATION_HEADING_RADIANS = Math.toRadians(2.0);
       public static final double[] ENCODER_ODOMETRY_STANDARD_DEVATIONS = new double[] {ENCODER_ODOMETRY_STANDARD_DEVATION_X_METERS, ENCODER_ODOMETRY_STANDARD_DEVATION_Y_METERS, ENCODER_ODOMETRY_STANDARD_DEVATION_HEADING_RADIANS};
       public static final double VISION_ODOMETRY_STANDARD_DEVATION_X_METERS = 0.03;
       public static final double VISION_ODOMETRY_STANDARD_DEVATION_Y_METERS = 0.03;
@@ -300,6 +302,19 @@ public final class Constants {
       public static final int RED_CENTER_NODE_GROUP_CENTRAL_COULMN_ORDINAL = 4;
       public static final int RED_RIGHT_NODE_GROUP_CENTRAL_COULMN_ORDINAL = 1;
       public static final double TELEOP_SCOREING_MOVE_TO_POSE_MAX_LINEAR_VEL = 3.0;
+
+      public static final double INTER_NODE_GOUP_Y_OFFSET = Units.inchesToMeters(66.0);
+      public static final double INTER_NODE_Y_OFFSET = Units.inchesToMeters(22.0);
+      public static final Pose2d C0_BASE_ALLIGNMENT_POSE = new Pose2d();
+      public static final Pose2d C1_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET), new Rotation2d()));
+      public static final Pose2d C2_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 2.0), new Rotation2d()));
+      public static final Pose2d C3_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 3.0), new Rotation2d()));
+      public static final Pose2d C4_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 4.0), new Rotation2d()));
+      public static final Pose2d C5_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 5.0), new Rotation2d()));
+      public static final Pose2d C6_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 6.0), new Rotation2d()));
+      public static final Pose2d C7_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 7.0), new Rotation2d()));
+      public static final Pose2d C8_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 8.0), new Rotation2d()));
+      
   }
 
   public static final class OperatorConstants {

@@ -33,6 +33,7 @@ public class SetIntakeActuatorMotorState extends CommandBase {
       timer.restart();
     }
     intake.setActuatorMotorState(motorState);
+    BreakerLog.logEvent("SetIntakeActuatorMotorState command instace started, (set motor state: " + motorState.toString() + ")");
   }
 
   @Override
@@ -48,6 +49,10 @@ public class SetIntakeActuatorMotorState extends CommandBase {
     timer.reset();
     if (interrupted) {
       BreakerLog.logEvent("setIntakeActuatorMotorState command instance FAILED, command timed out or was cancled");
+    } else if (!isInstant) {
+      BreakerLog.logEvent("setIntakeActuatorMotorState command instance SUCESSFULL, intake reached desired state");
+    } else {
+      BreakerLog.logEvent("setIntakeActuatorMotorState command ran and finished whout checks, desired end state not garrentieed");
     }
   }
 

@@ -49,7 +49,7 @@ public class TeleopBalanceChargingStation extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (timer.hasElapsed(DriveConstants.AUTO_BALANCE_TIMEOUT_SEC)) {
+    if (enableTimeout && timer.hasElapsed(DriveConstants.AUTO_BALANCE_TIMEOUT_SEC)) {
       this.cancel();
     }
   }

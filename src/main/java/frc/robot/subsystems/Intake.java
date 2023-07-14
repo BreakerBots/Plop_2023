@@ -24,6 +24,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
+import frc.robot.BreakerLib.util.logging.BreakerLog;
 import frc.robot.BreakerLib.util.test.selftest.SystemDiagnostics;
 import frc.robot.Constants.IntakeConstants;
 
@@ -127,8 +128,12 @@ public class Intake extends SubsystemBase {
   }
 
   public void setActuatorMotorState(ActuatorMotorState newState) {
+    if (actuatorMotorState != newState) {
+      BreakerLog.logSuperstructureEvent(String.format("INTAKE NOW %s", newState));
+    }
     actuatorMotorState = newState;
     privateSetActuatorMotorState(newState);
+    
   }
 
   public void extend() {

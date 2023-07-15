@@ -23,6 +23,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.GamePieceType;
 import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
 import frc.robot.BreakerLib.util.logging.BreakerLog;
 import frc.robot.BreakerLib.util.test.selftest.SystemDiagnostics;
@@ -32,7 +33,8 @@ public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
   private final CANSparkMax actuatorMotor;
   private final CANSparkMax rollerMotor;
-  private final BreakerBeamBreak beamBreak;
+  private final BreakerBeamBreak coneBeamBrake;
+  private final BreakerBeamBreak cubeBeamBrake;
 
   private final SparkMaxLimitSwitch extendLimitSwitch;
   private final SparkMaxLimitSwitch retractLimitSwich;
@@ -70,8 +72,21 @@ public class Intake extends SubsystemBase {
     diagnostics.addSparkMaxs(actuatorMotor, rollerMotor);
   }
 
+  public ControledGamePieceType getControledGamePieceType() {
+    boolean cone = coneBeamBrake.isBroken();
+    boolean cube = cubeBeamBrake.isBroken();
+    if (cone && !cube) {
+      return ControledGamePieceType.CONE;
+    } else if (!cone && cube) {
+      return ControledGamePieceType.CUBE;
+    } else if (!cone && !cube) {
+      return ControledGamePieceType.NONE;
+    }
+    return ControledGamePieceType.ERROR;
+  }
+
   public boolean hasGamePiece() {
-    return beamBreak.isBroken();
+    return getControledGamePieceType().hasGamePiece();
   }
 
   public ActuatorMotorState getActuatorMotorState() {
@@ -95,17 +110,38 @@ public class Intake extends SubsystemBase {
     return ActuatorState.ERROR;
   } 
 
-  public void intake() {
-    if (actuatorMotorState == ActuatorMotorState.EXTENDING && !beamBreak.isBroken()) {
-      rollerState = RollerState.INTAKEING;
-      rollerMotor.set(IntakeConstants.INTAKE_DUTY_CYCLE);
+  // public void intake() {
+  //   if (actuatorMotorState == ActuatorMotorState.EXTENDING && !beamBreak.isBroken()) {
+  //     rollerState = RollerState.INTAKEING;
+  //     rollerMotor.set(IntakeConstants.INTAKE_DUTY_CYCLE);
+  //   }
+  // }
+
+  public void intakeCone() {
+    if (actuatorMotorState == ActuatorMotorState.EXTENDING && !hasGamePiece()) {
+      rollerState = RollerState.INTAKEING_CONE;
+      rollerMotor.set(IntakeConstants.INTAKE_CONE_DUTY_CYCLE);
     }
   }
 
-  public void extake() {
-    if (actuatorMotorState == ActuatorMotorState.EXTENDING) {
-      rollerState = RollerState.EXTAKEING;
-      rollerMotor.set(IntakeConstants.INTAKE_DUTY_CYCLE);
+  public void intakeCube() {
+    if (actuatorMotorState == ActuatorMotorState.EXTENDING && !hasGamePiece()) {
+      rollerState = RollerState.INTAKEING_CUBE;
+      rollerMotor.set(IntakeConstants.INTAKE_CUBE_DUTY_CYCLE);
+    }
+  }
+
+  public void extakeCone() {
+    if (actuatorMotorState == ActuatorMotorState.EXTENDING && getControledGamePieceType() == ControledGamePieceType.CONE) {
+      rollerState = RollerState.EXTAKEING_CONE;
+      rollerMotor.set(IntakeConstants.EXTAKE_CONE_DUTY_CYCLE);
+    }
+  }
+
+  public void extakeCube() {
+    if (actuatorMotorState == ActuatorMotorState.EXTENDING && getControledGamePieceType() == ControledGamePieceType.CONE) {
+      rollerState = RollerState.EXTAKEING_CUBE;
+      rollerMotor.set(IntakeConstants.EXTAKE_CUBE_DUTY_CYCLE);
     }
   }
 
@@ -177,9 +213,12 @@ public class Intake extends SubsystemBase {
   }
 
   public static enum RollerState {
-    INTAKEING,
-    EXTAKEING,
-    GRIPPING,
+    INTAKEING_CONE,
+    INTAKEING_CUBE,
+    EXTAKEING_CONE,
+    EXTAKEING_CUBE,
+    GRIPPING_CONE,
+    GRIPPING_CUBE,
     NEUTRAL
   }
 
@@ -188,6 +227,29 @@ public class Intake extends SubsystemBase {
     RETRACTED,
     TRANSIT,
     ERROR
+  }
+
+  public static enum ControledGamePieceType {
+    CONE(Optional.of(GamePieceType.CONE)),
+    CUBE(Optional.of(GamePieceType.CUBE)),
+    NONE(Optional.empty()),
+    ERROR(Optional.empty());
+
+
+    private final Optional<GamePieceType> controledType;
+    public ControledGamePieceType(Optional<GamePieceType> controledType) {
+      this.controledType = controledType;
+    }
+
+    public Optional<GamePieceType> getGamePieceType() {
+        return controledType;
+    }
+
+    public boolean hasGamePiece() {
+      return this != ERROR && this != NONE;
+    }
+
+
   }
 
   public static enum ActuatorMotorState {

@@ -231,7 +231,8 @@ public final class Constants {
   public static final class IntakeConstants {
       public static final int ACTUATOR_ID = 40;
       public static final int ROLLER_ID = 41;
-      public static final int BEAM_BRAKE_DIO_PORT = 0;
+      public static final int CONE_BEAM_BRAKE_DIO_PORT = 0;
+      public static final int CUBE_BEAM_BRAKE_DIO_PORT = 1;
       public static final boolean BEAM_BRAKE_BROKEN_ON_TRUE = true;
 
       public static final boolean INVERT_ACTUATOR = false;
@@ -243,9 +244,12 @@ public final class Constants {
       public static final double ACTUATOR_EXTEND_DUTY_CYCLE = 0.45;
       public static final double ACTUATOR_RETRACT_DUTY_CYCLE = -0.45;
 
-      public static final double INTAKE_DUTY_CYCLE = -0.5;
-      public static final double INTAKE_GRIP_DUTY_CYCLE = -0.2;
-      public static final double EXTAKE_DUTY_CYCLE = 0.75;
+      public static final double INTAKE_CONE_DUTY_CYCLE = -0.5;
+      public static final double INTAKE_CUBE_DUTY_CYCLE = 0.5;
+      public static final double INTAKE_CONE_GRIP_DUTY_CYCLE = -0.2;
+      public static final double INTAKE_CUBE_GRIP_DUTY_CYCLE = 0.2;
+      public static final double EXTAKE_CONE_DUTY_CYCLE = 0.75;
+      public static final double EXTAKE_CUBE_DUTY_CYCLE = -0.75;
 
       public static final double EJECT_COMMAND_CUTOFF_TRALING_DELAY = 1.0;
       public static final double EJECT_COMMAND_CUTOFF_TIMEOUT = 4.0;

@@ -324,6 +324,8 @@ public final class Constants {
   }
 
   public static final class AutonomousConstants {
-      public static final HashMap<String, Command> AUTONOMOUS_ACTION_MAP = new HashMap<>();
+    public static final Pose2d NAV_TO_TRAJECTORY_START_TOLERENCE = new Pose2d(0.5, 0.5, Rotation2d.fromDegrees(10.0));
+    public static final double NAV_TO_TRAJECTORY_START_VEL = 2.5;
+    public static final HashMap<String, Command> AUTONOMOUS_ACTION_MAP = new HashMap<>();
   }
 }

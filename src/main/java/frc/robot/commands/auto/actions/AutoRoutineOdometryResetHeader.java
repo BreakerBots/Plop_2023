@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.drive;
+package frc.robot.commands.auto.actions;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
 
@@ -39,9 +39,9 @@ public class AutoRoutineOdometryResetHeader extends CommandBase {
   public void execute() {
     if (!hasSetPose) {
       if (timer.hasElapsed(waitForVisionTargetTimeout) || waitForVisionTargetTimeout == 0.0) {
-        drivetrain.setAbsoluteOdometryPosition(trajectory.getInitialState().poseMeters);
+        drivetrain.setAbsoluteOdometryPosition(trajectory.getInitialHolonomicPose());
         hasSetPose = true;
-        BreakerLog.logEvent("Robot odometry position reset trajectory initial state, vision wait for");
+        BreakerLog.logEvent("Robot odometry position reset trajectory initial state, no vision targets visiable");
       } else {
         visionSet();
       }

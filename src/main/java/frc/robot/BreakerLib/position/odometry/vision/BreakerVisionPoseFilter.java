@@ -26,6 +26,8 @@ public class BreakerVisionPoseFilter {
      * average (Without distance scaleing). Weaights calculated by:
      * trustCoef ^ ((-trustCoef) * poseUncertanty)
      * 
+     * https://www.desmos.com/calculator/e0nejygfri
+     * 
      * @param trustCoef          - Higher values mean more uncertain values are
      *                           trusted less.
      * @param maxUncertainty     - The highest uncertainty value (0-1) that will
@@ -45,6 +47,8 @@ public class BreakerVisionPoseFilter {
      * Fiters all predcted poses from visable Fiducial targets through a weaighted
      * average (With distance scaleing). Weaights calculated by:
      * (trustCoef ^ ((-trustCoef) * poseUncertanty)) - ((targetDistance/maxDistance) * distanceScailFactor)
+     * 
+     * https://www.desmos.com/calculator/creax7nbwa
      * 
      * @param trustCoef           - Higher values mean more uncertain values are
      *                           trusted less.

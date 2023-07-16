@@ -20,8 +20,8 @@ public class BreakerSwerveDrivePoseEstimator extends SubsystemBase implements Br
     private BreakerGenericGyro gyro;
     private SwerveDrivePoseEstimator poseEstimator;
     private BreakerSwerveDrive drivetrain;
-    private double lastUpdateTimestamp = Timer.getFPGATimestamp();
-    private Pose2d prevPose = getOdometryPoseMeters();
+    private double lastUpdateTimestamp;
+    private Pose2d prevPose;
     private ChassisSpeeds fieldRelativeChassisSpeeds = new ChassisSpeeds();
     private BreakerMovementState2d prevMovementState = new BreakerMovementState2d();
     private BreakerMovementState2d curMovementState = new BreakerMovementState2d();
@@ -33,6 +33,7 @@ public class BreakerSwerveDrivePoseEstimator extends SubsystemBase implements Br
         double[] visionStanderdDeveation
     ) {
         this.drivetrain = drivetrain;
+        gyro = drivetrain.getBaseGyro();
         poseEstimator = new SwerveDrivePoseEstimator(
             drivetrain.getKinematics(),
             gyro.getYawRotation2d(), 
@@ -40,6 +41,8 @@ public class BreakerSwerveDrivePoseEstimator extends SubsystemBase implements Br
             initialPose,
             new MatBuilder<>(Nat.N3(), Nat.N1()).fill(stateStandardDeveation),
             new MatBuilder<>(Nat.N3(), Nat.N1()).fill(visionStanderdDeveation));
+        prevPose = getOdometryPoseMeters();
+        lastUpdateTimestamp = Timer.getFPGATimestamp();
     }
 
     public Pose2d addVisionMeasurment(Pose2d robotPoseFromVision, double visionDataTimestamp) {

@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import java.util.Map;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -24,21 +25,32 @@ import com.ctre.phoenix6.signals.ReverseLimitTypeValue;
 import com.ctre.phoenix6.signals.ReverseLimitValue;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+import com.fasterxml.jackson.databind.deser.impl.ExternalTypeHandler.Builder;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.NetworkButton;
+import frc.robot.BreakerLib.driverstation.dashboard.BreakerDashboard;
 import frc.robot.BreakerLib.util.logging.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
+import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import frc.robot.BreakerLib.util.test.selftest.SystemDiagnostics;
 import frc.robot.Constants.ElevatorConstants;
 
@@ -63,9 +75,10 @@ public class Elevator extends SubsystemBase {
     private double targetHeightMeters;
     private double manualControlDutyCycle;
 
-    private ElevatorSimManager simManager;
+    //private ElevatorSimManager simManager;
 
     private boolean isForceStoped = false;
+    private boolean isManualControlSelected = false;
 
    
     public Elevator() {
@@ -124,8 +137,7 @@ public class Elevator extends SubsystemBase {
         diagnostics = new SystemDiagnostics("Elevator");
         diagnostics.addPhoenix6TalonFXs(leftMotor, rightMotor);
 
-        simManager = this.new ElevatorSimManager();
-        
+       // simManager = this.new ElevatorSimManager();
     }
 
     public ElevatorState getCurrentState() {
@@ -195,7 +207,7 @@ public class Elevator extends SubsystemBase {
 
     @Override
     public void simulationPeriodic() {
-        simManager.updateSim();
+        //simManager.updateSim();
     }
 
     @Override
@@ -208,7 +220,7 @@ public class Elevator extends SubsystemBase {
             }
     
             if (DriverStation.isEnabled()) {
-                if (!hasBeenCalibrated) {
+                if (!hasBeenCalibrated && currentState != ElevatorState.MANUAL) {
                     calibrate();
                 }
             } else {
@@ -223,6 +235,10 @@ public class Elevator extends SubsystemBase {
 
         if (DriverStation.isDisabled() || currentState != ElevatorState.AUTOMATIC) {
             targetHeightMeters = getHeight();
+        }
+
+        if (DriverStation.isDisabled() || currentState != ElevatorState.MANUAL) {
+            manualControlDutyCycle = 0.0;
         }
 
         if (!isForceStoped) {
@@ -261,8 +277,6 @@ public class Elevator extends SubsystemBase {
             leftMotor.setControl(lockRequest);
             rightMotor.setControl(lockRequest);
         }
-        
-        
     }
 
     public static enum ElevatorState {
@@ -334,7 +348,6 @@ public class Elevator extends SubsystemBase {
             sim.update(elapsedTime);
             simState.setRawRotorPosition(sim.getPositionMeters() / ElevatorConstants.MOTOR_ROT_TO_METERS_SCALAR);
             simState.setRotorVelocity(sim.getVelocityMetersPerSecond() / ElevatorConstants.MOTOR_ROT_TO_METERS_SCALAR);
-            System.out.println(sim.getPositionMeters());
         }
     }
 }

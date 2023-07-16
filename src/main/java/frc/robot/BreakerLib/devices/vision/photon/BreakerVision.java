@@ -4,6 +4,9 @@
 
 package frc.robot.BreakerLib.devices.vision.photon;
 
+import java.util.HashMap;
+import java.util.Map.Entry;
+
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -19,24 +22,26 @@ public class BreakerVision implements BreakerGenericOdometer {
     private BreakerPhotonCamera[] cameras;
     private BreakerVisionPoseFilter poseFilter;
     private BreakerVisionPoseFilterOdometer odometer;
-    public BreakerVision(double poseFilterTrustCoef, double poseFilterMaxUncertanty, BreakerPhotonCamera[] cameras, Pair<Integer, Pose3d>[] fiducialTargetIDsAndPoses) {
-        targets = new BreakerFiducialPhotonTarget[fiducialTargetIDsAndPoses.length];
+    public BreakerVision(double poseFilterTrustCoef, double poseFilterMaxUncertanty, BreakerPhotonCamera[] cameras, HashMap<Integer, Pose3d> fiducialTargetIDsAndPoses) {
+        targets = new BreakerFiducialPhotonTarget[fiducialTargetIDsAndPoses.size()];
         this.cameras = cameras;
-        for (int i = 0; i < fiducialTargetIDsAndPoses.length; i++) {
-            Pair<Integer, Pose3d> dataPair = fiducialTargetIDsAndPoses[i];
-            targets[i] = new BreakerFiducialPhotonTarget(dataPair.getFirst(), dataPair.getSecond(), cameras);
+        int i = 0;
+        for (Entry<Integer, Pose3d> ent: fiducialTargetIDsAndPoses.entrySet()) {
+            targets[i] = new BreakerFiducialPhotonTarget(ent.getKey(), ent.getValue(), cameras);
+            i++;
         }
 
         poseFilter = new BreakerVisionPoseFilter(poseFilterTrustCoef, poseFilterMaxUncertanty, targets);
         odometer = new BreakerVisionPoseFilterOdometer(poseFilter);
     }
 
-    public BreakerVision(double poseFilterTrustCoef, double poseFilterMaxUncertanty, double distanceScailFactor, double maxDistance, BreakerPhotonCamera[] cameras, Pair<Integer, Pose3d>[] fiducialTargetIDsAndPoses) {
-        targets = new BreakerFiducialPhotonTarget[fiducialTargetIDsAndPoses.length];
+    public BreakerVision(double poseFilterTrustCoef, double poseFilterMaxUncertanty, double distanceScailFactor, double maxDistance, BreakerPhotonCamera[] cameras, HashMap<Integer, Pose3d> fiducialTargetIDsAndPoses) {
+        targets = new BreakerFiducialPhotonTarget[fiducialTargetIDsAndPoses.size()];
         this.cameras = cameras;
-        for (int i = 0; i < fiducialTargetIDsAndPoses.length; i++) {
-            Pair<Integer, Pose3d> dataPair = fiducialTargetIDsAndPoses[i];
-            targets[i] = new BreakerFiducialPhotonTarget(dataPair.getFirst(), dataPair.getSecond(), cameras);
+        int i = 0;
+        for (Entry<Integer, Pose3d> ent: fiducialTargetIDsAndPoses.entrySet()) {
+            targets[i] = new BreakerFiducialPhotonTarget(ent.getKey(), ent.getValue(), cameras);
+            i++;
         }
 
         poseFilter = new BreakerVisionPoseFilter(poseFilterTrustCoef, poseFilterMaxUncertanty, distanceScailFactor, maxDistance, targets);

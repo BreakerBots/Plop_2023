@@ -53,6 +53,23 @@ public class OperatorControlPad {
         rightMidNodeButton = new JoystickButton(hid, port);
         rightLowNodeButton = new JoystickButton(hid, port);
 
+        ejectGamePieceButton = new JoystickButton(hid, port);
+        rollerExtakeButton = new JoystickButton(hid, port);
+
+        
+        elevatorStowButton = new JoystickButton(hid, port);
+        
+        intakeGroundConeButton = new JoystickButton(hid, port);
+        intakeGroundCubeButton = new JoystickButton(hid, port);
+
+        intakeSingleSubstationConeButton = new JoystickButton(hid, port);
+        intakeSingleSubstationCubeButton = new JoystickButton(hid, port);
+
+        intakeDoubleSubstationConeButton = new JoystickButton(hid, port);
+        intakeDoubleSubstationCubeButton = new JoystickButton(hid, port);
+
+        scrollClick = new JoystickButton(hid, port);
+
       
         leftNodeSelectedTrigger = leftHighNodeButton.or(leftMidNodeButton).or(leftLowNodeButton);
         centerNodeSelectedTrigger = centerHighNodeButton.or(centerMidNodeButton).or(centerLowNodeButton);

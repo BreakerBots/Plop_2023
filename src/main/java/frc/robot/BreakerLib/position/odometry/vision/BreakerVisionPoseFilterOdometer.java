@@ -68,6 +68,8 @@ public class BreakerVisionPoseFilterOdometer extends SubsystemBase implements Br
 
     @Override
     public void periodic() {
-        updatePose();
+        if (visionPoseFilter.isAnyTargetVisable()) {
+            updatePose();
+        }
     }
 }

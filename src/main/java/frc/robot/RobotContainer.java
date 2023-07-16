@@ -10,13 +10,19 @@ import java.util.HashMap;
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.controls.StaticBrake;
 
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.NetworkButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AutonomousConstants;
 import frc.robot.Constants.MiscConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.BreakerLib.devices.sensors.imu.ctre.BreakerPigeon2;
+import frc.robot.BreakerLib.driverstation.dashboard.BreakerDashboard;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController;
 import frc.robot.BreakerLib.util.robot.BreakerRobotConfig;
@@ -30,6 +36,7 @@ import frc.robot.commands.elevatorintakeassembly.IntakeFromDoubleSubstation;
 import frc.robot.commands.elevatorintakeassembly.IntakeFromGround;
 import frc.robot.commands.elevatorintakeassembly.IntakeFromSingleSubstation;
 import frc.robot.commands.elevatorintakeassembly.StowElevatorIntakeAssembly;
+import frc.robot.commands.elevatorintakeassembly.elevator.ManuallyControlElevator;
 import frc.robot.commands.elevatorintakeassembly.intake.EjectGamePiece;
 import frc.robot.commands.elevatorintakeassembly.intake.SetIntakeRollerState;
 import frc.robot.commands.elevatorintakeassembly.intake.SetIntakeRollerState.IntakeRollerStateRequest;
@@ -115,7 +122,7 @@ public class RobotContainer {
     operatorControlPadSys.getIntakeDoubleSubstationCubeButton().onTrue(new IntakeFromDoubleSubstation(elevatorSys, intakeSys, true, GamePieceType.CUBE));
 
     //intake roller controls, (driver controls: A = intake, B = stop) (operator controls: 19 = extake)
-    driverControllerSys.getButtonA().onTrue(new SetIntakeRollerState(intakeSys, IntakeRollerStateRequest.INTAKE));
+    //driverControllerSys.getButtonA().onTrue(new SetIntakeRollerState(intakeSys, IntakeRollerStateRequest.INTAKE));
     driverControllerSys.getButtonB().onTrue(new SetIntakeRollerState(intakeSys, IntakeRollerStateRequest.STOP));
     operatorControlPadSys.getRollerExtakeButton().onTrue(new SetIntakeRollerState(intakeSys, IntakeRollerStateRequest.EXTAKE));
 
@@ -124,7 +131,6 @@ public class RobotContainer {
 
     //teleop autobalance
     driverControllerSys.getStartButton().toggleOnTrue(new TeleopBalanceChargingStation(drivetrainSys, imuSys, teleopDriveController, driverControllerSys, false, false));
-
   }
 
   private void configureAutonomousActionMap() {

@@ -273,9 +273,12 @@ public final class Constants {
       public static final Transform3d RIGHT_CAMERA_POSE = new Transform3d();
       public static final Transform3d BACK_CAMERA_POSE = new Transform3d();
 
-      // public static final Pair<Integer, Pose3d>[] APRILTAG_IDS_AND_LOCATIONS = new Pair<Integer, Pose3d>[] {
-      //     new Pair<Integer, Pose3d>(0, );
-      // }
+      public static final double POSE_FILTER_TRUST_COEF = 2.8;
+      public static final double POSE_FILTER_MAX_UNCERTANTY = 0.2;
+      public static final double POSE_FILTER_DISTANCE_SCALE_FACTOR = 0.75;
+      public static final double POSE_FILTER_MAX_DISTANCE = 8.5;
+
+      public static final HashMap<Integer, Pose3d> APRILTAG_IDS_AND_LOCATIONS = new HashMap<Integer, Pose3d>();
   }
 
   public static final class MiscConstants {
@@ -328,7 +331,7 @@ public final class Constants {
   }
 
   public static final class AutonomousConstants {
-    public static final Pose2d NAV_TO_TRAJECTORY_START_TOLERENCE = new Pose2d(0.5, 0.5, Rotation2d.fromDegrees(10.0));
+    public static final Pose2d NAV_TO_TRAJECTORY_START_TOLERENCE = new Pose2d(0.5, 0.5, Rotation2d.fromDegrees(25.0));
     public static final double NAV_TO_TRAJECTORY_START_VEL = 2.5;
     public static final HashMap<String, Command> AUTONOMOUS_ACTION_MAP = new HashMap<>();
   }

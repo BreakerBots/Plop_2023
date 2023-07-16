@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -14,17 +15,23 @@ import frc.robot.BreakerLib.devices.vision.photon.BreakerVision;
 import frc.robot.BreakerLib.position.movement.BreakerMovementState2d;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerGenericVisionOdometer;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerVisionPoseFilterOdometer;
+import frc.robot.Constants.VisionConstants;
 
 public class Vision extends SubsystemBase implements BreakerGenericVisionOdometer {
   /** Creates a new Vision. */
   private BreakerPhotonCamera frontCam, leftCam, rightCam, backCam;
   private BreakerVision vision;
   public Vision() {
-    frontCam = new BreakerPhotonCamera(getName(), null);
-    leftCam  = new BreakerPhotonCamera(getName(), null);
-    rightCam = new BreakerPhotonCamera(getName(), null);
-    backCam = new BreakerPhotonCamera(getName(), null);
-    vision = new BreakerVision(getDataTimestamp(), getDataTimestamp(), getDataTimestamp(), getDataTimestamp(), new BreakerPhotonCamera[]{frontCam, leftCam, rightCam, backCam}, null);
+    configApriltags();
+    frontCam = new BreakerPhotonCamera(getName(), VisionConstants.FRONT_CAMERA_POSE);
+    leftCam  = new BreakerPhotonCamera(getName(), VisionConstants.LEFT_CAMERA_POSE);
+    rightCam = new BreakerPhotonCamera(getName(), VisionConstants.RIGHT_CAMERA_POSE);
+    backCam = new BreakerPhotonCamera(getName(), VisionConstants.BACK_CAMERA_POSE);
+    vision = new BreakerVision(VisionConstants.POSE_FILTER_TRUST_COEF, VisionConstants.POSE_FILTER_MAX_UNCERTANTY, VisionConstants.POSE_FILTER_DISTANCE_SCALE_FACTOR, VisionConstants.POSE_FILTER_MAX_DISTANCE, new BreakerPhotonCamera[]{frontCam, leftCam, rightCam, backCam}, VisionConstants.APRILTAG_IDS_AND_LOCATIONS);
+  }
+
+  private static void configApriltags() {
+    VisionConstants.APRILTAG_IDS_AND_LOCATIONS.put(0, new Pose3d());
   }
 
   @Override

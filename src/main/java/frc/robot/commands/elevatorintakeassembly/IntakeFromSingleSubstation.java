@@ -21,7 +21,7 @@ public class IntakeFromSingleSubstation extends ParallelCommandGroup {
   public IntakeFromSingleSubstation(Elevator elevator, Intake intake, boolean verifyIntakeAcutation, GamePieceType gamePieceType) {
     addCommands(
       new SetElevatorIntakeAssemblyState(elevator, intake, gamePieceType.isCube() ? ElevatorTarget.PICKUP_SINGLE_SUBSTATION_CUBE : ElevatorTarget.PICKUP_SINGLE_SUBSTATION_CONE, ActuatorMotorState.EXTENDING, verifyIntakeAcutation),
-      new SetIntakeRollerState(intake, IntakeRollerStateRequest.INTAKE)
+      new SetIntakeRollerState(intake, gamePieceType.isCube() ? IntakeRollerStateRequest.INTAKE_CUBE : IntakeRollerStateRequest.INTAKE_CONE)
     );
   }
 }

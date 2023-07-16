@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.GamePieceType;
 import frc.robot.Node;
 import frc.robot.Node.NodeType;
 import frc.robot.OperatorControlPad;
@@ -33,6 +34,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Elevator.ElevatorTarget;
+import frc.robot.subsystems.Intake.ControledGamePieceType;
 
 public class TeleopScoreGamePiece extends CommandBase {
   /** Creates a new ScoreGamePiece. */
@@ -58,22 +60,34 @@ public class TeleopScoreGamePiece extends CommandBase {
     Optional<Node> selectedNodeOptional = operatorControlPad.getSelectedScoringNode();
     if (selectedNodeOptional.isPresent()) {
       selectedNode = selectedNodeOptional.get();
-      ElevatorTarget elevatorTgt = getElevatorTarget();
-      Pose2d allignmentPose = selectedNode.getAllignmentPose();
-      BreakerLog.logEvent(String.format("TeleopScoreGamePiece instance selected node indentified, scoreing sequince starting (node: %s) (elevator tgt: %s) (allignment pose: %s)", selectedNode.toString(), elevatorTgt.toString(), allignmentPose.toString()));
-      new SinglePulseRumble(driverController).schedule();
-      scoreingSequince = 
-      new SequentialCommandGroup(
-        new ParallelCommandGroup(
-          new MoveToPose(selectedNode.getAllignmentPose(), ScoreingConstants.TELEOP_SCOREING_MOVE_TO_POSE_MAX_LINEAR_VEL, drivetrain), 
-          new ElevatorMoveToHight(elevator, getElevatorTarget())
-        ),
-        new ConditionalCommand(new EjectGamePiece(intake), new InstantCommand(this::cancel), () -> preEjectCheck(elevatorTgt)),
-        new InstantCommand(this::postEjectCheck)
-        );
+      Optional<GamePieceType> controledGamePiece = intake.getControledGamePieceType().getGamePieceType();
+      if (controledGamePiece.isPresent()) {
+        if (selectedNode.getType().isGamePieceSupported(controledGamePiece.get())) {
+          ElevatorTarget elevatorTgt = getElevatorTarget();
+          Pose2d allignmentPose = selectedNode.getAllignmentPose();
+          BreakerLog.logEvent(String.format("TeleopScoreGamePiece instance selected node indentified, scoreing sequince starting (node: %s) (elevator tgt: %s) (allignment pose: %s)", selectedNode.toString(), elevatorTgt.toString(), allignmentPose.toString()));
+          new SinglePulseRumble(driverController).schedule();
+          scoreingSequince = 
+          new SequentialCommandGroup(
+            new ParallelCommandGroup(
+              new MoveToPose(selectedNode.getAllignmentPose(), ScoreingConstants.TELEOP_SCOREING_MOVE_TO_POSE_MAX_LINEAR_VEL, drivetrain), 
+              new ElevatorMoveToHight(elevator, getElevatorTarget())
+            ),
+            new ConditionalCommand(new EjectGamePiece(intake), new InstantCommand(this::cancel), () -> preEjectCheck(elevatorTgt)),
+            new InstantCommand(this::postEjectCheck)
+            );
+        } else {
+          BreakerLog.logEvent(String.format("TeleopScoreGamePiece instance FAILED, selected node type is not compatable with currently controled game piece (node: %s) (controled game piece: %s)", selectedNode.toString(), controledGamePiece.get().toString()));
+          this.cancel();
+        }
+      } else {
+        BreakerLog.logEvent("TeleopScoreGamePiece instance FAILED, cannot score while robot does not control a game piece");
+        this.cancel();
+      }
+      
     } else {
-      this.cancel();
       BreakerLog.logEvent("TeleopScoreGamePiece instance FAILED, no node selected");
+      this.cancel();
     }
   
   }

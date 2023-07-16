@@ -139,6 +139,16 @@ public enum Node {
         public double getAllignmentOffset() {
             return allignmentOffset;
         }
+
+        public boolean isGamePieceSupported(GamePieceType gamePieceType) {
+            if (this == CUBE) {
+                return gamePieceType == GamePieceType.CUBE;
+            } else if (this == CONE) {
+                return gamePieceType == GamePieceType.CONE;
+            } else {
+                return true;
+            }
+        }
     }
 
 

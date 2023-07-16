@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -28,6 +29,7 @@ import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
 import frc.robot.BreakerLib.util.logging.BreakerLog;
 import frc.robot.BreakerLib.util.test.selftest.SystemDiagnostics;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.subsystems.Intake.RollerState.RollerStateType;
 
 public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
@@ -46,7 +48,8 @@ public class Intake extends SubsystemBase {
   public Intake() {
     actuatorMotor = new CANSparkMax(IntakeConstants.ACTUATOR_ID, MotorType.kBrushless);
     rollerMotor = new CANSparkMax(IntakeConstants.ROLLER_ID, MotorType.kBrushless);
-    beamBreak = new BreakerBeamBreak(IntakeConstants.BEAM_BRAKE_DIO_PORT, IntakeConstants.BEAM_BRAKE_BROKEN_ON_TRUE);
+    coneBeamBrake = new BreakerBeamBreak(IntakeConstants.CONE_BEAM_BRAKE_DIO_PORT, IntakeConstants.BEAM_BRAKE_BROKEN_ON_TRUE);
+    cubeBeamBrake = new BreakerBeamBreak(IntakeConstants.CUBE_BEAM_BRAKE_DIO_PORT, IntakeConstants.BEAM_BRAKE_BROKEN_ON_TRUE);
     
     actuatorMotor.setSmartCurrentLimit(IntakeConstants.ACTUATOR_CURRENT_LIMIT);
     actuatorMotor.setInverted(IntakeConstants.INVERT_ACTUATOR);
@@ -85,6 +88,14 @@ public class Intake extends SubsystemBase {
     return ControledGamePieceType.ERROR;
   }
 
+  public boolean hasCone() {
+    return getControledGamePieceType() == ControledGamePieceType.CONE;
+  }
+
+  public boolean hasCube() {
+    return getControledGamePieceType() == ControledGamePieceType.CUBE;
+  }
+
   public boolean hasGamePiece() {
     return getControledGamePieceType().hasGamePiece();
   }
@@ -110,13 +121,6 @@ public class Intake extends SubsystemBase {
     return ActuatorState.ERROR;
   } 
 
-  // public void intake() {
-  //   if (actuatorMotorState == ActuatorMotorState.EXTENDING && !beamBreak.isBroken()) {
-  //     rollerState = RollerState.INTAKEING;
-  //     rollerMotor.set(IntakeConstants.INTAKE_DUTY_CYCLE);
-  //   }
-  // }
-
   public void intakeCone() {
     if (actuatorMotorState == ActuatorMotorState.EXTENDING && !hasGamePiece()) {
       rollerState = RollerState.INTAKEING_CONE;
@@ -139,25 +143,28 @@ public class Intake extends SubsystemBase {
   }
 
   public void extakeCube() {
-    if (actuatorMotorState == ActuatorMotorState.EXTENDING && getControledGamePieceType() == ControledGamePieceType.CONE) {
+    if (actuatorMotorState == ActuatorMotorState.EXTENDING && getControledGamePieceType() == ControledGamePieceType.CUBE) {
       rollerState = RollerState.EXTAKEING_CUBE;
       rollerMotor.set(IntakeConstants.EXTAKE_CUBE_DUTY_CYCLE);
     }
   }
 
-  private void gripp() {
-    rollerMotor.set(IntakeConstants.INTAKE_GRIP_DUTY_CYCLE);
-    rollerState = RollerState.GRIPPING;
+  private void grippCone() {
+    rollerMotor.set(IntakeConstants.INTAKE_CONE_GRIP_DUTY_CYCLE);
+    rollerState = RollerState.GRIPPING_CONE;
+  }
+
+  private void grippCube() {
+    rollerMotor.set(IntakeConstants.INTAKE_CUBE_GRIP_DUTY_CYCLE);
+    rollerState = RollerState.GRIPPING_CUBE;
   }
 
   public void stopRoller() {
-    if (!beamBreak.isBroken()) {
+    if (!hasGamePiece()) {
       rollerState = RollerState.NEUTRAL;
       rollerMotor.stopMotor();
     }
   }
-
-
 
   public RollerState getRollerState() {
       return rollerState;
@@ -199,9 +206,13 @@ public class Intake extends SubsystemBase {
   public void periodic() {
 
     if (DriverStation.isEnabled()) {
-      if (beamBreak.isBroken() && rollerState != RollerState.EXTAKEING) {
-        gripp();
-      } else if (!beamBreak.isBroken() && actuatorMotorState != ActuatorMotorState.EXTENDING) {
+      if (hasGamePiece() && rollerState.getRollerStateType() != RollerStateType.EXTAKEING) {
+        if (hasCone()) {
+          grippCone();
+        } else {
+          grippCube();
+        }
+      } else if (!hasGamePiece() && actuatorMotorState != ActuatorMotorState.EXTENDING) {
         stopRoller();
       }
 
@@ -213,13 +224,36 @@ public class Intake extends SubsystemBase {
   }
 
   public static enum RollerState {
-    INTAKEING_CONE,
-    INTAKEING_CUBE,
-    EXTAKEING_CONE,
-    EXTAKEING_CUBE,
-    GRIPPING_CONE,
-    GRIPPING_CUBE,
-    NEUTRAL
+    INTAKEING_CONE(RollerStateType.INTAKEING, ControledGamePieceType.CONE),
+    INTAKEING_CUBE(RollerStateType.INTAKEING, ControledGamePieceType.CUBE),
+    EXTAKEING_CONE(RollerStateType.EXTAKEING, ControledGamePieceType.CONE),
+    EXTAKEING_CUBE(RollerStateType.EXTAKEING, ControledGamePieceType.CUBE),
+    GRIPPING_CONE(RollerStateType.GRIPPING, ControledGamePieceType.CONE),
+    GRIPPING_CUBE(RollerStateType.GRIPPING, ControledGamePieceType.CUBE),
+    NEUTRAL(RollerStateType.NEUTRAL, ControledGamePieceType.NONE);
+
+    private RollerStateType rollerStateType;
+    private ControledGamePieceType desiredControledGamePieceType;
+    private RollerState(RollerStateType rollerStateType, ControledGamePieceType desiredControledGamePieceType) {
+      this.rollerStateType = rollerStateType;
+      this.desiredControledGamePieceType = desiredControledGamePieceType;
+    }
+
+    public ControledGamePieceType getDesiredControledGamePieceType() {
+        return desiredControledGamePieceType;
+    }
+
+    public RollerStateType getRollerStateType() {
+        return rollerStateType;
+    }
+
+    public static enum RollerStateType {
+      INTAKEING,
+      EXTAKEING,
+      GRIPPING,
+      NEUTRAL
+    }
+    
   }
 
   public static enum ActuatorState {
@@ -237,7 +271,7 @@ public class Intake extends SubsystemBase {
 
 
     private final Optional<GamePieceType> controledType;
-    public ControledGamePieceType(Optional<GamePieceType> controledType) {
+    private ControledGamePieceType(Optional<GamePieceType> controledType) {
       this.controledType = controledType;
     }
 

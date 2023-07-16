@@ -1,0 +1,16 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Main/Field": "Field2d",
+      "/Shuffleboard/Setup/AUTOPATH SELECTOR": "String Chooser"
+    }
+  },
+  "NetworkTables": {
+    "retained": {
+      "Shuffleboard": {
+        "open": true
+      }
+    }
+  }
+}

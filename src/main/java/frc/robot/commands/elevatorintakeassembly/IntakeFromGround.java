@@ -21,7 +21,7 @@ public class IntakeFromGround extends ParallelCommandGroup {
   public IntakeFromGround(Elevator elevator, Intake intake, boolean verifyIntakeAcutation, GamePieceType gamePieceType) {
     addCommands(
       new SetElevatorIntakeAssemblyState(elevator, intake, gamePieceType.isCube() ? ElevatorTarget.PICKUP_GROUND_CUBE : ElevatorTarget.PICKUP_GROUND_CONE, ActuatorMotorState.EXTENDING, verifyIntakeAcutation),
-      new SetIntakeRollerState(intake, IntakeRollerStateRequest.INTAKE)
+      new SetIntakeRollerState(intake, gamePieceType.isCube() ? IntakeRollerStateRequest.INTAKE_CUBE : IntakeRollerStateRequest.INTAKE_CONE)
     );
   }
 }

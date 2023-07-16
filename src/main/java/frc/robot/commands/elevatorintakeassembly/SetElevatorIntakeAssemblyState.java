@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.commands.elevatorintakeassembly.elevator.ElevatorMoveToHight;
 import frc.robot.commands.elevatorintakeassembly.intake.SetIntakeActuatorMotorState;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Elevator.ElevatorTarget;
+import frc.robot.subsystems.Elevator.ElevatorTargetState;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Intake.ActuatorMotorState;
 
@@ -17,7 +17,7 @@ import frc.robot.subsystems.Intake.ActuatorMotorState;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class SetElevatorIntakeAssemblyState extends ParallelCommandGroup {
   /** Creates a new SetElevatorIntakeAssemblyState. */
-  public SetElevatorIntakeAssemblyState(Elevator elevator, Intake intake, ElevatorTarget elevatorTarget, ActuatorMotorState intakeActuatorstate, boolean verifyIntakeAcutation) {
+  public SetElevatorIntakeAssemblyState(Elevator elevator, Intake intake, ElevatorTargetState elevatorTarget, ActuatorMotorState intakeActuatorstate, boolean verifyIntakeAcutation) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(

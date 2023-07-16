@@ -23,9 +23,11 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.GamePieceType;
 import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
+import frc.robot.BreakerLib.driverstation.dashboard.BreakerDashboard;
 import frc.robot.BreakerLib.util.logging.BreakerLog;
 import frc.robot.BreakerLib.util.test.selftest.SystemDiagnostics;
 import frc.robot.Constants.IntakeConstants;
@@ -73,6 +75,22 @@ public class Intake extends SubsystemBase {
 
     diagnostics = new SystemDiagnostics("Intake");
     diagnostics.addSparkMaxs(actuatorMotor, rollerMotor);
+    setupDashboard();
+  }
+
+  private void setupDashboard() {
+    ShuffleboardTab mainTab =  BreakerDashboard.getMainTab();
+    mainTab.addBoolean("INTK FAULT", diagnostics::hasFault);
+    mainTab.addBoolean("INTK HAS CONE", this::hasCone);
+    mainTab.addBoolean("INTK HAS CUBE", this::hasCone);
+    mainTab.addBoolean("INTK INTAKEING", () -> getRollerState().getRollerStateType() == RollerStateType.INTAKEING);
+    mainTab.addBoolean("INTK GRIPPING", () -> getRollerState().getRollerStateType() == RollerStateType.GRIPPING);
+    mainTab.addBoolean("INTK EXTAKEING", () -> getRollerState().getRollerStateType() == RollerStateType.EXTAKEING);
+    mainTab.addString("INTK A-MOT", () -> getActuatorMotorState().toString());
+    mainTab.addString("INTK A-ST", () -> getActuatorState().toString());
+    mainTab.addString("INTK ROLL", () -> getRollerState().toString());
+    mainTab.addString("INTK G-PICE", () -> getControledGamePieceType().toString());
+    
   }
 
   public ControledGamePieceType getControledGamePieceType() {

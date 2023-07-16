@@ -7,7 +7,7 @@ package frc.robot.commands.elevatorintakeassembly;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Elevator.ElevatorTarget;
+import frc.robot.subsystems.Elevator.ElevatorTargetState;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Intake.ActuatorMotorState;
 
@@ -17,6 +17,6 @@ import frc.robot.subsystems.Intake.ActuatorMotorState;
 public class StowElevatorIntakeAssembly extends SetElevatorIntakeAssemblyState {
   /** Creates a new StowElevatorIntakeAssembly. */
   public StowElevatorIntakeAssembly(Elevator elevator, Intake intake, boolean verifyIntakeAcutation) {
-     super(elevator, intake, ElevatorTarget.STOW, ActuatorMotorState.RETRACTING, verifyIntakeAcutation);
+     super(elevator, intake, ElevatorTargetState.STOW, ActuatorMotorState.RETRACTING, verifyIntakeAcutation);
   }
 }

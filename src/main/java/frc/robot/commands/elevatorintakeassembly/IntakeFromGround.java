@@ -9,7 +9,7 @@ import frc.robot.GamePieceType;
 import frc.robot.commands.elevatorintakeassembly.intake.SetIntakeRollerState;
 import frc.robot.commands.elevatorintakeassembly.intake.SetIntakeRollerState.IntakeRollerStateRequest;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Elevator.ElevatorTarget;
+import frc.robot.subsystems.Elevator.ElevatorTargetState;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Intake.ActuatorMotorState;
 
@@ -20,7 +20,7 @@ public class IntakeFromGround extends ParallelCommandGroup {
   /** Creates a new IntakeFromGround. */
   public IntakeFromGround(Elevator elevator, Intake intake, boolean verifyIntakeAcutation, GamePieceType gamePieceType) {
     addCommands(
-      new SetElevatorIntakeAssemblyState(elevator, intake, gamePieceType.isCube() ? ElevatorTarget.PICKUP_GROUND_CUBE : ElevatorTarget.PICKUP_GROUND_CONE, ActuatorMotorState.EXTENDING, verifyIntakeAcutation),
+      new SetElevatorIntakeAssemblyState(elevator, intake, gamePieceType.isCube() ? ElevatorTargetState.PICKUP_GROUND_CUBE : ElevatorTargetState.PICKUP_GROUND_CONE, ActuatorMotorState.EXTENDING, verifyIntakeAcutation),
       new SetIntakeRollerState(intake, gamePieceType.isCube() ? IntakeRollerStateRequest.INTAKE_CUBE : IntakeRollerStateRequest.INTAKE_CONE)
     );
   }

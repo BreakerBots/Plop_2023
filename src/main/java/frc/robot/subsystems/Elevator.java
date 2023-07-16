@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -40,6 +41,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
@@ -69,7 +71,7 @@ public class Elevator extends SubsystemBase {
 
     private final SystemDiagnostics diagnostics;
 
-    private ElevatorState currentState = ElevatorState.CALIBRATING;
+    private ElevatorControlMode currentState = ElevatorControlMode.CALIBRATING;
     private boolean hasBeenCalibrated = false;
    
     private double targetHeightMeters;
@@ -138,24 +140,43 @@ public class Elevator extends SubsystemBase {
         diagnostics.addPhoenix6TalonFXs(leftMotor, rightMotor);
 
        // simManager = this.new ElevatorSimManager();
+       setupDashboard();
     }
 
-    public ElevatorState getCurrentState() {
+    private void setupDashboard() {
+        ShuffleboardTab mainTab =  BreakerDashboard.getMainTab();
+        mainTab.addBoolean("ELEV FAULT", () -> diagnostics.hasFault());
+        mainTab.addDouble("ELEV HEIGHT", this::getHeight);
+        mainTab.addDouble("ELEV TARGET", this::getTargetHeightMeters);
+        mainTab.addDouble("ELEV VELOCITY", this::getVelocity);
+        mainTab.addString("ELEV TGT STATE", this::getTargetStateString);
+        mainTab.addString("ELEV CTRL MODE", () -> getCurrentControlMode().toString());
+    }
+
+    private String getTargetStateString() {
+       Optional<ElevatorTargetState> tgtOpt = ElevatorTargetState.getTargetFromHeight(getTargetHeightMeters());
+       if (tgtOpt.isPresent()) {
+        return tgtOpt.get().toString();
+       }
+       return "UNKNOWN";
+    }
+ 
+    public ElevatorControlMode getCurrentControlMode() {
         return currentState;
     }
 
     public void setTarget(double heightMeters) {
         targetHeightMeters = heightMeters;
-        currentState = ElevatorState.AUTOMATIC;
+        currentState = ElevatorControlMode.AUTOMATIC;
     }
 
     public void setManual(double dutyCycle) {
         manualControlDutyCycle = MathUtil.clamp(dutyCycle, -1.0, 1.0);
-        currentState = ElevatorState.MANUAL;
+        currentState = ElevatorControlMode.MANUAL;
     }
 
     public void calibrate() {
-        currentState = ElevatorState.CALIBRATING;
+        currentState = ElevatorControlMode.CALIBRATING;
     }
 
     public double getHeight() {
@@ -167,7 +188,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean atTargetHeight() {
-        return BreakerMath.epsilonEquals(getHeight(), targetHeightMeters, ElevatorConstants.HIGHT_TOLARENCE) && currentState == ElevatorState.AUTOMATIC;
+        return BreakerMath.epsilonEquals(getHeight(), targetHeightMeters, ElevatorConstants.HIGHT_TOLARENCE) && currentState == ElevatorControlMode.AUTOMATIC;
     }
 
     public double getTargetHeightMeters() {
@@ -183,11 +204,11 @@ public class Elevator extends SubsystemBase {
     }
 
     public void setNeutral() {
-        currentState = ElevatorState.NEUTRAL;
+        currentState = ElevatorControlMode.NEUTRAL;
     }
 
     public void setLocked() {
-        currentState = ElevatorState.LOCKED;
+        currentState = ElevatorControlMode.LOCKED;
     }
 
     /** */
@@ -220,7 +241,7 @@ public class Elevator extends SubsystemBase {
             }
     
             if (DriverStation.isEnabled()) {
-                if (!hasBeenCalibrated && currentState != ElevatorState.MANUAL) {
+                if (!hasBeenCalibrated && currentState != ElevatorControlMode.MANUAL) {
                     calibrate();
                 }
             } else {
@@ -233,11 +254,11 @@ public class Elevator extends SubsystemBase {
         } 
         
 
-        if (DriverStation.isDisabled() || currentState != ElevatorState.AUTOMATIC) {
+        if (DriverStation.isDisabled() || currentState != ElevatorControlMode.AUTOMATIC) {
             targetHeightMeters = getHeight();
         }
 
-        if (DriverStation.isDisabled() || currentState != ElevatorState.MANUAL) {
+        if (DriverStation.isDisabled() || currentState != ElevatorControlMode.MANUAL) {
             manualControlDutyCycle = 0.0;
         }
 
@@ -255,12 +276,12 @@ public class Elevator extends SubsystemBase {
                     if (RobotBase.isReal()) {
                         leftMotor.setControl(dutyCycleRequest.withOutput(ElevatorConstants.CALIBRATION_DUTY_CYCLE));
                         if (getReverseLimitTriggered()) {
-                            currentState = ElevatorState.AUTOMATIC;
+                            currentState = ElevatorControlMode.AUTOMATIC;
                             hasBeenCalibrated = true;
                             BreakerLog.logSuperstructureEvent("Elevator zero-point calibration sucessfull");
                         }
                     } else {
-                        currentState = ElevatorState.AUTOMATIC;
+                        currentState = ElevatorControlMode.AUTOMATIC;
                             hasBeenCalibrated = true;
                             BreakerLog.logSuperstructureEvent("Elevator calibation not supported in sim, action fallthrough");
                     }
@@ -279,7 +300,7 @@ public class Elevator extends SubsystemBase {
         }
     }
 
-    public static enum ElevatorState {
+    public static enum ElevatorControlMode {
         CALIBRATING,
         AUTOMATIC,
         MANUAL,
@@ -287,7 +308,7 @@ public class Elevator extends SubsystemBase {
         NEUTRAL
     }
 
-    public static enum ElevatorTarget {
+    public static enum ElevatorTargetState {
         PLACE_HYBRID(0.0),
         PLACE_CONE_MID(0.0),
         PLACE_CONE_HIGH(0.0),
@@ -302,12 +323,21 @@ public class Elevator extends SubsystemBase {
         STOW(0.0);
 
         private final double targetHeight;
-        private ElevatorTarget(double targetHeight) {
+        private ElevatorTargetState(double targetHeight) {
             this.targetHeight = targetHeight;
         }
 
         public double getTargetHeight() {
             return targetHeight;
+        }
+
+        public static Optional<ElevatorTargetState> getTargetFromHeight(double searchHeight) {
+            for (ElevatorTargetState tgt: ElevatorTargetState.values()) {
+                if (tgt.getTargetHeight() == searchHeight) {
+                    return Optional.of(tgt);
+                }
+            }
+            return Optional.empty();
         }
     }
 

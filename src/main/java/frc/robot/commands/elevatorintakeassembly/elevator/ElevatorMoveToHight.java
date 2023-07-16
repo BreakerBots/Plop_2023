@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.BreakerLib.util.logging.BreakerLog;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Elevator.ElevatorState;
-import frc.robot.subsystems.Elevator.ElevatorTarget;
+import frc.robot.subsystems.Elevator.ElevatorControlMode;
+import frc.robot.subsystems.Elevator.ElevatorTargetState;
 import frc.robot.Constants.ElevatorConstants;
 
 public class ElevatorMoveToHight extends CommandBase {
@@ -23,7 +23,7 @@ public class ElevatorMoveToHight extends CommandBase {
     addRequirements(elevator);
   }
 
-  public ElevatorMoveToHight(Elevator elevator, ElevatorTarget target) {
+  public ElevatorMoveToHight(Elevator elevator, ElevatorTargetState target) {
     this(elevator, target.getTargetHeight());
   }
 

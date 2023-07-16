@@ -33,7 +33,7 @@ import frc.robot.commands.rumble.TriplePulseRumble;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.Elevator.ElevatorTarget;
+import frc.robot.subsystems.Elevator.ElevatorTargetState;
 import frc.robot.subsystems.Intake.ControledGamePieceType;
 
 public class TeleopScoreGamePiece extends CommandBase {
@@ -63,7 +63,7 @@ public class TeleopScoreGamePiece extends CommandBase {
       Optional<GamePieceType> controledGamePiece = intake.getControledGamePieceType().getGamePieceType();
       if (controledGamePiece.isPresent()) {
         if (selectedNode.getType().isGamePieceSupported(controledGamePiece.get())) {
-          ElevatorTarget elevatorTgt = getElevatorTarget();
+          ElevatorTargetState elevatorTgt = getElevatorTarget();
           Pose2d allignmentPose = selectedNode.getAllignmentPose();
           BreakerLog.logEvent(String.format("TeleopScoreGamePiece instance selected node indentified, scoreing sequince starting (node: %s) (elevator tgt: %s) (allignment pose: %s)", selectedNode.toString(), elevatorTgt.toString(), allignmentPose.toString()));
           new SinglePulseRumble(driverController).schedule();
@@ -100,7 +100,7 @@ public class TeleopScoreGamePiece extends CommandBase {
       }
   }
 
-  private boolean preEjectCheck(ElevatorTarget elevatorTarget) {
+  private boolean preEjectCheck(ElevatorTargetState elevatorTarget) {
     boolean check = (elevator.atTargetHeight() && (elevator.getTargetHeightMeters() == elevatorTarget.getTargetHeight())) && BreakerMath.epsilonEqualsPose2d(selectedNode.getAllignmentPose(), drivetrain.getOdometryPoseMeters(), DriveConstants.BHDC_POSE_TOLERENCE);
     if (!check) {
       BreakerLog.logEvent("TeleopScoreGamePiece instance FAILED, game piece eject procedure pre init check failed, elevator or drive not at desired states");
@@ -120,21 +120,21 @@ public class TeleopScoreGamePiece extends CommandBase {
     }
   }
  
-  private ElevatorTarget getElevatorTarget() {
+  private ElevatorTargetState getElevatorTarget() {
     switch (selectedNode.getHeight()) {
       case HIGH:
         if (selectedNode.getType() == NodeType.CONE) {
-          return ElevatorTarget.PLACE_CONE_HIGH;
+          return ElevatorTargetState.PLACE_CONE_HIGH;
         }
-        return ElevatorTarget.PLACE_CUBE_HIGH;
+        return ElevatorTargetState.PLACE_CUBE_HIGH;
       case MID:
         if (selectedNode.getType() == NodeType.CONE) {
-          return ElevatorTarget.PLACE_CONE_MID;
+          return ElevatorTargetState.PLACE_CONE_MID;
         }
-        return ElevatorTarget.PLACE_CUBE_MID;
+        return ElevatorTargetState.PLACE_CUBE_MID;
       case LOW:
       default:
-        return ElevatorTarget.PLACE_HYBRID;
+        return ElevatorTargetState.PLACE_HYBRID;
     }
   }
   // Called once the command ends or is interrupted.

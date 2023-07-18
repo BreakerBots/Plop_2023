@@ -56,6 +56,7 @@ import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import frc.robot.BreakerLib.util.test.selftest.SystemDiagnostics;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.MiscConstants;
 
 /** Add your docs here. */
 public class Elevator extends SubsystemBase {
@@ -85,8 +86,8 @@ public class Elevator extends SubsystemBase {
 
    
     public Elevator() {
-        leftMotor = new TalonFX(ElevatorConstants.LEFT_MOTOR_ID, "placeholder");
-        rightMotor = new TalonFX(ElevatorConstants.RIGHT_MOTOR_ID, "placeholder");
+        leftMotor = new TalonFX(ElevatorConstants.LEFT_MOTOR_ID, MiscConstants.CANIVORE_1);
+        rightMotor = new TalonFX(ElevatorConstants.RIGHT_MOTOR_ID, MiscConstants.CANIVORE_1);
         leftMotor.setControl(new Follower(ElevatorConstants.RIGHT_MOTOR_ID, false));
         
         TalonFXConfiguration config = new TalonFXConfiguration();
@@ -153,7 +154,7 @@ public class Elevator extends SubsystemBase {
         builder.addStringProperty("ELEV TGT STATE", this::getTargetStateString, null);
         builder.addStringProperty("ELEV CTRL MODE", () -> getCurrentControlMode().toString(), null);
     }
-    
+
     private String getTargetStateString() {
        Optional<ElevatorTargetState> tgtOpt = ElevatorTargetState.getTargetFromHeight(getTargetHeightMeters());
        if (tgtOpt.isPresent()) {

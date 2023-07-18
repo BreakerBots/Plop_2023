@@ -22,6 +22,7 @@ import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -32,6 +33,7 @@ import frc.robot.GamePieceType;
 import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
 import frc.robot.BreakerLib.driverstation.dashboard.BreakerDashboard;
 import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import frc.robot.BreakerLib.util.test.selftest.SystemDiagnostics;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.Intake.RollerState.RollerStateType;
@@ -78,6 +80,8 @@ public class Intake extends SubsystemBase {
 
     diagnostics = new SystemDiagnostics("Intake");
     diagnostics.addSparkMaxs(actuatorMotor, rollerMotor);
+    diagnostics.addSupplier(this::healthCheck);
+
     BreakerDashboard.getMainTab().add("INTAKE", this);
   }
 
@@ -92,6 +96,21 @@ public class Intake extends SubsystemBase {
     builder.addStringProperty("INTK A-ST", () -> getActuatorState().toString(), null);
     builder.addStringProperty("INTK ROLL", () -> getRollerState().toString(), null);
     builder.addBooleanProperty("INTK FAULT", diagnostics::hasFault, null);
+  }
+
+  private Pair<DeviceHealth, String> healthCheck() {
+    String str = "";
+    DeviceHealth devHealth = DeviceHealth.NOMINAL;
+    if (getControledGamePieceType() == ControledGamePieceType.ERROR) {
+      str += " game_piece_deection_beam_break_malfunction_bolth_sensors_read_broken ";
+      devHealth = DeviceHealth.INOPERABLE;
+    }
+
+    if (getActuatorState() == ActuatorState.ERROR) {
+      str += " actuator_limit_switch_malfunction_bolth_switches_read_triggered ";
+      devHealth = DeviceHealth.INOPERABLE;
+    }
+    return new Pair<DeviceHealth,String>(devHealth, str);
   }
 
   public ControledGamePieceType getControledGamePieceType() {

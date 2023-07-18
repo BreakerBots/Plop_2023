@@ -308,7 +308,7 @@ public class BreakerMath {
     }
 
     public static Pose2d mirrorPose(Pose2d pose, double translationalAxisOfSymetry, MirrorAxis2d translationMirrorType, MirrorAxis2d rotationMirrorType) {
-       return new Pose2d(mirrorTranslation(pose.getTranslation(), translationalAxisOfSymetry, translationMirrorType), mirrorRotation(null, rotationMirrorType));
+       return new Pose2d(mirrorTranslation(pose.getTranslation(), translationalAxisOfSymetry, translationMirrorType), mirrorRotation(pose.getRotation(), rotationMirrorType));
     }
 
     public static enum MirrorAxis2d {

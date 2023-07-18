@@ -22,8 +22,11 @@ import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.GamePieceType;
 import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
@@ -75,22 +78,20 @@ public class Intake extends SubsystemBase {
 
     diagnostics = new SystemDiagnostics("Intake");
     diagnostics.addSparkMaxs(actuatorMotor, rollerMotor);
-    setupDashboard();
+    BreakerDashboard.getMainTab().add("INTAKE", this);
   }
 
-  private void setupDashboard() {
-    ShuffleboardTab mainTab =  BreakerDashboard.getMainTab();
-    mainTab.addBoolean("INTK FAULT", diagnostics::hasFault);
-    mainTab.addBoolean("INTK HAS CONE", this::hasCone);
-    mainTab.addBoolean("INTK HAS CUBE", this::hasCone);
-    mainTab.addBoolean("INTK INTAKEING", () -> getRollerState().getRollerStateType() == RollerStateType.INTAKEING);
-    mainTab.addBoolean("INTK GRIPPING", () -> getRollerState().getRollerStateType() == RollerStateType.GRIPPING);
-    mainTab.addBoolean("INTK EXTAKEING", () -> getRollerState().getRollerStateType() == RollerStateType.EXTAKEING);
-    mainTab.addString("INTK A-MOT", () -> getActuatorMotorState().toString());
-    mainTab.addString("INTK A-ST", () -> getActuatorState().toString());
-    mainTab.addString("INTK ROLL", () -> getRollerState().toString());
-    mainTab.addString("INTK G-PICE", () -> getControledGamePieceType().toString());
-    
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.addBooleanProperty("INTK HAS CONE", this::hasCone, null);
+    builder.addBooleanProperty("INTK HAS CUBE", this::hasCone, null);
+    builder.addBooleanProperty("INTK INTAKEING", () -> getRollerState().getRollerStateType() == RollerStateType.INTAKEING, null);
+    builder.addBooleanProperty("INTK GRIPPING", () -> getRollerState().getRollerStateType() == RollerStateType.GRIPPING, null);
+    builder.addBooleanProperty("INTK EXTAKEING", () -> getRollerState().getRollerStateType() == RollerStateType.EXTAKEING, null);
+    builder.addStringProperty("INTK A-MOT", () -> getActuatorMotorState().toString(), null);
+    builder.addStringProperty("INTK A-ST", () -> getActuatorState().toString(), null);
+    builder.addStringProperty("INTK ROLL", () -> getRollerState().toString(), null);
+    builder.addBooleanProperty("INTK FAULT", diagnostics::hasFault, null);
   }
 
   public ControledGamePieceType getControledGamePieceType() {

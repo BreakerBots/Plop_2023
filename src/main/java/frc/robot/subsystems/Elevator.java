@@ -45,6 +45,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -140,19 +141,19 @@ public class Elevator extends SubsystemBase {
         diagnostics.addPhoenix6TalonFXs(leftMotor, rightMotor);
 
        // simManager = this.new ElevatorSimManager();
-       setupDashboard();
+       BreakerDashboard.getMainTab().add(this);
     }
 
-    private void setupDashboard() {
-        ShuffleboardTab mainTab =  BreakerDashboard.getMainTab();
-        mainTab.addBoolean("ELEV FAULT", () -> diagnostics.hasFault());
-        mainTab.addDouble("ELEV HEIGHT", this::getHeight);
-        mainTab.addDouble("ELEV TARGET", this::getTargetHeightMeters);
-        mainTab.addDouble("ELEV VELOCITY", this::getVelocity);
-        mainTab.addString("ELEV TGT STATE", this::getTargetStateString);
-        mainTab.addString("ELEV CTRL MODE", () -> getCurrentControlMode().toString());
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.addBooleanProperty("ELEV FAULT", diagnostics::hasFault, null);
+        builder.addDoubleProperty("ELEV HEIGHT", this::getHeight, null);
+        builder.addDoubleProperty("ELEV TARGET", this::getTargetHeightMeters, null);
+        builder.addDoubleProperty("ELEV VELOCITY", this::getVelocity, null);
+        builder.addStringProperty("ELEV TGT STATE", this::getTargetStateString, null);
+        builder.addStringProperty("ELEV CTRL MODE", () -> getCurrentControlMode().toString(), null);
     }
-
+    
     private String getTargetStateString() {
        Optional<ElevatorTargetState> tgtOpt = ElevatorTargetState.getTargetFromHeight(getTargetHeightMeters());
        if (tgtOpt.isPresent()) {

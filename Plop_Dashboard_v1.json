@@ -11,17 +11,199 @@
         "vgap": 16.0,
         "titleType": 0,
         "tiles": {
-          "0,0": {
+          "10,0": {
+            "size": [
+              1,
+              2
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///Shuffleboard/Main/INTAKE/INTK INTAKEING",
+              "_title": "INTK INTAKEING",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#00FF00FF",
+              "Colors/Color when false": "#333333FF"
+            }
+          },
+          "8,0": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///Shuffleboard/Main/INTAKE/INTK HAS CUBE",
+              "_title": "INTK HAS CUBE",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#4D3399FF",
+              "Colors/Color when false": "#333333FF"
+            }
+          },
+          "10,3": {
             "size": [
               1,
               1
             ],
             "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Drive input",
-              "_title": "Drive input",
+              "_type": "Boolean Box",
+              "_source0": "network_table:///Shuffleboard/Main/INTAKE/INTK EXTAKEING",
+              "_title": "INTK EXTAKEING",
               "_glyph": 148,
-              "_showGlyph": false
+              "_showGlyph": false,
+              "Colors/Color when true": "#800000FF",
+              "Colors/Color when false": "#333333FF"
+            }
+          },
+          "8,1": {
+            "size": [
+              2,
+              3
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "INTAKE",
+              "_glyph": 149,
+              "_showGlyph": false,
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///Shuffleboard/Main/INTAKE/INTK A-MOT",
+                  "_title": "INTK A-MOT",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///Shuffleboard/Main/INTAKE/INTK A-ST",
+                  "_title": "INTK A-ST",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///Shuffleboard/Main/INTAKE/INTK ROLL",
+                  "_title": "INTK ROLL",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///Shuffleboard/Main/INTAKE/INTK FAULT",
+                  "_title": "INTK FAULT",
+                  "_glyph": 148,
+                  "_showGlyph": false,
+                  "Colors/Color when true": "#FF00FFFF",
+                  "Colors/Color when false": "#333333FF"
+                }
+              ]
+            }
+          },
+          "0,0": {
+            "size": [
+              6,
+              4
+            ],
+            "content": {
+              "_type": "Field",
+              "_source0": "network_table:///Shuffleboard/Main/Field",
+              "_title": "Field",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Game/Game": "A2023_Charged_Up",
+              "Visuals/Robot Icon Size": 50.0,
+              "Visuals/Show Outside Circles": false
+            }
+          },
+          "10,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///Shuffleboard/Main/INTAKE/INTK GRIPPING",
+              "_title": "INTK GRIPPING",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#CC8033FF",
+              "Colors/Color when false": "#333333FF"
+            }
+          },
+          "6,1": {
+            "size": [
+              2,
+              4
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "ELEVATOR",
+              "_glyph": 149,
+              "_showGlyph": false,
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///Shuffleboard/Main/Elevator/ELEV TGT STATE",
+                  "_title": "ELEV TGT STATE",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///Shuffleboard/Main/Elevator/ELEV CTRL MODE",
+                  "_title": "ELEV CTRL MODE",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///Shuffleboard/Main/Elevator/ELEV TARGET",
+                  "_title": "ELEV TARGET",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///Shuffleboard/Main/Elevator/ELEV HEIGHT",
+                  "_title": "ELEV HEIGHT",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///Shuffleboard/Main/Elevator/ELEV VELOCITY",
+                  "_title": "ELEV VELOCITY",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///Shuffleboard/Main/Elevator/ELEV FAULT",
+                  "_title": "ELEV FAULT",
+                  "_glyph": 148,
+                  "_showGlyph": false,
+                  "Colors/Color when true": "#FF00FFFF",
+                  "Colors/Color when false": "#333333FF"
+                }
+              ]
+            }
+          },
+          "6,0": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///Shuffleboard/Main/INTAKE/INTK HAS CONE",
+              "_title": "INTK HAS CONE",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#FFFF00FF",
+              "Colors/Color when false": "#333333FF"
             }
           }
         }
@@ -42,9 +224,9 @@
     }
   ],
   "windowGeometry": {
-    "x": -115.33333587646484,
-    "y": 36.66666793823242,
-    "width": 1707.3333740234375,
-    "height": 912.0
+    "x": -7.333333492279053,
+    "y": -7.333333492279053,
+    "width": 1721.3333740234375,
+    "height": 926.6666870117188
   }
 }

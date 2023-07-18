@@ -149,6 +149,10 @@ public class RobotContainer {
     BreakerRobotManager.setup(drivetrainSys, robotConfig);
   }
 
+  private void configureDashboard() {
+    BreakerDashboard.getMainTab().addBooleanArray("TEST BOOL ARR", () -> new boolean[]{true,false,true,true,false,true});
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

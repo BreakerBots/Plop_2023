@@ -24,4 +24,25 @@ public interface BreakerSelfTestable {
 
     /** Sets the device's name as returned by the {@link BreakerSelfTestable#getDeviceName()} method */
     public abstract void setDeviceName(String newName);
+
+
+    /** Infrestructure class for {@link BreakerSelfTestableBase} {@link BreakerGenericLoopedDevice} and simeler classes that directly inheret from {@link BreakerSelfTestable}.
+     *  Exists to require a unified featureset between all {@link BreakerSelfTestable} child classes.
+     * (NOTE: To be imlemented globaly following Subsystem/SubsystemBase rework in WPILib 2024)
+     * 
+     */
+    public static class BreakerSelfTestableCore {
+        public String faultStr, deviceName;
+        public DeviceHealth health;
+        public BreakerSelfTestableCore() {
+            faultStr = "";
+            deviceName = " Unknown_Device ";
+            health = DeviceHealth.NOMINAL;
+        }
+
+        public boolean hasFault() {
+            return health != DeviceHealth.NOMINAL;
+        }
+
+    }
 }

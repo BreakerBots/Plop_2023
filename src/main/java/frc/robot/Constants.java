@@ -214,13 +214,8 @@ public final class Constants {
       public static final double MIN_HEIGHT = 0.0;
       public static final double MIN_ROT = MIN_HEIGHT / MOTOR_ROT_TO_METERS_SCALAR;
 
-      //Sim Configs
-      public static final double CARRIAGE_MASS_KG = 15.0;
-      public static final boolean SIM_GRAVITY = false;
-      public static final ChassisReference MOTOR_CHASSIS_REF = ChassisReference.CounterClockwise_Positive;
-      
       //Misc
-      public static final double CALIBRATION_DUTY_CYCLE = -0.1;
+      public static final double CALIBRATION_DUTY_CYCLE = 0.2;
       public static final double HIGHT_TOLARENCE = 0.01;
 
       //Command configs
@@ -239,18 +234,30 @@ public final class Constants {
       public static final boolean INVERT_ROLLER= false;
 
       public static final int ACTUATOR_CURRENT_LIMIT = 25;
-      public static final int ROLLER_CURRENT_LIMIT = 25;
 
       public static final double ACTUATOR_EXTEND_DUTY_CYCLE = 0.45;
       public static final double ACTUATOR_RETRACT_DUTY_CYCLE = -0.45;
 
+      // Roller state constants
       public static final double INTAKE_CONE_DUTY_CYCLE = -0.5;
-      public static final double INTAKE_CUBE_DUTY_CYCLE = 0.5;
-      public static final double INTAKE_CONE_GRIP_DUTY_CYCLE = -0.2;
-      public static final double INTAKE_CUBE_GRIP_DUTY_CYCLE = 0.2;
-      public static final double EXTAKE_CONE_DUTY_CYCLE = 0.75;
-      public static final double EXTAKE_CUBE_DUTY_CYCLE = -0.75;
+      public static final int INTAKE_CONE_CURENT_LIMIT = 25;
 
+      public static final double INTAKE_CUBE_DUTY_CYCLE = 0.5;
+      public static final int INTAKE_CUBE_CURENT_LIMIT = 25;
+
+      public static final double INTAKE_CONE_GRIP_DUTY_CYCLE = -0.1;
+      public static final int INTAKE_CONE_GRIP_CURENT_LIMIT = 5;
+
+      public static final double INTAKE_CUBE_GRIP_DUTY_CYCLE = 0.1;
+      public static final int INTAKE_CUBE_GRIP_CURENT_LIMIT = 5;
+
+      public static final double EXTAKE_CONE_DUTY_CYCLE = 0.75;
+      public static final int EXTAKE_CONE_CURENT_LIMIT = 25;
+
+      public static final double EXTAKE_CUBE_DUTY_CYCLE = -0.75;
+      public static final int EXTAKE_CUBE_CURENT_LIMIT = 25;
+
+      // command constants
       public static final double EJECT_COMMAND_CUTOFF_TRALING_DELAY = 1.0;
       public static final double EJECT_COMMAND_CUTOFF_TIMEOUT = 4.0;
 

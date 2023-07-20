@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AutonomousConstants;
 import frc.robot.Constants.MiscConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.BreakerLib.auto.trajectory.management.BreakerAutoPath;
 import frc.robot.BreakerLib.devices.sensors.imu.ctre.BreakerPigeon2;
 import frc.robot.BreakerLib.driverstation.dashboard.BreakerDashboard;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
@@ -29,6 +30,7 @@ import frc.robot.BreakerLib.util.robot.BreakerRobotConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotManager;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
 import frc.robot.commands.TeleopScoreGamePiece;
+import frc.robot.commands.auto.routines.DemoPath;
 import frc.robot.commands.drive.TeleopBalanceChargingStation;
 import frc.robot.commands.drive.TeleopSnapDriveToCardinalHeading;
 import frc.robot.commands.drive.TeleopSnapDriveToCardinalHeading.SwerveCardinal;
@@ -123,7 +125,7 @@ public class RobotContainer {
 
     //intake roller controls, (driver controls: A = intake, B = stop) (operator controls: 19 = extake)
     //driverControllerSys.getButtonA().onTrue(new SetIntakeRollerState(intakeSys, IntakeRollerStateRequest.INTAKE));
-    driverControllerSys.getButtonB().onTrue(new SetIntakeRollerState(intakeSys, IntakeRollerStateRequest.STOP));
+    //driverControllerSys.getButtonB().onTrue(new SetIntakeRollerState(intakeSys, IntakeRollerStateRequest.STOP));
     operatorControlPadSys.getRollerExtakeButton().onTrue(new SetIntakeRollerState(intakeSys, IntakeRollerStateRequest.EXTAKE));
 
     //game piece eject, (operator controls: fire button)
@@ -145,12 +147,8 @@ public class RobotContainer {
   private void configureRobotManager() {
     BreakerRobotConfig robotConfig = new BreakerRobotConfig(new BreakerRobotStartConfig(5104, "BreakerBots",
     "Plop", 2023, "v1", "Roman Abrahamson"));
-    
+    robotConfig.setAutoPaths(new BreakerAutoPath("Demo Path", new DemoPath(drivetrainSys, visionSys, imuSys)));
     BreakerRobotManager.setup(drivetrainSys, robotConfig);
-  }
-
-  private void configureDashboard() {
-    BreakerDashboard.getMainTab().addBooleanArray("TEST BOOL ARR", () -> new boolean[]{true,false,true,true,false,true});
   }
 
   /**
@@ -160,6 +158,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return null;
+    return BreakerRobotManager.getSelectedAutoPath();
   }
 }

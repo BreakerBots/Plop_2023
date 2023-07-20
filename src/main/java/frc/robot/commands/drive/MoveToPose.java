@@ -26,6 +26,9 @@ public class MoveToPose extends CommandBase {
   private final Timer timer = new Timer();
 
   public MoveToPose(Pose2d goal, double maxLinearVel, Drive drivetrain) {
+    this.drivetrain = drivetrain;
+    this.goal = goal;
+    this.maxLinearVel = maxLinearVel;
     addRequirements(drivetrain);
   }
 
@@ -33,6 +36,7 @@ public class MoveToPose extends CommandBase {
   @Override
   public void initialize() {
     timer.restart();
+    BreakerLog.logEvent(String.format("MoveToPose command instance STARTED (tgt: %s)", goal.toString()));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -52,9 +56,9 @@ public class MoveToPose extends CommandBase {
     timer.reset();
     drivetrain.stop();
     if (interrupted) {
-      BreakerLog.logEvent("MoveToPose command instance FAILED, command timed out or was cancled");
+      BreakerLog.logEvent(String.format("MoveToPose command instance FAILED, command timed out or was cancled (tgt: %s)", goal.toString()));
     } else {
-      BreakerLog.logEvent("MoveToPose command instance SUCSEEDED, command reached tgt pose");
+      BreakerLog.logEvent(String.format("MoveToPose command instance SUCSEEDED, command reached tgt pose (tgt: %s)", goal.toString()));
     }
   }
 

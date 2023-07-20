@@ -29,6 +29,7 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import com.fasterxml.jackson.databind.deser.impl.ExternalTypeHandler.Builder;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.networktables.GenericEntry;
@@ -140,6 +141,7 @@ public class Elevator extends SubsystemBase {
 
         diagnostics = new SystemDiagnostics("Elevator");
         diagnostics.addPhoenix6TalonFXs(leftMotor, rightMotor);
+        diagnostics.addSupplier(this::healthCheck);
 
        // simManager = this.new ElevatorSimManager();
        BreakerDashboard.getMainTab().add(this);
@@ -155,6 +157,20 @@ public class Elevator extends SubsystemBase {
         builder.addStringProperty("ELEV CTRL MODE", () -> getCurrentControlMode().toString(), null);
     }
 
+    private Pair<DeviceHealth, String> healthCheck() {
+        DeviceHealth health = DeviceHealth.NOMINAL;
+        String str = "";
+        if (getForwardLimitTriggered() && getReverseLimitTriggered()) {
+            str += " limit_switch_malfunction_fwd_&_rev_swiches_triggered ";
+            health = DeviceHealth.INOPERABLE;
+        }
+        if (isForceStoped) {
+            str += " force_stoped_elevator_inoporable ";
+            health = DeviceHealth.INOPERABLE;
+        }
+        return new Pair<DeviceHealth,String>(health, str);
+    }
+ 
     private String getTargetStateString() {
        Optional<ElevatorTargetState> tgtOpt = ElevatorTargetState.getTargetFromHeight(getTargetHeightMeters());
        if (tgtOpt.isPresent()) {
@@ -277,7 +293,7 @@ public class Elevator extends SubsystemBase {
                 case CALIBRATING:
                     if (RobotBase.isReal()) {
                         leftMotor.setControl(dutyCycleRequest.withOutput(ElevatorConstants.CALIBRATION_DUTY_CYCLE));
-                        if (getReverseLimitTriggered()) {
+                        if (getForwardLimitTriggered()) {
                             currentState = ElevatorControlMode.AUTOMATIC;
                             hasBeenCalibrated = true;
                             BreakerLog.logSuperstructureEvent("Elevator zero-point calibration sucessfull");
@@ -340,46 +356,6 @@ public class Elevator extends SubsystemBase {
                 }
             }
             return Optional.empty();
-        }
-    }
-
-   
-    private class ElevatorSimManager {
-        private ElevatorSim sim;
-        private TalonFXSimState simState;
-        private final Timer timer = new Timer();
-        private boolean hasBeenInit = false;
-        public ElevatorSimManager() {
-            sim = new ElevatorSim(
-            DCMotor.getFalcon500(2), 
-            ElevatorConstants.MOTOR_TO_DRUM_GEARING, 
-            ElevatorConstants.CARRIAGE_MASS_KG,
-            ElevatorConstants.DRUM_RADIUS_METERS, 
-            ElevatorConstants.MIN_HEIGHT,
-            ElevatorConstants.MAX_HEIGHT, 
-            ElevatorConstants.SIM_GRAVITY);
-            simState = leftMotor.getSimState();
-        }
-
-        private void initSim() {
-            simState.setRawRotorPosition(ElevatorConstants.MAX_ROT);
-            simState.Orientation = ElevatorConstants.MOTOR_CHASSIS_REF;
-            timer.restart();
-        }
-
-        public void updateSim() {
-            if (!hasBeenInit) {
-                initSim();
-            }
-
-            double elapsedTime = timer.get();
-            timer.reset();
-
-            simState.setSupplyVoltage(RobotController.getBatteryVoltage());
-            sim.setInput(12);
-            sim.update(elapsedTime);
-            simState.setRawRotorPosition(sim.getPositionMeters() / ElevatorConstants.MOTOR_ROT_TO_METERS_SCALAR);
-            simState.setRotorVelocity(sim.getVelocityMetersPerSecond() / ElevatorConstants.MOTOR_ROT_TO_METERS_SCALAR);
         }
     }
 }

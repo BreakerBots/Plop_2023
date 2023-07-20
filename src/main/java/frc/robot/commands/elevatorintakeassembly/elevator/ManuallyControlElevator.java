@@ -29,7 +29,6 @@ public class ManuallyControlElevator extends CommandBase {
   @Override
   public void execute() {
     elevator.setManual(driverController.getLeftTrigger().get() - driverController.getRightTrigger().get());
-    System.out.println("A");
   }
 
   // Called once the command ends or is interrupted.

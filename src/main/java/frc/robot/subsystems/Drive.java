@@ -21,7 +21,7 @@ import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.B
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.BreakerSwerveCANcoder;
 import frc.robot.BreakerLib.util.logging.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
-import frc.robot.BreakerLib.util.math.BreakerMath.MirrorAxis2d;
+import frc.robot.BreakerLib.util.math.BreakerMath.MirrorSymetryAxis2d;
 import frc.robot.Constants.FieldConstants;
 
 import static frc.robot.Constants.DriveConstants.*;
@@ -93,7 +93,7 @@ public class Drive extends BreakerSwerveDriveBase {
     public void setOdometryPosition(Pose2d newPose) {
         Optional<Alliance> ally = AllianceManager.getAlliance();
         if (ally.get() == Alliance.Red) {
-            newPose = BreakerMath.mirrorPose(newPose, FIELD_LENGTH_X/2.0, MirrorAxis2d.Y, MirrorAxis2d.Y);
+            newPose = BreakerMath.mirrorPose(newPose, FIELD_LENGTH_X/2.0, MirrorSymetryAxis2d.Y, MirrorSymetryAxis2d.Y);
         } 
         super.setOdometryPosition(newPose);
     }
@@ -103,7 +103,7 @@ public class Drive extends BreakerSwerveDriveBase {
         Optional<Alliance> ally = AllianceManager.getAlliance();
         Pose2d pose = super.getOdometryPoseMeters();
         if (ally.get() == Alliance.Red) {
-            pose =  BreakerMath.mirrorPose(pose, FIELD_LENGTH_X/2.0, MirrorAxis2d.Y, MirrorAxis2d.Y);
+            pose =  BreakerMath.mirrorPose(pose, FIELD_LENGTH_X/2.0, MirrorSymetryAxis2d.Y, MirrorSymetryAxis2d.Y);
         }
         return pose;
     }

@@ -43,6 +43,10 @@ public class BreakerAutoManager {
         BreakerDashboard.getSetupTab().add("AUTOPATH SELECTOR", selector).withWidget(BuiltInWidgets.kComboBoxChooser);
     }
 
+    public BreakerAutoPath[] getAutoPaths() {
+        return autoPaths;
+    }
+
     /** Returns auto path selected on the dashboard widget. */
     public BreakerAutoPath getSelected() {
         return selector.getSelected();

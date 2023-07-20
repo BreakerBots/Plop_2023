@@ -307,21 +307,21 @@ public class BreakerMath {
         return curRelativeAngle + (tgtAngle.minus(curAbsoluteAngle).getDegrees());
     }
 
-    public static Pose2d mirrorPose(Pose2d pose, double translationalAxisOfSymetry, MirrorAxis2d translationMirrorType, MirrorAxis2d rotationMirrorType) {
+    public static Pose2d mirrorPose(Pose2d pose, double translationalAxisOfSymetry, MirrorSymetryAxis2d translationMirrorType, MirrorSymetryAxis2d rotationMirrorType) {
        return new Pose2d(mirrorTranslation(pose.getTranslation(), translationalAxisOfSymetry, translationMirrorType), mirrorRotation(pose.getRotation(), rotationMirrorType));
     }
 
-    public static enum MirrorAxis2d {
+    public static enum MirrorSymetryAxis2d {
         X,
         Y,
         X_AND_Y
     } 
 
-    public static Translation2d mirrorTranslation(Translation2d translation, double axisOfSymetry, MirrorAxis2d mirrorType) {
-        if (mirrorType == MirrorAxis2d.Y) {
+    public static Translation2d mirrorTranslation(Translation2d translation, double axisOfSymetry, MirrorSymetryAxis2d mirrorType) {
+        if (mirrorType == MirrorSymetryAxis2d.Y) {
             double distance = axisOfSymetry - translation.getX();
             return new Translation2d(axisOfSymetry + distance, translation.getY());
-        } else if (mirrorType == MirrorAxis2d.X) {
+        } else if (mirrorType == MirrorSymetryAxis2d.X) {
             double distance = axisOfSymetry - translation.getY();
             return new Translation2d(translation.getX(), axisOfSymetry + distance);
         }
@@ -330,10 +330,10 @@ public class BreakerMath {
         return new Translation2d(axisOfSymetry + distanceX, axisOfSymetry + distanceY);
     }
 
-    public static Rotation2d mirrorRotation(Rotation2d angle, MirrorAxis2d mirrorType) {
-        if (mirrorType == MirrorAxis2d.Y) {
+    public static Rotation2d mirrorRotation(Rotation2d angle, MirrorSymetryAxis2d mirrorType) {
+        if (mirrorType == MirrorSymetryAxis2d.Y) {
             return new Rotation2d(-angle.getCos(), angle.getSin());
-        } else if (mirrorType == MirrorAxis2d.X) {
+        } else if (mirrorType == MirrorSymetryAxis2d.X) {
             return new Rotation2d(angle.getCos(), -angle.getSin());
         }
         return new Rotation2d(-angle.getCos(), -angle.getSin());

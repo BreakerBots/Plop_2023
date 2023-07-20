@@ -62,13 +62,12 @@ public class Intake extends SubsystemBase {
     actuatorMotor.setInverted(IntakeConstants.INVERT_ACTUATOR);
     actuatorMotor.setIdleMode(IdleMode.kBrake);
     actuatorMotor.enableVoltageCompensation(12.0);
-    actuatorMotor.burnFlash();
+    
 
-    rollerMotor.setSmartCurrentLimit(IntakeConstants.ROLLER_CURRENT_LIMIT);
     rollerMotor.setInverted(IntakeConstants.INVERT_ROLLER);
     rollerMotor.setIdleMode(IdleMode.kBrake);
     rollerMotor.enableVoltageCompensation(12.0);
-    rollerMotor.burnFlash();
+    
 
     extendLimitSwitch = actuatorMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
     extendLimitSwitch.enableLimitSwitch(true);
@@ -82,7 +81,14 @@ public class Intake extends SubsystemBase {
     diagnostics.addSparkMaxs(actuatorMotor, rollerMotor);
     diagnostics.addSupplier(this::healthCheck);
 
+    actuatorMotor.burnFlash();
+    rollerMotor.burnFlash();
     BreakerDashboard.getMainTab().add("INTAKE", this);
+  }
+
+  private void setRollerMotor(double dutyCycle, int currentLimit) {
+    rollerMotor.set(dutyCycle);
+    rollerMotor.setSmartCurrentLimit(currentLimit);
   }
 
   @Override
@@ -162,38 +168,38 @@ public class Intake extends SubsystemBase {
   public void intakeCone() {
     if (actuatorMotorState == ActuatorMotorState.EXTENDING && !hasGamePiece()) {
       rollerState = RollerState.INTAKEING_CONE;
-      rollerMotor.set(IntakeConstants.INTAKE_CONE_DUTY_CYCLE);
+      setRollerMotor(IntakeConstants.INTAKE_CONE_DUTY_CYCLE, IntakeConstants.INTAKE_CONE_CURENT_LIMIT);
     }
   }
 
   public void intakeCube() {
     if (actuatorMotorState == ActuatorMotorState.EXTENDING && !hasGamePiece()) {
       rollerState = RollerState.INTAKEING_CUBE;
-      rollerMotor.set(IntakeConstants.INTAKE_CUBE_DUTY_CYCLE);
+      setRollerMotor(IntakeConstants.INTAKE_CUBE_DUTY_CYCLE, IntakeConstants.INTAKE_CUBE_CURENT_LIMIT);
     }
   }
 
   public void extakeCone() {
     if (actuatorMotorState == ActuatorMotorState.EXTENDING && getControledGamePieceType() == ControledGamePieceType.CONE) {
       rollerState = RollerState.EXTAKEING_CONE;
-      rollerMotor.set(IntakeConstants.EXTAKE_CONE_DUTY_CYCLE);
+      setRollerMotor(IntakeConstants.EXTAKE_CONE_DUTY_CYCLE, IntakeConstants.EXTAKE_CONE_CURENT_LIMIT);
     }
   }
 
   public void extakeCube() {
     if (actuatorMotorState == ActuatorMotorState.EXTENDING && getControledGamePieceType() == ControledGamePieceType.CUBE) {
       rollerState = RollerState.EXTAKEING_CUBE;
-      rollerMotor.set(IntakeConstants.EXTAKE_CUBE_DUTY_CYCLE);
+      setRollerMotor(IntakeConstants.EXTAKE_CUBE_DUTY_CYCLE, IntakeConstants.EXTAKE_CUBE_CURENT_LIMIT);
     }
   }
 
   private void grippCone() {
-    rollerMotor.set(IntakeConstants.INTAKE_CONE_GRIP_DUTY_CYCLE);
+    setRollerMotor(IntakeConstants.INTAKE_CONE_GRIP_DUTY_CYCLE, IntakeConstants.INTAKE_CONE_GRIP_CURENT_LIMIT);
     rollerState = RollerState.GRIPPING_CONE;
   }
 
   private void grippCube() {
-    rollerMotor.set(IntakeConstants.INTAKE_CUBE_GRIP_DUTY_CYCLE);
+    setRollerMotor(IntakeConstants.INTAKE_CUBE_GRIP_DUTY_CYCLE, IntakeConstants.INTAKE_CUBE_GRIP_CURENT_LIMIT);
     rollerState = RollerState.GRIPPING_CUBE;
   }
 

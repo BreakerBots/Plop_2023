@@ -26,6 +26,7 @@ public class BreakerNeoSwerveModuleDriveMotor extends BreakerGenericSwerveModule
         this.driveGearRatio = driveGearRatio;
         this.wheelDiameter = wheelDiameter;
         this.arbFF = arbFF;
+        motor.restoreFactoryDefaults();
         targetVelocity = 0.0;
         SparkMaxPIDController drivePID = motor.getPIDController();
         drivePID.setP(pidConfig.kP);
@@ -37,6 +38,7 @@ public class BreakerNeoSwerveModuleDriveMotor extends BreakerGenericSwerveModule
         BreakerREVUtil.checkError(motor.setSmartCurrentLimit(supplyCurrentLimit),  "Failed to config " + deviceName + " smart current limit");
         motor.setInverted(isMotorInverted);
         motor.setIdleMode(IdleMode.kBrake);
+        motor.burnFlash();
     }
 
     @Override

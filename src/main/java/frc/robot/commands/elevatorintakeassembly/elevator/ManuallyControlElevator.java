@@ -35,6 +35,7 @@ public class ManuallyControlElevator extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     BreakerLog.logSuperstructureEvent("ELEVATOR RETURNED TO AUTOMATIC CONTROL");
+    elevator.setTarget(elevator.getHeight());
   }
 
   // Returns true when the command should end.

@@ -172,6 +172,12 @@ public class BreakerSwervePathFollower extends CommandBase {
       this.useAllianceColor = useAllianceColor;
     }
 
+    public BreakerSwervePathFollowerConfig(BreakerSwerveDriveBase drivetrain, boolean useAllianceColor) {
+      this.driveController = drivetrain.getConfig().getDriveController();
+      this.drivetrain = drivetrain;
+      this.useAllianceColor = useAllianceColor;
+    }
+
     public PPHolonomicDriveController getDriveController() {
         return driveController;
     }

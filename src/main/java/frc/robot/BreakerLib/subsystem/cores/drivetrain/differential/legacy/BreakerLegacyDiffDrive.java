@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.BreakerLib.subsystem.cores.drivetrain.differential;
+package frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.legacy;
 
 import java.util.function.DoubleSupplier;
 
@@ -23,13 +23,14 @@ import frc.robot.BreakerLib.position.movement.BreakerMovementState2d;
 import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
 import frc.robot.BreakerLib.position.odometry.differential.BreakerDiffDriveState;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.BreakerDiffDriveConfig;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.BreakerLib.util.power.BreakerPowerManagementConfig;
 import frc.robot.BreakerLib.util.power.DevicePowerMode;
 
 /** Base infastracture class from which all differential drivetrain types must inherit. 
 * Examples include {@link BreakerLegacyFalconDiffDrive} and {@link BreakerNeoDiffDrive} */
-public abstract class BreakerDiffDrive extends BreakerGenericDrivetrain {
+public abstract class BreakerLegacyDiffDrive extends BreakerGenericDrivetrain {
     private MotorControllerGroup leftDrive;
   
     private MotorControllerGroup rightDrive;
@@ -62,7 +63,7 @@ public abstract class BreakerDiffDrive extends BreakerGenericDrivetrain {
      * @param gyro A {@link BreakerGenericGyro} representing a single axis gyro, mostly used for auto functionality
      * @param driveConfing A {@link BreakerDiffDriveConfig} representing the configerable values of this drivetrain's kinimatics and control values
      */
-    protected BreakerDiffDrive(MotorController[] leftMotors, DoubleSupplier leftRotationSupplier, DoubleSupplier leftRPMSupplier, boolean invertL,
+    protected BreakerLegacyDiffDrive(MotorController[] leftMotors, DoubleSupplier leftRotationSupplier, DoubleSupplier leftRPMSupplier, boolean invertL,
         MotorController[] rightMotors, DoubleSupplier rightRotationSupplier, DoubleSupplier rightRPMSupplier, boolean invertR,
         BreakerGenericGyro gyro, BreakerDiffDriveConfig driveConfig) {
 

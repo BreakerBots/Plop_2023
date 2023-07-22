@@ -8,16 +8,16 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.BreakerDiffDrive;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.legacy.BreakerLegacyDiffDrive;
 
 /** Add your docs here. */
 public class BreakerRamseteConfig {
-    private BreakerDiffDrive drivetrain;
+    private BreakerLegacyDiffDrive drivetrain;
     private BreakerGenericOdometer odometer;
     private RamseteController ramseteController;
     private PIDController leftDriveController, rightDriveController;
     private SimpleMotorFeedforward ffDriveController;
-    public BreakerRamseteConfig(BreakerDiffDrive drivetrain, PIDController leftDriveController, PIDController rightDriveController, SimpleMotorFeedforward ffDriveController, RamseteController ramseteController) {
+    public BreakerRamseteConfig(BreakerLegacyDiffDrive drivetrain, PIDController leftDriveController, PIDController rightDriveController, SimpleMotorFeedforward ffDriveController, RamseteController ramseteController) {
         this.drivetrain = drivetrain;
         this.ramseteController = ramseteController;
         this.leftDriveController = leftDriveController;
@@ -26,7 +26,7 @@ public class BreakerRamseteConfig {
         odometer = drivetrain;
     }
 
-    public BreakerRamseteConfig(BreakerDiffDrive drivetrain, BreakerGenericOdometer odometer, PIDController leftDriveController, PIDController rightDriveController, SimpleMotorFeedforward ffDriveController, RamseteController ramseteController) {
+    public BreakerRamseteConfig(BreakerLegacyDiffDrive drivetrain, BreakerGenericOdometer odometer, PIDController leftDriveController, PIDController rightDriveController, SimpleMotorFeedforward ffDriveController, RamseteController ramseteController) {
         this.drivetrain = drivetrain;
         this.ramseteController  = ramseteController;
         this.leftDriveController = leftDriveController;
@@ -36,7 +36,7 @@ public class BreakerRamseteConfig {
     }
 
 
-    public BreakerDiffDrive getDrivetrain() {
+    public BreakerLegacyDiffDrive getDrivetrain() {
         return drivetrain;
     }
 

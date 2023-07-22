@@ -210,7 +210,7 @@ public class BreakerVector2 implements BreakerInterpolable<BreakerVector2> {
      */
     @Override
     public String toString() {
-       return String.format("BreakerVector2(Vector_Magnatude: %.2f, X-Magnatude: %.2f, Y-Magnatude: %.2f,  Vector_Angle: %s)", magnitude, magnitudeX, magnitudeY, vectorRotation.toString());
+       return String.format("BreakerVector2(Magnatude: %.2f, X: %.2f, Y: %.2f, Angle: %s)", magnitude, magnitudeX, magnitudeY, vectorRotation.toString());
     }
 
 }

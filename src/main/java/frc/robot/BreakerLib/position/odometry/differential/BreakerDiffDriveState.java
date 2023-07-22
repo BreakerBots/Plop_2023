@@ -2,7 +2,7 @@ package frc.robot.BreakerLib.position.odometry.differential;
 
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 
-/** State of a {@link BreakerDiffDrive} with speeds and distances. */
+/** State of a {@link BreakerLegacyDiffDrive} with speeds and distances. */
 public class BreakerDiffDriveState {
 
     private DifferentialDriveWheelSpeeds wheelSpeeds;

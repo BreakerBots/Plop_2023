@@ -9,6 +9,7 @@ import java.util.Objects;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.WPI_CANCoder;
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.MotorFeedbackSensor;
 import com.revrobotics.SparkMaxPIDController;
@@ -21,7 +22,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule.BreakerSwerveMotorPIDConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.BreakerSwerveAzimuthEncoder;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.BreakerSwerveNeoSparkDutyCycleEncoder;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.BreakerSwerveSparkDutyCycleEncoder;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.angle.BreakerGenericSwerveModuleAngleMotor;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.angle.BreakerSwerveAzimuthControler;
 //import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule.BreakerSwerveModulePIDConfig;
@@ -39,13 +40,13 @@ public class BreakerNeoSwerveModuleAngleMotor extends BreakerGenericSwerveModule
     public BreakerNeoSwerveModuleAngleMotor(CANSparkMax motor, BreakerSwerveAzimuthEncoder encoder, double encoderAbsoluteAngleOffsetDegrees, int supplyCurrentLimit, boolean isMotorInverted,  BreakerSwerveMotorPIDConfig pidConfig) {
         this.motor = motor;
         this.encoder = encoder;
-        
+        motor.restoreFactoryDefaults();
         deviceName = "NEO_Swerve_Angle_Motor_(" + motor.getDeviceId() + ")";
 
         motor.setInverted(isMotorInverted);
         encoder.config(false, encoderAbsoluteAngleOffsetDegrees);
         azimuthControler = null;
-        if (encoder.getBaseEncoderType() == BreakerSwerveNeoSparkDutyCycleEncoder.class) {
+        if (encoder.getBaseEncoderType() == BreakerSwerveSparkDutyCycleEncoder.class) {
             SparkMaxPIDController sparkPID = motor.getPIDController();
             sparkPID.setP(pidConfig.kP);
             sparkPID.setI(pidConfig.kI);
@@ -53,7 +54,7 @@ public class BreakerNeoSwerveModuleAngleMotor extends BreakerGenericSwerveModule
             sparkPID.setPositionPIDWrappingEnabled(true);
             sparkPID.setPositionPIDWrappingMaxInput(0.5);
             sparkPID.setPositionPIDWrappingMinInput(-0.5);
-            sparkPID.setFeedbackDevice(motor.getEncoder());
+            sparkPID.setFeedbackDevice((AbsoluteEncoder) encoder.getBaseEncoder());
             azimuthControler = new BreakerSwerveAzimuthControler((Rotation2d tgt) -> {sparkPID.setReference(tgt.getRotations(), ControlType.kPosition);} );
         }
 
@@ -64,6 +65,7 @@ public class BreakerNeoSwerveModuleAngleMotor extends BreakerGenericSwerveModule
         BreakerREVUtil.checkError(motor.enableVoltageCompensation(12.0), "Failed to config " + deviceName + " voltage compensation");
         BreakerREVUtil.checkError(motor.setSmartCurrentLimit(supplyCurrentLimit),  "Failed to config " + deviceName + " smart current limit");
         targetAngle = new Rotation2d();
+        motor.burnFlash();
     }
 
     @Override

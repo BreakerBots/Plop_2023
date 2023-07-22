@@ -11,19 +11,36 @@ import frc.robot.BreakerLib.position.movement.BreakerMovementState2d;
 import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerGenericVisionOdometer;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerVisionPoseFilterOdometer;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.BreakerDiffDrive;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.legacy.BreakerLegacyDiffDrive;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.motorgroups.BreakerDiffDrive;
 
 /** Estimates diff drive pose based on vision odometry. */
-public class BreakerDiffDriveFiducialVisionPoseEstimator extends SubsystemBase implements BreakerGenericOdometer {
+public class BreakerDiffDriveFusedVisionPoseEstimator extends SubsystemBase implements BreakerGenericOdometer {
     private BreakerGenericVisionOdometer vision;
-    private BreakerDiffDrivePoseEstimationOdometer poseEstimator;
+    private BreakerDiffDrivePoseEstimator poseEstimator;
 
-    public BreakerDiffDriveFiducialVisionPoseEstimator(BreakerDiffDrive drivetrain, BreakerGenericVisionOdometer vision,
-            double[] stateStanderdDeveation, double[] encoderAndGyroStandardDeveation,
+    public BreakerDiffDriveFusedVisionPoseEstimator(
+            BreakerDiffDrive drivetrain,
+            BreakerGenericVisionOdometer vision,
+            double[] stateStanderdDeveation,
             double[] visionStanderdDeveation) {
         this.vision = vision;
-        poseEstimator = new BreakerDiffDrivePoseEstimationOdometer(drivetrain, vision.getOdometryPoseMeters(),
+        poseEstimator = new BreakerDiffDrivePoseEstimator(
+                drivetrain, vision.getOdometryPoseMeters(),
                 stateStanderdDeveation, visionStanderdDeveation);
+    }
+
+    public BreakerDiffDriveFusedVisionPoseEstimator(
+            BreakerDiffDrive drivetrain,
+            BreakerGenericVisionOdometer vision,
+            Pose2d initialPose,
+            double[] stateStandardDeviation,
+            double[] visionStandardDeviation) {
+        this.vision = vision;
+        vision.setOdometryPosition(initialPose);
+        poseEstimator = new BreakerDiffDrivePoseEstimator(
+                drivetrain, initialPose,
+                stateStandardDeviation, visionStandardDeviation);
     }
 
     @Override

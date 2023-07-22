@@ -2,17 +2,18 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.BreakerLib.subsystem.cores.drivetrain.differential;
+package frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.legacy;
 
 
 import com.revrobotics.CANSparkMax;
 
 import frc.robot.BreakerLib.devices.sensors.gyro.BreakerGenericGyro;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.BreakerDiffDriveConfig;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import frc.robot.BreakerLib.util.vendorutil.BreakerREVUtil;
 
-/** A {@link BreakerDiffDrive} instance with SparkMax driven Neo motors */
-public class BreakerNeoDiffDrive extends BreakerDiffDrive {
+/** A {@link BreakerLegacyDiffDrive} instance with SparkMax driven Neo motors */
+public class BreakerNeoDiffDrive extends BreakerLegacyDiffDrive {
     private CANSparkMax[] leftMotors, rightMotors;
     /** Creates a new Differential (tank drive) drivetrain instance.
      * 

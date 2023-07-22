@@ -50,7 +50,7 @@ public class BreakerSwerveDriveBase extends BreakerSwerveDrive {
         super(config, odometryConfig, gyro, swerveModules);
         this.config = config;
         lastSetHeading = getOdometryPoseMeters().getRotation();
-        pathFollowerConfig = new BreakerSwervePathFollowerConfig(this, config.getDriveController(), false);
+        pathFollowerConfig = new BreakerSwervePathFollowerConfig(this, false);
     }
 
     @Override

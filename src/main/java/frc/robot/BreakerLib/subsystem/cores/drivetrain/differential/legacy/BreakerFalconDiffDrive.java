@@ -2,19 +2,23 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.BreakerLib.subsystem.cores.drivetrain.differential;
+package frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.legacy;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import frc.robot.BreakerLib.devices.sensors.gyro.BreakerGenericGyro;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.BreakerDiffDriveConfig;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import frc.robot.BreakerLib.util.vendorutil.BreakerPhoenix5Util;
 import frc.robot.BreakerLib.util.vendorutil.BreakerPhoenix6Util;
 
-/** A {@link BreakerDiffDrive} instance with TalonFX (Falcon 500) motors running Phoenix Pro firmware */
-public class BreakerProFalconDiffDrive extends BreakerDiffDrive {
+/** A {@link BreakerLegacyDiffDrive} instance with TalonFX (Falcon 500) motors running Phoenix Pro firmware */
+public class BreakerFalconDiffDrive extends BreakerLegacyDiffDrive {
     private TalonFX[] leftMotors;
     private TalonFX[] rightMotors;
 
@@ -27,15 +31,14 @@ public class BreakerProFalconDiffDrive extends BreakerDiffDrive {
      * @param gyro {@link BreakerGenericGyro} capable of reading yaw. 
      * @param driveConfig A {@link BreakerDiffDriveConfig} representing the configerable values of this drivetrain's kinimatics and control values
      */
-    public BreakerProFalconDiffDrive(TalonFX[] leftMotors, TalonFX[] rightMotors, boolean invertL, boolean invertR,
+    public BreakerFalconDiffDrive(TalonFX[] leftMotors, TalonFX[] rightMotors, boolean invertL, boolean invertR,
         BreakerGenericGyro imu, BreakerDiffDriveConfig driveConfig) {
-        
         super(
-            leftMotors,
+            NonFOCMotorControllerFalconWrapper.convertAll(leftMotors),
             () -> {return leftMotors[0].getRotorPosition().getValue();},
             () -> {return leftMotors[0].getRotorVelocity().getValue();},
             invertL, 
-            rightMotors,
+            NonFOCMotorControllerFalconWrapper.convertAll(rightMotors),
             () -> {return rightMotors[0].getRotorPosition().getValue();},
             () -> {return rightMotors[0].getRotorVelocity().getValue();},
             invertR,
@@ -69,8 +72,8 @@ public class BreakerProFalconDiffDrive extends BreakerDiffDrive {
 
     @Override
     public void resetDriveEncoders() {
-        leftMotors[0].setRotorPosition(0);
-        rightMotors[0].setRotorPosition(0);
+      leftMotors[0].setRotorPosition(0);
+      rightMotors[0].setRotorPosition(0);
     }
 
     @Override
@@ -79,4 +82,5 @@ public class BreakerProFalconDiffDrive extends BreakerDiffDrive {
         BreakerPhoenix6Util.setBrakeMode(isEnabled, rightMotors);
     }
 
+    
 }

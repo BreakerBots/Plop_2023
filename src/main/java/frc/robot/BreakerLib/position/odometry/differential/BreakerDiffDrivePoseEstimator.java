@@ -13,11 +13,12 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.BreakerLib.position.movement.BreakerMovementState2d;
 import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.BreakerDiffDrive;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.legacy.BreakerLegacyDiffDrive;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.motorgroups.BreakerDiffDrive;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 
 /** Add your docs here. */
-public class BreakerDiffDrivePoseEstimationOdometer extends SubsystemBase implements BreakerGenericOdometer {
+public class BreakerDiffDrivePoseEstimator extends SubsystemBase implements BreakerGenericOdometer {
 
     private DifferentialDrivePoseEstimator poseEstimator;
     private BreakerDiffDrive drivetrain;
@@ -28,7 +29,7 @@ public class BreakerDiffDrivePoseEstimationOdometer extends SubsystemBase implem
     private BreakerMovementState2d prevMovementState = new BreakerMovementState2d();
     private BreakerMovementState2d curMovementState = new BreakerMovementState2d();
 
-    public BreakerDiffDrivePoseEstimationOdometer(BreakerDiffDrive drivetrain, Pose2d initialPose,
+    public BreakerDiffDrivePoseEstimator(BreakerDiffDrive drivetrain, Pose2d initialPose,
             double[] stateStanderdDeviation,
             double[] visionStanderdDeviation) {
         
@@ -36,20 +37,12 @@ public class BreakerDiffDrivePoseEstimationOdometer extends SubsystemBase implem
         currentPose = initialPose;
         poseEstimator = new DifferentialDrivePoseEstimator(
         drivetrain.getKinematics(), drivetrain.getBaseGyro().getYawRotation2d(),
-        drivetrain.getLeftDriveDistanceMeters(),
-        drivetrain.getLeftDriveDistanceMeters(),
+        drivetrain.getLeftDriveWheelDistance(),
+        drivetrain.getLeftDriveWheelDistance(),
         initialPose,
         new MatBuilder<>(Nat.N3(), Nat.N1()).fill(stateStanderdDeviation),
         new MatBuilder<>(Nat.N3(), Nat.N1()).fill(visionStanderdDeviation));
       
-    }
-
-    private void update() {
-        prevPose = getOdometryPoseMeters();
-        currentPose = poseEstimator.update(drivetrain.getBaseGyro().getYawRotation2d(), drivetrain.getLeftDriveDistanceMeters(),
-        drivetrain.getRightDriveDistanceMeters());
-        updateChassisSpeeds();
-        lastUpdateTimestamp = Timer.getFPGATimestamp();
     }
 
     public Pose2d addVisionMeasurment(Pose2d robotPoseFromVision, double visionDataTimestamp) {
@@ -64,7 +57,7 @@ public class BreakerDiffDrivePoseEstimationOdometer extends SubsystemBase implem
     }
 
     public void setOdometryPosition(Pose2d newPose) {
-        poseEstimator.resetPosition(drivetrain.getBaseGyro().getYawRotation2d(), drivetrain.getRightDriveDistanceMeters(), drivetrain.getRightDriveDistanceMeters(), newPose);
+        poseEstimator.resetPosition(drivetrain.getBaseGyro().getYawRotation2d(), drivetrain.getRightDriveWheelDistance(), drivetrain.getRightDriveWheelDistance(), newPose);
     }
 
     @Override
@@ -106,6 +99,15 @@ public class BreakerDiffDrivePoseEstimationOdometer extends SubsystemBase implem
         fieldRelativeChassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, thetaSpeed);
         curMovementState = BreakerMath.movementStateFromChassisSpeedsAndPreviousState(getOdometryPoseMeters(),
                 fieldRelativeChassisSpeeds, timeDiff, prevMovementState);
+    }
+
+    @Override
+    public void periodic() {
+        prevPose = getOdometryPoseMeters();
+        currentPose = poseEstimator.update(drivetrain.getBaseGyro().getYawRotation2d(), drivetrain.getLeftDriveWheelDistance(),
+        drivetrain.getRightDriveWheelDistance());
+        updateChassisSpeeds();
+        lastUpdateTimestamp = Timer.getFPGATimestamp();
     }
 
 }

@@ -203,7 +203,7 @@ public final class Constants {
       public static final double PIDF_KV = 0;
 
       //Gearing
-      public static final double MOTOR_TO_DRUM_GEARING = 100.0; //to one
+      public static final double MOTOR_TO_DRUM_GEARING = 5.0; //to one
       public static final double DRUM_RADIUS_METERS = 0.02;
       public static final double DRUM_CIRCUMFERENCE_METERS = 2*Math.PI*DRUM_RADIUS_METERS;
       public static final double MOTOR_ROT_TO_METERS_SCALAR = DRUM_CIRCUMFERENCE_METERS / MOTOR_TO_DRUM_GEARING;

@@ -199,7 +199,6 @@ public class BreakerVector3 implements BreakerInterpolable<BreakerVector3> {
      */
     @Override
     public String toString() {
-        return "Vector Magnatude:" + magnitude + ", X-Magnatude: " + magnatudeX + ", Y-Magnatude: " + magnatudeY
-                + ", Z-Magnatude: " + magnatudeZ + ", Vector Angles: " + vectorRotation.toString();
+        return String.format("BreakerVector3(Magnatude: %.2f, X: %.2f, Y: %.2f, Z: %.2f, Angle: %s)", magnitude, magnatudeX, magnatudeY, magnatudeZ, vectorRotation.toString());
     }
 }

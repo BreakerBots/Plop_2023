@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.BreakerDiffDrive;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.legacy.BreakerLegacyDiffDrive;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -203,7 +203,7 @@ public class BreakerRamsetePathFollower extends CommandBase {
   }
 
 public static class BreakerRamsetePathFollowerConfig {
-  private BreakerDiffDrive drivetrain;
+  private BreakerLegacyDiffDrive drivetrain;
   private BreakerGenericOdometer odometer;
   private RamseteController ramseteController;
   private SimpleMotorFeedforward feedforward;
@@ -211,7 +211,7 @@ public static class BreakerRamsetePathFollowerConfig {
   private PIDController rightController;
   private boolean useAllianceColor;
   public BreakerRamsetePathFollowerConfig(
-    BreakerDiffDrive drivetrain, 
+    BreakerLegacyDiffDrive drivetrain, 
     RamseteController ramseteController, 
     SimpleMotorFeedforward feedforward,  
     PIDController leftController,
@@ -228,7 +228,7 @@ public static class BreakerRamsetePathFollowerConfig {
     }
 
     public BreakerRamsetePathFollowerConfig(
-    BreakerDiffDrive drivetrain, 
+    BreakerLegacyDiffDrive drivetrain, 
     BreakerGenericOdometer odometer,
     RamseteController ramseteController, 
     SimpleMotorFeedforward feedforward,  
@@ -245,7 +245,7 @@ public static class BreakerRamsetePathFollowerConfig {
       this.useAllianceColor = useAllianceColor;
     }
 
-    public BreakerDiffDrive getDrivetrain() {
+    public BreakerLegacyDiffDrive getDrivetrain() {
         return drivetrain;
     }
 

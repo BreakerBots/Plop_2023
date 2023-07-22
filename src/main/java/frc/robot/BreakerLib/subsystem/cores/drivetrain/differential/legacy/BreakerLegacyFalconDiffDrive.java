@@ -2,18 +2,19 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.BreakerLib.subsystem.cores.drivetrain.differential;
+package frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.legacy;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.math.Pair;
 import frc.robot.BreakerLib.devices.sensors.gyro.BreakerGenericGyro;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.BreakerDiffDriveConfig;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import frc.robot.BreakerLib.util.vendorutil.BreakerPhoenix5Util;
 
-/** A {@link BreakerDiffDrive} instance with TalonFX (Falcon 500) motors */
+/** A {@link BreakerLegacyDiffDrive} instance with TalonFX (Falcon 500) motors */
 @Deprecated
-public class BreakerLegacyFalconDiffDrive extends BreakerDiffDrive {
+public class BreakerLegacyFalconDiffDrive extends BreakerLegacyDiffDrive {
     private WPI_TalonFX[] leftMotors;
     private WPI_TalonFX[] rightMotors;
 

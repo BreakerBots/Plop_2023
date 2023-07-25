@@ -10,18 +10,20 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerGenericGamepad;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.legacy.BreakerLegacyDiffDrive;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.BreakerDiffDriveBase.BreakerDiffDriveBaseMovementPrefrences;
 import frc.robot.BreakerLib.util.math.functions.BreakerGenericMathFunction;
 
 public class BreakerTeleopDiffDriveController extends CommandBase {
   
   private BreakerGenericGamepad controller;
-  private BreakerLegacyDiffDrive baseDrivetrain;
+  private BreakerDiffDrive baseDrivetrain;
   private boolean usesSuppliers, usesCurves, usesRateLimiters, inputOverride;
   private BreakerGenericMathFunction netSpeedCurve, turnSpeedCurve;
   private SlewRateLimiter netRateLimiter, turnRateLimiter;
   private DoubleSupplier netSpeedPrecentSupplier, turnSpeedPrecentSupplier, overrideNetSup, overrideTurnSup;
-  public BreakerTeleopDiffDriveController(BreakerLegacyDiffDrive baseDrivetrain, BreakerGenericGamepad controller) {
+  private final double DEFAULT_DEADBAND = 0.02;
+  private final BreakerDiffDriveBaseMovementPrefrences movementPrefrences = new BreakerDiffDriveBaseMovementPrefrences(true, );
+  public BreakerTeleopDiffDriveController(BreakerDiffDrive baseDrivetrain, BreakerGenericGamepad controller) {
     this.controller = controller;
     this.baseDrivetrain = baseDrivetrain;
     usesSuppliers = false;
@@ -31,7 +33,7 @@ public class BreakerTeleopDiffDriveController extends CommandBase {
     addRequirements(baseDrivetrain);
   }
 
-  public BreakerTeleopDiffDriveController(BreakerLegacyDiffDrive baseDrivetrain, DoubleSupplier netSpeedPrecentSupplier, DoubleSupplier turnSpeedPrecentSupplier) {
+  public BreakerTeleopDiffDriveController(BreakerDiffDrive baseDrivetrain, DoubleSupplier netSpeedPrecentSupplier, DoubleSupplier turnSpeedPrecentSupplier) {
     this.netSpeedPrecentSupplier = netSpeedPrecentSupplier;
     this.turnSpeedPrecentSupplier = turnSpeedPrecentSupplier;
     this.baseDrivetrain = baseDrivetrain;

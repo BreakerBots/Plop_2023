@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.BreakerLib.position.movement.BreakerMovementState2d;
 import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.motorgroups.BreakerDiffDrive;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.BreakerDiffDrive;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 
 public class BreakerDiffDriveOdometer extends SubsystemBase implements BreakerGenericOdometer {

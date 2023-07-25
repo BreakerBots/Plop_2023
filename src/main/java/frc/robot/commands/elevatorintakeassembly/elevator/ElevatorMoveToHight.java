@@ -37,15 +37,15 @@ public class ElevatorMoveToHight extends CommandBase {
 
   @Override
   public void execute() {
-    if (timer.hasElapsed(ElevatorConstants.MOVE_TO_HEIGHT_COMMAND_TIMEOUT)) {
+    if (timer.hasElapsed(ElevatorConstants.MOVE_TO_HEIGHT_COMMAND_TIMEOUT) || elevator.getCurrentControlMode() != ElevatorControlMode.AUTOMATIC || elevator.getTargetHeightMeters() != targetHightMeters) {
       this.cancel();
     }
-  }
+  } 
 
   @Override
   public void end(boolean interrupted) {
       if (interrupted) {
-        BreakerLog.logSuperstructureEvent(String.format("AN ElevatorMoveToHight COMMAND INSTANCE TIMED OUT OR WAS INTERRUPTED (tgt: %.2f meters)", targetHightMeters));
+        BreakerLog.logSuperstructureEvent(String.format("AN ElevatorMoveToHight COMMAND INSTANCE TIMED OUT, WAS INTERRUPTED, OR ERRORED OUT (tgt: %.2f meters)", targetHightMeters));
       }
       BreakerLog.logSuperstructureEvent(String.format("AN ElevatorMoveToHight COMMAND INSTANCE ENDED NORMALY AND WAS SUCCESSFULL (tgt: %.2f meters)", targetHightMeters));
   }

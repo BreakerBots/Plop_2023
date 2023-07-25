@@ -17,12 +17,12 @@ import frc.robot.BreakerLib.position.odometry.vision.BreakerVisionPoseFilterOdom
 import frc.robot.BreakerLib.position.odometry.vision.BreakerVisionPoseFilter;
 
 /** WIP */
-public class BreakerVision implements BreakerGenericOdometer {
+public class BreakerPhotonVision implements BreakerGenericOdometer {
     private BreakerFiducialPhotonTarget[] targets;
     private BreakerPhotonCamera[] cameras;
     private BreakerVisionPoseFilter poseFilter;
     private BreakerVisionPoseFilterOdometer odometer;
-    public BreakerVision(double poseFilterTrustCoef, double poseFilterMaxUncertanty, BreakerPhotonCamera[] cameras, HashMap<Integer, Pose3d> fiducialTargetIDsAndPoses) {
+    public BreakerPhotonVision(double poseFilterTrustCoef, double poseFilterMaxUncertanty, BreakerPhotonCamera[] cameras, HashMap<Integer, Pose3d> fiducialTargetIDsAndPoses) {
         targets = new BreakerFiducialPhotonTarget[fiducialTargetIDsAndPoses.size()];
         this.cameras = cameras;
         int i = 0;
@@ -35,7 +35,7 @@ public class BreakerVision implements BreakerGenericOdometer {
         odometer = new BreakerVisionPoseFilterOdometer(poseFilter);
     }
 
-    public BreakerVision(double poseFilterTrustCoef, double poseFilterMaxUncertanty, double distanceScailFactor, double maxDistance, BreakerPhotonCamera[] cameras, HashMap<Integer, Pose3d> fiducialTargetIDsAndPoses) {
+    public BreakerPhotonVision(double poseFilterTrustCoef, double poseFilterMaxUncertanty, double distanceScailFactor, double maxDistance, BreakerPhotonCamera[] cameras, HashMap<Integer, Pose3d> fiducialTargetIDsAndPoses) {
         targets = new BreakerFiducialPhotonTarget[fiducialTargetIDsAndPoses.size()];
         this.cameras = cameras;
         int i = 0;

@@ -442,12 +442,6 @@ public class BreakerLegacySwerveDrive extends BreakerGenericDrivetrain
     return BreakerMath.fromRobotRelativeSpeeds(getRobotRelativeChassisSpeeds(), getOdometryPoseMeters().getRotation());
   }
 
-  @Override
-  public ChassisSpeeds getFieldRelativeChassisSpeeds(BreakerGenericOdometer odometer) {
-    return BreakerMath.fromRobotRelativeSpeeds(getRobotRelativeChassisSpeeds(),
-        odometer.getOdometryPoseMeters().getRotation());
-  }
-
   public void setFieldRelativeMovementOffsetAngle(Rotation2d fieldRelativeMovementOffset) {
     this.fieldRelativeMovementOffset = fieldRelativeMovementOffset;
   }

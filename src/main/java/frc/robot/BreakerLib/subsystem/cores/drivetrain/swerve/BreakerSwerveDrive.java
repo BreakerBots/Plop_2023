@@ -283,12 +283,6 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain implements Brea
   }
 
   @Override
-  public ChassisSpeeds getFieldRelativeChassisSpeeds(BreakerGenericOdometer odometer) {
-    return BreakerMath.fromRobotRelativeSpeeds(getRobotRelativeChassisSpeeds(),
-        odometer.getOdometryPoseMeters().getRotation());
-  }
-
-  @Override
   public void runSelfTest() {
     faultStr = "";
     health = DeviceHealth.NOMINAL;

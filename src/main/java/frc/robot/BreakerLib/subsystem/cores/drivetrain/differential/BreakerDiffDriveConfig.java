@@ -5,7 +5,6 @@
 package frc.robot.BreakerLib.subsystem.cores.drivetrain.differential;
 
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.legacy.BreakerLegacyDiffDrive;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 
 /** Configuration for {@link BreakerLegacyDiffDrive}. */

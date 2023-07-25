@@ -150,6 +150,17 @@ public class BreakerSwerveDriveBase extends BreakerSwerveDrive {
             return new BreakerSwerveDriveBaseMovementPreferences(this.swerveMovementRefrenceFrame, this.slowModeValue, headingCorrectionEnabled);
         }
 
+        @Override
+        public BreakerSwerveDriveBaseMovementPreferences withSlowModeValue(SlowModeValue slowModeValue) {
+            return new BreakerSwerveDriveBaseMovementPreferences(this.swerveMovementRefrenceFrame, slowModeValue, this.headingCorrectionEnabled);
+        }
+
+        @Override
+        public BreakerSwerveDriveBaseMovementPreferences withSwerveMovementRefrenceFrame(
+                SwerveMovementRefrenceFrame swerveMovementRefrenceFrame) {
+            return new BreakerSwerveDriveBaseMovementPreferences(swerveMovementRefrenceFrame, this.slowModeValue, this.headingCorrectionEnabled);
+        }
+
     }
 
     public static class BreakerSwerveDriveBaseConfig extends BreakerSwerveDriveConfig {

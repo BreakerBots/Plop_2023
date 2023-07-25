@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
 import frc.robot.BreakerLib.util.logging.BreakerLog;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Elevator.ElevatorControlMode;
 
 public class ManuallyControlElevator extends CommandBase {
   /** Creates a new ManuallyControlElevator. */
@@ -23,6 +24,7 @@ public class ManuallyControlElevator extends CommandBase {
   @Override
   public void initialize() {
     BreakerLog.logSuperstructureEvent("ELEVATOR SWITCHED TO MANUAL CONTROL");
+    elevator.setManual(0.0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -41,6 +43,6 @@ public class ManuallyControlElevator extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return elevator.getCurrentControlMode() != ElevatorControlMode.MANUAL;
   }
 }

@@ -36,9 +36,6 @@ public abstract class BreakerGenericDrivetrain extends BreakerGenericLoopedDevic
     /** Enables or disables the brake-on-neutral mode of the drivetrains motors */
     public abstract void setDrivetrainBrakeMode(boolean isEnabled);
 
-    /** @return The {@link ChassisSpeeds object that represents } */
-    public abstract ChassisSpeeds getFieldRelativeChassisSpeeds(BreakerGenericOdometer odometer);
-
     /** Stops the robot's movement in all axsies */
     public abstract void stop();
 

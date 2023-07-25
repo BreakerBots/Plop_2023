@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.legacy.BreakerLegacyDiffDrive;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.BreakerDiffDrive;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -138,7 +138,7 @@ public class BreakerRamsetePathFollower extends CommandBase {
               + this.config.getRightController().calculate(
                 this.config.getDrivetrain().getWheelSpeeds().rightMetersPerSecond, rightSpeedSetpoint);
 
-    this.config.getDrivetrain().tankDriveVoltage(leftOutput, rightOutput);
+    this.config.getDrivetrain().setRawWheelVoltages(leftOutput, rightOutput);
     this.prevSpeeds = targetWheelSpeeds;
     this.prevTime = currentTime;
 
@@ -203,7 +203,7 @@ public class BreakerRamsetePathFollower extends CommandBase {
   }
 
 public static class BreakerRamsetePathFollowerConfig {
-  private BreakerLegacyDiffDrive drivetrain;
+  private BreakerDiffDrive drivetrain;
   private BreakerGenericOdometer odometer;
   private RamseteController ramseteController;
   private SimpleMotorFeedforward feedforward;
@@ -211,7 +211,7 @@ public static class BreakerRamsetePathFollowerConfig {
   private PIDController rightController;
   private boolean useAllianceColor;
   public BreakerRamsetePathFollowerConfig(
-    BreakerLegacyDiffDrive drivetrain, 
+    BreakerDiffDrive drivetrain, 
     RamseteController ramseteController, 
     SimpleMotorFeedforward feedforward,  
     PIDController leftController,
@@ -228,7 +228,7 @@ public static class BreakerRamsetePathFollowerConfig {
     }
 
     public BreakerRamsetePathFollowerConfig(
-    BreakerLegacyDiffDrive drivetrain, 
+    BreakerDiffDrive drivetrain, 
     BreakerGenericOdometer odometer,
     RamseteController ramseteController, 
     SimpleMotorFeedforward feedforward,  
@@ -245,7 +245,7 @@ public static class BreakerRamsetePathFollowerConfig {
       this.useAllianceColor = useAllianceColor;
     }
 
-    public BreakerLegacyDiffDrive getDrivetrain() {
+    public BreakerDiffDrive getDrivetrain() {
         return drivetrain;
     }
 

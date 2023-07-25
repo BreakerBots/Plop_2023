@@ -15,11 +15,8 @@ import frc.robot.BreakerLib.util.math.interpolation.BreakerInterpolable;
  */
 public class BreakerVector3 implements BreakerInterpolable<BreakerVector3> {
 
-    private double magnatudeX;
-    private double magnatudeY;
-    private double magnatudeZ;
-    private double magnitude;
-    private Rotation3d vectorRotation;
+    private final double x, y, z, magnitude;
+    private final Rotation3d vectorRotation;
 
     /** Creates a BreakerVector3 based on given x, y, and z forces.
      * 
@@ -28,18 +25,18 @@ public class BreakerVector3 implements BreakerInterpolable<BreakerVector3> {
      * @param magnatudeZ Z-axis force relative to field.
     */
     public BreakerVector3(double magnatudeX, double magnatudeY, double magnatudeZ) {
-        this.magnatudeX = magnatudeX;
-        this.magnatudeY = magnatudeY;
-        this.magnatudeZ = magnatudeZ;
+        this.x = magnatudeX;
+        this.y = magnatudeY;
+        this.z = magnatudeZ;
         magnitude = Math.sqrt(Math.pow(magnatudeX, 2) + Math.pow(magnatudeY, 2) + Math.pow(magnatudeZ, 2));
         vectorRotation = new Rotation3d(0.0, Math.atan2(magnatudeZ, (Math.sqrt(magnatudeX*magnatudeX+magnatudeY*magnatudeY))),
                 Math.atan2(magnatudeY, magnatudeX)); // need to check this math
     }
 
     public BreakerVector3() {
-        magnatudeX = 0;
-        magnatudeY = 0;
-        magnatudeZ = 0;
+        x = 0;
+        y = 0;
+        z = 0;
         magnitude = 0;
         vectorRotation = new Rotation3d();
     }
@@ -51,9 +48,9 @@ public class BreakerVector3 implements BreakerInterpolable<BreakerVector3> {
      * @param vectorRotation Rotation of forces.
      */
     public BreakerVector3(double magnitude, Rotation3d vectorRotation) {
-        magnatudeX = magnitude * (Math.cos(vectorRotation.getZ()) * Math.cos(vectorRotation.getY()));
-        magnatudeY = magnitude * (Math.sin(vectorRotation.getZ()) * Math.cos(vectorRotation.getY()));
-        magnatudeZ = magnitude * (Math.sin(vectorRotation.getY()));
+        x = magnitude * (Math.cos(vectorRotation.getZ()) * Math.cos(vectorRotation.getY()));
+        y = magnitude * (Math.sin(vectorRotation.getZ()) * Math.cos(vectorRotation.getY()));
+        z = magnitude * (Math.sin(vectorRotation.getY()));
         this.magnitude = magnitude;
         this.vectorRotation = vectorRotation;
     }
@@ -68,21 +65,21 @@ public class BreakerVector3 implements BreakerInterpolable<BreakerVector3> {
      * @return double
      */
     public double getX() {
-        return magnatudeX;
+        return x;
     }
     
     /** 
      * @return double
      */
     public double getY() {
-        return magnatudeY;
+        return y;
     }
   
     /** 
      * @return double
      */
     public double getZ() {
-        return magnatudeZ;
+        return z;
     }
     
     /** 
@@ -112,7 +109,7 @@ public class BreakerVector3 implements BreakerInterpolable<BreakerVector3> {
      * @return BreakerVector3
      */
     public BreakerVector3 minus(BreakerVector3 outher) {
-        return new BreakerVector3(magnatudeX - outher.magnatudeX, magnatudeY - outher.magnatudeY, magnatudeZ - outher.magnatudeZ);
+        return new BreakerVector3(x - outher.x, y - outher.y, z - outher.z);
     }
     
     /** 
@@ -120,14 +117,14 @@ public class BreakerVector3 implements BreakerInterpolable<BreakerVector3> {
      * @return BreakerVector3
      */
     public BreakerVector3 plus(BreakerVector3 outher) {
-        return new BreakerVector3(magnatudeX + outher.magnatudeX, magnatudeY + outher.magnatudeY, magnatudeZ + outher.magnatudeZ);
+        return new BreakerVector3(x + outher.x, y + outher.y, z + outher.z);
     }
     
     /** 
      * @return BreakerVector3
      */
     public BreakerVector3 unaryMinus()  {
-        return new BreakerVector3(-magnatudeX, -magnatudeY, -magnatudeZ);
+        return new BreakerVector3(-x, -y, -z);
     }
     
     /** 
@@ -135,7 +132,7 @@ public class BreakerVector3 implements BreakerInterpolable<BreakerVector3> {
      * @return BreakerVector3
      */
     public BreakerVector3 times(double scalar) {
-        return new BreakerVector3(magnatudeX * scalar, magnatudeY * scalar, magnatudeZ * scalar);
+        return new BreakerVector3(x * scalar, y * scalar, z * scalar);
     }
     
     /** 
@@ -143,18 +140,18 @@ public class BreakerVector3 implements BreakerInterpolable<BreakerVector3> {
      * @return BreakerVector3
      */
     public BreakerVector3 div(double scalar) {
-        return new BreakerVector3(magnatudeX / scalar,  magnatudeY / scalar, magnatudeY / scalar);
+        return new BreakerVector3(x / scalar,  y / scalar, y / scalar);
     }
     
     /** 
      * @return Translation3d
      */
     public Translation3d getAsTranslation() {
-        return new Translation3d(magnatudeX, magnatudeY, magnatudeZ);
+        return new Translation3d(x, y, z);
     }
 
     public BreakerVector2 toBreakerVector2() {
-        return new BreakerVector2(magnatudeX, magnatudeY);
+        return new BreakerVector2(x, y);
     }
 
     /** 
@@ -171,16 +168,16 @@ public class BreakerVector3 implements BreakerInterpolable<BreakerVector3> {
      */
     @Override
     public BreakerVector3 interpolate(BreakerVector3 endValue, double t) {
-        double interX = MathUtil.interpolate(magnatudeX, endValue.getX(), t);
-        double interY = MathUtil.interpolate(magnatudeY, endValue.getY(), t);
-        double interZ = MathUtil.interpolate(magnatudeZ, endValue.getZ(), t);
+        double interX = MathUtil.interpolate(x, endValue.getX(), t);
+        double interY = MathUtil.interpolate(y, endValue.getY(), t);
+        double interZ = MathUtil.interpolate(z, endValue.getZ(), t);
         return new BreakerVector3(interX, interY, interZ);
     }
     
     /** [0] = X, [1] = Y, [2] = Z */
     @Override
     public double[] getInterpolatableData() {
-        return new double[] { magnatudeX, magnatudeY, magnatudeZ };
+        return new double[] { x, y, z };
     }
 
     
@@ -199,6 +196,6 @@ public class BreakerVector3 implements BreakerInterpolable<BreakerVector3> {
      */
     @Override
     public String toString() {
-        return String.format("BreakerVector3(Magnatude: %.2f, X: %.2f, Y: %.2f, Z: %.2f, Angle: %s)", magnitude, magnatudeX, magnatudeY, magnatudeZ, vectorRotation.toString());
+        return String.format("BreakerVector3(Magnatude: %.2f, X: %.2f, Y: %.2f, Z: %.2f, Angle: %s)", magnitude, x, y, z, vectorRotation.toString());
     }
 }

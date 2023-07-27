@@ -5,8 +5,12 @@
 package frc.robot.BreakerLib.physics.vector;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import frc.robot.BreakerLib.util.math.interpolation.BreakerInterpolable;
 
 /**
@@ -20,17 +24,17 @@ public class BreakerVector3 implements BreakerInterpolable<BreakerVector3> {
 
     /** Creates a BreakerVector3 based on given x, y, and z forces.
      * 
-     * @param magnatudeX X-axis force relative to field.
-     * @param magnatudeY Y-axis force relative to field.
-     * @param magnatudeZ Z-axis force relative to field.
+     * @param x X-axis force relative to field.
+     * @param y Y-axis force relative to field.
+     * @param z Z-axis force relative to field.
     */
-    public BreakerVector3(double magnatudeX, double magnatudeY, double magnatudeZ) {
-        this.x = magnatudeX;
-        this.y = magnatudeY;
-        this.z = magnatudeZ;
-        magnitude = Math.sqrt(Math.pow(magnatudeX, 2) + Math.pow(magnatudeY, 2) + Math.pow(magnatudeZ, 2));
-        vectorRotation = new Rotation3d(0.0, Math.atan2(magnatudeZ, (Math.sqrt(magnatudeX*magnatudeX+magnatudeY*magnatudeY))),
-                Math.atan2(magnatudeY, magnatudeX)); // need to check this math
+    public BreakerVector3(double x, double y, double z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        magnitude = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+        vectorRotation = new Rotation3d(0.0, Math.atan2(z, (Math.sqrt(x*x+y*y))),
+                Math.atan2(y, x)); // need to check this math
     }
 
     public BreakerVector3() {
@@ -59,6 +63,15 @@ public class BreakerVector3 implements BreakerInterpolable<BreakerVector3> {
      *  This exists because of the Tranlation2d classes suppport of various vector opperations */
     public BreakerVector3(Translation3d translationToVectorize) {
         this(translationToVectorize.getX(), translationToVectorize.getY(), translationToVectorize.getY());
+    }
+
+
+    public static BreakerVector3 fromRowMatrix(Matrix<N1, N3> rowMatrix) {
+        return new BreakerVector3(rowMatrix.get(0, 0), rowMatrix.get(0, 1), rowMatrix.get(0, 2));
+    }
+
+    public static BreakerVector3 fromColumnMatrix(Matrix<N3, N1> columnMatrix) {
+        return new BreakerVector3(columnMatrix.get(0, 0), columnMatrix.get(1, 0), columnMatrix.get(2, 0));
     }
 
     /** 
@@ -159,6 +172,22 @@ public class BreakerVector3 implements BreakerInterpolable<BreakerVector3> {
      */
     public BreakerVector3 getUnitVector() {
         return new BreakerVector3(1, vectorRotation);
+    }
+
+    public Matrix<N3, N1> getColumnMatrix() {
+        Matrix<N3, N1> mtrx = new Matrix<N3,N1>(Nat.N3(), Nat.N1());
+        mtrx.set(0, 0, x);
+        mtrx.set(1, 0, y);
+        mtrx.set(2, 0, z);
+        return mtrx;
+    }
+
+    public Matrix<N1, N3> getRowMatrix() {
+        Matrix<N1, N3> mtrx = new Matrix<N1,N3>(Nat.N1(), Nat.N3());
+        mtrx.set(0, 0, x);
+        mtrx.set(0, 1, y);
+        mtrx.set(0, 2, z);
+        return mtrx;
     }
 
     /** 

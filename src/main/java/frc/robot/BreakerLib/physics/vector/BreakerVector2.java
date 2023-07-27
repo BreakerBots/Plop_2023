@@ -5,8 +5,12 @@
 package frc.robot.BreakerLib.physics.vector;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N2;
 import frc.robot.BreakerLib.util.math.interpolation.BreakerInterpolable;
 
 /**
@@ -30,11 +34,11 @@ public class BreakerVector2 implements BreakerInterpolable<BreakerVector2> {
      * creates a new BreakerVector2 from the magnatudes of the vector's X and Y
      * components
      */
-    public BreakerVector2(double magnitudeX, double magnitudeY) {
-        this.x = magnitudeX;
-        this.y = magnitudeY;
-        vectorRotation = new Rotation2d(Math.atan2(magnitudeY, magnitudeX));
-        magnitude = Math.sqrt((magnitudeX * magnitudeX) + (magnitudeY * magnitudeY));
+    public BreakerVector2(double x, double y) {
+        this.x = x;
+        this.y = y;
+        vectorRotation = new Rotation2d(Math.atan2(y, x));
+        magnitude = Math.sqrt((x * x) + (y * y));
     }
 
     /**
@@ -52,11 +56,19 @@ public class BreakerVector2 implements BreakerInterpolable<BreakerVector2> {
        this(translationToVectorize.getX(), translationToVectorize.getY(), translationToVectorize.getNorm(), translationToVectorize.getAngle());
     }
 
-    private BreakerVector2(double magnitudeX, double magnitudeY, double magnitude, Rotation2d vectorRotation) {
-        this.x = magnitudeX;
-        this.y = magnitudeY;
+    private BreakerVector2(double x, double y, double magnitude, Rotation2d vectorRotation) {
+        this.x = x;
+        this.y = y;
         this.magnitude = magnitude;
         this.vectorRotation = vectorRotation;
+    }
+
+    public static BreakerVector2 fromRowMatrix(Matrix<N1, N2> rowMatrix) {
+        return new BreakerVector2(rowMatrix.get(0, 0), rowMatrix.get(0, 1));
+    }
+
+    public static BreakerVector2 fromColumnMatrix(Matrix<N2, N1> columnMatrix) {
+        return new BreakerVector2(columnMatrix.get(0, 0), columnMatrix.get(1, 0));
     }
 
     
@@ -143,6 +155,19 @@ public class BreakerVector2 implements BreakerInterpolable<BreakerVector2> {
         return new Translation2d(x, y);
     }
 
+    public Matrix<N2, N1> getColumnMatrix() {
+        Matrix<N2, N1> mtrx = new Matrix<N2,N1>(Nat.N2(), Nat.N1());
+        mtrx.set(0, 0, x);
+        mtrx.set(1, 0, y);
+        return mtrx;
+    }
+
+    public Matrix<N1, N2> getRowMatrix() {
+        Matrix<N1, N2> mtrx = new Matrix<N1,N2>(Nat.N1(), Nat.N2());
+        mtrx.set(0, 0, x);
+        mtrx.set(0, 1, y);
+        return mtrx;
+    }
     
     /** 
      * @param rotation

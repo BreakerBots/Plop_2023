@@ -18,7 +18,9 @@ public class SetIntakeRollerState extends InstantCommand {
   private Intake intake;
   private IntakeRollerStateRequest stateRequest;
   public SetIntakeRollerState(Intake intake, IntakeRollerStateRequest stateRequest) {
-    // Use addRequirements() here to declare subsystem dependencies.
+    this.intake = intake;
+    this.stateRequest = stateRequest;
+    addRequirements(intake);
   }
 
   // Called when the command is initially scheduled.

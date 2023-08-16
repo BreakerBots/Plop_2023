@@ -83,7 +83,6 @@ public class Elevator extends SubsystemBase {
     //private ElevatorSimManager simManager;
 
     private boolean isForceStoped = false;
-    private boolean isManualControlSelected = false;
 
    
     public Elevator() {

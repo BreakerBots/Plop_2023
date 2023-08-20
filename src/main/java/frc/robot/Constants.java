@@ -261,7 +261,7 @@ public final class Constants {
       public static final double EJECT_COMMAND_CUTOFF_TRALING_DELAY = 1.0;
       public static final double EJECT_COMMAND_CUTOFF_TIMEOUT = 4.0;
 
-      public static final double ACTUATOR_SET_STATE_COMMAND_TIMEOUT_SEC = 3.0;
+      public static final double WRIST_SET_GOAL_COMMAND_TIMEOUT_SEC = 3.0;
   }
 
   public static class FieldConstants {

@@ -25,16 +25,15 @@ import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ScoreingConstants;
 import frc.robot.commands.drive.MoveToPose;
-import frc.robot.commands.elevatorintakeassembly.elevator.ElevatorMoveToHight;
-import frc.robot.commands.elevatorintakeassembly.intake.EjectGamePiece;
 import frc.robot.commands.rumble.DoublePulseRumble;
 import frc.robot.commands.rumble.SinglePulseRumble;
 import frc.robot.commands.rumble.TriplePulseRumble;
+import frc.robot.commands.superstructure.elevator.ElevatorMoveToHight;
+import frc.robot.commands.superstructure.intake.EjectGamePiece;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Hand;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Elevator.ElevatorTargetState;
-import frc.robot.subsystems.Intake.ControledGamePieceType;
 
 public class TeleopScoreGamePiece extends CommandBase {
   /** Creates a new ScoreGamePiece. */
@@ -43,14 +42,14 @@ public class TeleopScoreGamePiece extends CommandBase {
   private BreakerXboxController driverController;
   private Drive drivetrain;
   private Elevator elevator;
-  private Intake intake;
+  private Hand hand;
   private SequentialCommandGroup scoreingSequince;
-  public TeleopScoreGamePiece(OperatorControlPad operatorControlPad, BreakerXboxController driverController, Drive drivetrain, Elevator elevator, Intake intake) {
+  public TeleopScoreGamePiece(OperatorControlPad operatorControlPad, BreakerXboxController driverController, Drive drivetrain, Elevator elevator, Hand hand) {
     this.operatorControlPad = operatorControlPad;
     this.driverController = driverController;
     this.drivetrain = drivetrain;
     this.elevator = elevator;
-    this.intake = intake;
+    this.hand = hand;
   }
 
   // Called when the command is initially scheduled.
@@ -60,7 +59,7 @@ public class TeleopScoreGamePiece extends CommandBase {
     Optional<Node> selectedNodeOptional = operatorControlPad.getSelectedScoringNode();
     if (selectedNodeOptional.isPresent()) {
       selectedNode = selectedNodeOptional.get();
-      Optional<GamePieceType> controledGamePiece = intake.getControledGamePieceType().getGamePieceType();
+      Optional<GamePieceType> controledGamePiece = hand.getControledGamePieceType().getGamePieceType();
       if (controledGamePiece.isPresent()) {
         if (selectedNode.getType().isGamePieceSupported(controledGamePiece.get())) {
           ElevatorTargetState elevatorTgt = getElevatorTarget();
@@ -73,7 +72,7 @@ public class TeleopScoreGamePiece extends CommandBase {
               new MoveToPose(selectedNode.getAllignmentPose(), ScoreingConstants.TELEOP_SCOREING_MOVE_TO_POSE_MAX_LINEAR_VEL, drivetrain), 
               new ElevatorMoveToHight(elevator, getElevatorTarget())
             ),
-            new ConditionalCommand(new EjectGamePiece(intake), new InstantCommand(this::cancel), () -> preEjectCheck(elevatorTgt)),
+            new ConditionalCommand(new EjectGamePiece(hand), new InstantCommand(this::cancel), () -> preEjectCheck(elevatorTgt)),
             new InstantCommand(this::postEjectCheck)
             );
         } else {
@@ -112,7 +111,7 @@ public class TeleopScoreGamePiece extends CommandBase {
   }
 
   private void postEjectCheck() {
-    if (intake.hasGamePiece()) {
+    if (hand.hasGamePiece()) {
       BreakerLog.logEvent("TeleopScoreGamePiece instance FAILED, post eject check failed, game piece not sucessfully ejected");
       this.cancel();
     } else {

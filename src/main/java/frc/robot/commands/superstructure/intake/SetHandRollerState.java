@@ -2,31 +2,31 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.elevatorintakeassembly.intake;
+package frc.robot.commands.superstructure.intake;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.BreakerLib.util.logging.BreakerLog;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Intake.ActuatorMotorState;
-import frc.robot.subsystems.Intake.ControledGamePieceType;
-import frc.robot.subsystems.Intake.RollerState;
+import frc.robot.subsystems.Hand;
+import frc.robot.subsystems.Hand.ControledGamePieceType;
+import frc.robot.subsystems.Hand.RollerState;
+import frc.robot.subsystems.Hand.WristGoal.WristGoalType;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class SetIntakeRollerState extends InstantCommand {
-  private Intake intake;
+public class SetHandRollerState extends InstantCommand {
+  private Hand hand;
   private IntakeRollerStateRequest stateRequest;
-  public SetIntakeRollerState(Intake intake, IntakeRollerStateRequest stateRequest) {
-    this.intake = intake;
+  public SetHandRollerState(Hand hand, IntakeRollerStateRequest stateRequest) {
+    this.hand = hand;
     this.stateRequest = stateRequest;
-    addRequirements(intake);
+    addRequirements(hand);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    ControledGamePieceType controledGamePiece = intake.getControledGamePieceType();
+    ControledGamePieceType controledGamePiece = hand.getControledGamePieceType();
     switch(stateRequest) {
 
 
@@ -34,14 +34,14 @@ public class SetIntakeRollerState extends InstantCommand {
 
 
         BreakerLog.logEvent("Intake roller start requested (request: EXTAKE)");
-        if (intake.getActuatorMotorState() == ActuatorMotorState.EXTENDING) {
+        if (hand.getWristGoalType() != WristGoalType.STOW || hand.getWristGoalType() != WristGoalType.UNKNOWN) {
           switch (controledGamePiece) {
             case CONE:
-              intake.extakeCone();
+              hand.rollerExtakeCone();
               BreakerLog.logSuperstructureEvent("INTAKE ROLLER EXTAKE REQUEST SUCESSSFULL, ROLLER STARTED EXTAKEING CONE (request: EXTAKE)");
               break;
             case CUBE:
-              intake.extakeCube();
+              hand.rollerExtakeCube();
               BreakerLog.logSuperstructureEvent("INTAKE ROLLER EXTAKE REQUEST SUCESSSFULL, ROLLER STARTED EXTAKEING CUBE (request: EXTAKE)");
               break;
             case ERROR:
@@ -62,9 +62,9 @@ public class SetIntakeRollerState extends InstantCommand {
 
 
         BreakerLog.logEvent("Intake roller start requested (request: INTAKE_CONE)");
-        if (intake.getActuatorMotorState() == ActuatorMotorState.EXTENDING) {
-          if (!intake.hasGamePiece()) {
-            intake.intakeCone();
+        if (hand.getWristGoalType() != WristGoalType.STOW || hand.getWristGoalType() != WristGoalType.UNKNOWN) {
+          if (!hand.hasGamePiece()) {
+            hand.rollerIntakeCone();
             BreakerLog.logSuperstructureEvent("INTAKE ROLLER START REQUEST SUCESSSFULL, ROLLER STARTED INTAKEING (request: INTAKE_CONE)");
           } else {
             BreakerLog.logEvent("Intake roller start request FAILED, roller can not enter an intake state while it has a game piece (request: INTAKE_CONE)");
@@ -79,9 +79,9 @@ public class SetIntakeRollerState extends InstantCommand {
 
 
         BreakerLog.logEvent("Intake roller start requested (request: INTAKE_CUBE)");
-        if (intake.getActuatorMotorState() == ActuatorMotorState.EXTENDING) {
-          if (!intake.hasGamePiece()) {
-            intake.intakeCube();
+        if (hand.getWristGoalType() != WristGoalType.STOW || hand.getWristGoalType() != WristGoalType.UNKNOWN) {
+          if (!hand.hasGamePiece()) {
+            hand.rollerIntakeCube();
             BreakerLog.logSuperstructureEvent("INTAKE ROLLER START REQUEST SUCESSSFULL, ROLLER STARTED INTAKEING  (request: INTAKE_CUBE)");
           } else {
             BreakerLog.logEvent("Intake roller start request FAILED, roller can not enter an intake state while it has a game piece (request: INTAKE_CUBE)");
@@ -97,9 +97,9 @@ public class SetIntakeRollerState extends InstantCommand {
   
       default:
         BreakerLog.logEvent("Intake roller stop requested (request: STOP)");
-        if (intake.getRollerState() != RollerState.NEUTRAL) {
-          if (!intake.hasGamePiece()) {
-            intake.stopRoller();
+        if (hand.getRollerState() != RollerState.NEUTRAL) {
+          if (!hand.hasGamePiece()) {
+            hand.stopRoller();
             BreakerLog.logSuperstructureEvent("INTAKE ROLLER STOP REQUEST SUCESSFULL, INTAKE ROLLER STOPED (request: STOP)");
           } else {
             BreakerLog.logEvent("Intake roller stop request FAILED, intake can not be stoped while gripping game piece (request: STOP)");

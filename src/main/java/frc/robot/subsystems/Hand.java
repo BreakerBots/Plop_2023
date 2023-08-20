@@ -49,9 +49,10 @@ import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import frc.robot.BreakerLib.util.test.selftest.SystemDiagnostics;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.subsystems.Intake.RollerState.RollerStateType;
+import frc.robot.subsystems.Hand.RollerState.RollerStateType;
+import frc.robot.subsystems.Hand.WristGoal.WristGoalType;
 
-public class Intake2 extends SubsystemBase {
+public class Hand extends SubsystemBase {
   /** Creates a new Intake. */
   private final CANSparkMax wristMotor;
   private final CANSparkMax rollerMotor;
@@ -65,11 +66,13 @@ public class Intake2 extends SubsystemBase {
   private ArmFeedforward ff;
 
   private RollerState rollerState;
+  private WristControlState wristControlState;
   private Rotation2d wristGoal;
+  private WristGoalType wristGoalType;
   private CANcoder encoder;
 
   private final SystemDiagnostics diagnostics;
-  public Intake2() {
+  public Hand() {
     wristMotor = new CANSparkMax(IntakeConstants.ACTUATOR_ID, MotorType.kBrushless);
     rollerMotor = new CANSparkMax(IntakeConstants.ROLLER_ID, MotorType.kBrushless);
     coneBeamBrake = new BreakerBeamBreak(IntakeConstants.CONE_BEAM_BRAKE_DIO_PORT, IntakeConstants.BEAM_BRAKE_BROKEN_ON_TRUE);
@@ -85,9 +88,6 @@ public class Intake2 extends SubsystemBase {
     rollerMotor.setIdleMode(IdleMode.kBrake);
     rollerMotor.enableVoltageCompensation(12.0);
 
-    encoder = BreakerSwerveCANcoder.;
-    
-
     extendLimitSwitch = wristMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
     extendLimitSwitch.enableLimitSwitch(true);
     retractLimitSwich = wristMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
@@ -96,9 +96,7 @@ public class Intake2 extends SubsystemBase {
     pid = new ProfiledPIDController(0, 0, 0, null);
     ff = new ArmFeedforward(0, 0, 0, 0);
     rollerState = RollerState.NEUTRAL;
-    wristGoal = getWristRotation();
-    wristState = WristState.IDLE;
-    actuatorMotorState = getActuatorState() == ActuatorState.EXTENDED ? ActuatorMotorState.EXTENDING : ActuatorMotorState.RETRACTING;
+    wristControlState = WristControlState.SEEKING;
 
     diagnostics = new SystemDiagnostics("Intake");
     diagnostics.addSparkMaxs(wristMotor, rollerMotor);
@@ -107,6 +105,8 @@ public class Intake2 extends SubsystemBase {
     wristMotor.burnFlash();
     rollerMotor.burnFlash();
     BreakerDashboard.getMainTab().add("INTAKE", this);
+
+    wristGoal = getWristRotation();
   }
 
   private void setRollerMotor(double dutyCycle, int currentLimit) {
@@ -121,8 +121,8 @@ public class Intake2 extends SubsystemBase {
     builder.addBooleanProperty("INTK INTAKEING", () -> getRollerState().getRollerStateType() == RollerStateType.INTAKEING, null);
     builder.addBooleanProperty("INTK GRIPPING", () -> getRollerState().getRollerStateType() == RollerStateType.GRIPPING, null);
     builder.addBooleanProperty("INTK EXTAKEING", () -> getRollerState().getRollerStateType() == RollerStateType.EXTAKEING, null);
-    builder.addStringProperty("INTK A-MOT", () -> getActuatorMotorState().toString(), null);
-    builder.addStringProperty("INTK A-ST", () -> getActuatorState().toString(), null);
+    // builder.addStringProperty("INTK A-MOT", () -> getActuatorMotorState().toString(), null);
+    // builder.addStringProperty("INTK A-ST", () -> getActuatorState().toString(), null);
     builder.addStringProperty("INTK ROLL", () -> getRollerState().toString(), null);
     builder.addBooleanProperty("INTK FAULT", diagnostics::hasFault, null);
   }
@@ -135,7 +135,7 @@ public class Intake2 extends SubsystemBase {
       devHealth = DeviceHealth.INOPERABLE;
     }
 
-    if (getActuatorState() == ActuatorState.ERROR) {
+    if (extendLimitSwitch.isPressed() && retractLimitSwich.isPressed()) {
       str += " actuator_limit_switch_malfunction_bolth_switches_read_triggered ";
       devHealth = DeviceHealth.INOPERABLE;
     }
@@ -167,58 +167,53 @@ public class Intake2 extends SubsystemBase {
     return getControledGamePieceType().hasGamePiece();
   }
 
-  public ActuatorMotorState getActuatorMotorState() {
-    return actuatorMotorState;
-  }
-
-  public boolean isInDesiredActuatorState() {
-    return actuatorMotorState == ActuatorMotorState.EXTENDING ? getActuatorState() == ActuatorState.EXTENDED : getActuatorState() == ActuatorState.RETRACTED;
-  }
-
   public WristState getWristState() {
-    if (DriverStation.isDisabled()) {
+    if (DriverStation.isDisabled() || wristControlState == WristControlState.IDLE) {
       return WristState.IDLE;
     } else if (atWristGoal()) {
       return WristState.AT_GOAL;
     }
     return WristState.TRANSIT;
-    
-  } 
+  }
 
-  public void intakeCone() {
-    if (actuatorMotorState == ActuatorMotorState.EXTENDING && !hasGamePiece()) {
+  public WristControlState getWristControlState() {
+    return wristControlState;
+  }
+
+  public void rollerIntakeCone() {
+    if (wristGoalType == WristGoalType.PICKUP && !hasGamePiece()) {
       rollerState = RollerState.INTAKEING_CONE;
       setRollerMotor(IntakeConstants.INTAKE_CONE_DUTY_CYCLE, IntakeConstants.INTAKE_CONE_CURENT_LIMIT);
     }
   }
 
-  public void intakeCube() {
-    if (actuatorMotorState == ActuatorMotorState.EXTENDING && !hasGamePiece()) {
+  public void rollerIntakeCube() {
+    if (wristGoalType == WristGoalType.PICKUP && !hasGamePiece()) {
       rollerState = RollerState.INTAKEING_CUBE;
       setRollerMotor(IntakeConstants.INTAKE_CUBE_DUTY_CYCLE, IntakeConstants.INTAKE_CUBE_CURENT_LIMIT);
     }
   }
 
-  public void extakeCone() {
-    if (actuatorMotorState == ActuatorMotorState.EXTENDING && getControledGamePieceType() == ControledGamePieceType.CONE) {
+  public void rollerExtakeCone() {
+    if ((wristGoalType != WristGoalType.STOW || wristGoalType != WristGoalType.UNKNOWN) && getControledGamePieceType() == ControledGamePieceType.CONE) {
       rollerState = RollerState.EXTAKEING_CONE;
       setRollerMotor(IntakeConstants.EXTAKE_CONE_DUTY_CYCLE, IntakeConstants.EXTAKE_CONE_CURENT_LIMIT);
     }
   }
 
-  public void extakeCube() {
-    if (actuatorMotorState == ActuatorMotorState.EXTENDING && getControledGamePieceType() == ControledGamePieceType.CUBE) {
+  public void rollerExtakeCube() {
+    if ((wristGoalType != WristGoalType.STOW || wristGoalType != WristGoalType.UNKNOWN) && getControledGamePieceType() == ControledGamePieceType.CUBE) {
       rollerState = RollerState.EXTAKEING_CUBE;
       setRollerMotor(IntakeConstants.EXTAKE_CUBE_DUTY_CYCLE, IntakeConstants.EXTAKE_CUBE_CURENT_LIMIT);
     }
   }
 
-  private void grippCone() {
+  private void rollerGrippCone() {
     setRollerMotor(IntakeConstants.INTAKE_CONE_GRIP_DUTY_CYCLE, IntakeConstants.INTAKE_CONE_GRIP_CURENT_LIMIT);
     rollerState = RollerState.GRIPPING_CONE;
   }
 
-  private void grippCube() {
+  private void rollerGrippCube() {
     setRollerMotor(IntakeConstants.INTAKE_CUBE_GRIP_DUTY_CYCLE, IntakeConstants.INTAKE_CUBE_GRIP_CURENT_LIMIT);
     rollerState = RollerState.GRIPPING_CUBE;
   }
@@ -236,50 +231,49 @@ public class Intake2 extends SubsystemBase {
 
 
   public void setWristGoal(WristGoal wristGoal) {
-    privateSetWristGoal(wristGoal.getgoalAngle());
+    privateSetWristGoal(wristGoal.getGoalType(), wristGoal.getGoalAngle());
   }
 
-  private void privateSetWristGoal(Rotation2d wristGoal) {
+  private void privateSetWristGoal(WristGoalType goalType, Rotation2d wristGoal) {
     this.wristGoal = wristGoal;
+    this.wristGoalType = goalType;
+    
   }
  
   private void calculateAndApplyPIDF() {
-    ProfiledPIDSubsystem
-    if (getWristState() !=  WristState.IDLE) {
-      pid.calculate(0)
-    }
+    pid.calculate(getWristRotation().getRadians(), wristGoal.getRotations());
   }
 
   public boolean atWristGoal() {
-    if (wristGoal.getgoalAngle().isEmpty()) {
-        return false;
-    }
-    return BreakerMath.epsilonEquals(wristGoal.getgoalAngle().get().getDegrees(), getWristRotation().getDegrees(), 0);
+    return BreakerMath.epsilonEquals(wristGoal.getDegrees(), getWristRotation().getDegrees(), 0);
   }
 
   public Rotation2d getWristRotation() {
     return Rotation2d.fromRotations(encoder.getAbsolutePosition().getValue());
   }
 
+  public WristGoalType getWristGoalType() {
+      return wristGoalType;
+  }
+
 
   @Override
   public void periodic() {
 
-    if (DriverStation.isEnabled()) {
+    if (DriverStation.isEnabled() && wristControlState == WristControlState.SEEKING) {
       if (hasGamePiece() && rollerState.getRollerStateType() != RollerStateType.EXTAKEING) {
         if (hasCone()) {
-          grippCone();
+          rollerGrippCone();
         } else {
-          grippCube();
+          rollerGrippCube();
         }
-      } else if (!hasGamePiece() && actuatorMotorState != ActuatorMotorState.EXTENDING) {
+      } else if (!hasGamePiece() && (wristGoalType == WristGoalType.STOW || wristGoalType == WristGoalType.UNKNOWN)) {
         stopRoller();
       }
-
-      privateSetActuatorMotorState(actuatorMotorState);
+      calculateAndApplyPIDF();
     } else {
+      privateSetWristGoal(WristGoalType.UNKNOWN, getWristRotation());
       stopRoller();
-      setWristGoal(null);
     }
     
   }
@@ -346,28 +340,46 @@ public class Intake2 extends SubsystemBase {
     IDLE
   }
 
-  public static enum WristGoal{
-    PLACE_HYBRID(Rotation2d.fromDegrees(0)),
-    PLACE_CONE_MID(Rotation2d.fromDegrees(0)),
-    PLACE_CONE_HIGH(Rotation2d.fromDegrees(0)),
-    PLACE_CUBE_MID(Rotation2d.fromDegrees(0)),
-    PLACE_CUBE_HIGH(Rotation2d.fromDegrees(0)),
-    PICKUP_GROUND_CONE(Rotation2d.fromDegrees(0)),
-    PICKUP_GROUND_CUBE(Rotation2d.fromDegrees(0)),
-    PICKUP_SINGLE_SUBSTATION_CONE(Rotation2d.fromDegrees(0)),
-    PICKUP_SINGLE_SUBSTATION_CUBE(Rotation2d.fromDegrees(0)),
-    PICKUP_DOUBLE_SUBSTATION_CONE(Rotation2d.fromDegrees(0)),
-    PICKUP_DOUBLE_SUBSTATION_CUBE(Rotation2d.fromDegrees(0)),
-    STOW(Rotation2d.fromDegrees(0));
+  public static enum WristControlState {
+    SEEKING,
+    IDLE
+  }
 
-    private final Rotation2d goalAngle;
-        private WristGoal(Rotation2d goalAngle) {
+  public static enum WristGoal{
+    PLACE_HYBRID(WristGoalType.PLACE, Rotation2d.fromDegrees(0)),
+    PLACE_CONE_MID(WristGoalType.PLACE, Rotation2d.fromDegrees(0)),
+    PLACE_CONE_HIGH(WristGoalType.PLACE, Rotation2d.fromDegrees(0)),
+    PLACE_CUBE_MID(WristGoalType.PLACE, Rotation2d.fromDegrees(0)),
+    PLACE_CUBE_HIGH(WristGoalType.PLACE, Rotation2d.fromDegrees(0)),
+    PICKUP_GROUND_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(0)),
+    PICKUP_GROUND_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(0)),
+    PICKUP_SINGLE_SUBSTATION_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(0)),
+    PICKUP_SINGLE_SUBSTATION_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(0)),
+    PICKUP_DOUBLE_SUBSTATION_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(0)),
+    PICKUP_DOUBLE_SUBSTATION_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(0)),
+    STOW(WristGoalType.STOW, Rotation2d.fromDegrees(0));
+
+        private final Rotation2d goalAngle;
+        private final WristGoalType goalType;
+        private WristGoal(WristGoalType goalType, Rotation2d goalAngle) {
             this.goalAngle = goalAngle;
+            this.goalType = goalType;
         }
 
-        public Rotation2d getgoalAngle() {
+        public Rotation2d getGoalAngle() {
             return goalAngle;
         }
+
+        public WristGoalType getGoalType() {
+            return goalType;
+        }
+
+      public static enum WristGoalType {
+        PLACE,
+        PICKUP,
+        STOW,
+        UNKNOWN
+      }
   }
 
 

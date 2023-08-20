@@ -358,7 +358,7 @@ public class Hand extends SubsystemBase {
     PICKUP_SINGLE_SUBSTATION_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(0)),
     PICKUP_DOUBLE_SUBSTATION_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(0)),
     PICKUP_DOUBLE_SUBSTATION_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(0)),
-    STOW(WristGoalType.STOW, Rotation2d.fromDegrees(0));
+    STOW(WristGoalType.STOW, Rotation2d.fromDegrees(90));
 
         private final Rotation2d goalAngle;
         private final WristGoalType goalType;

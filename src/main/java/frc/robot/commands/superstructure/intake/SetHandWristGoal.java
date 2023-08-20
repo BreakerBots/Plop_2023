@@ -6,7 +6,7 @@ package frc.robot.commands.superstructure.intake;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.HandConstants;
 import frc.robot.subsystems.Hand;
 import frc.robot.subsystems.Hand.WristGoal;
 import frc.robot.BreakerLib.util.logging.BreakerLog;
@@ -39,7 +39,7 @@ public class SetHandWristGoal extends CommandBase {
 
   @Override
   public void execute() {
-      if (!isInstant && timer.hasElapsed(IntakeConstants.WRIST_SET_GOAL_COMMAND_TIMEOUT_SEC)) {
+      if (!isInstant && timer.hasElapsed(HandConstants.WRIST_SET_GOAL_COMMAND_TIMEOUT_SEC)) {
         this.cancel();
       }
   }

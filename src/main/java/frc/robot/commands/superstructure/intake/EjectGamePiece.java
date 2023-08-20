@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.HandConstants;
 import frc.robot.commands.superstructure.intake.SetHandRollerState.IntakeRollerStateRequest;
 import frc.robot.BreakerLib.util.logging.BreakerLog;
 import frc.robot.subsystems.Hand;
@@ -31,7 +31,7 @@ public class EjectGamePiece extends SequentialCommandGroup {
       }
       ),
       new SetHandRollerState(hand, IntakeRollerStateRequest.EXTAKE),
-      new ParallelRaceGroup(new SequentialCommandGroup(new WaitUntilCommand(() -> !hand.hasGamePiece()), new WaitCommand(IntakeConstants.EJECT_COMMAND_CUTOFF_TRALING_DELAY)), new WaitCommand(IntakeConstants.EJECT_COMMAND_CUTOFF_TIMEOUT)),
+      new ParallelRaceGroup(new SequentialCommandGroup(new WaitUntilCommand(() -> !hand.hasGamePiece()), new WaitCommand(HandConstants.EJECT_COMMAND_CUTOFF_TRALING_DELAY)), new WaitCommand(HandConstants.EJECT_COMMAND_CUTOFF_TIMEOUT)),
       new SetHandRollerState(hand, IntakeRollerStateRequest.STOP),
       new InstantCommand(() -> {if (hand.hasGamePiece()) { BreakerLog.logSuperstructureEvent("GAME PIECE EJECTION PROCEDURE FAILED, GAME PIECE NOT PROPERLY EJECTED, COMMMAND TIMED OUT"); } else { BreakerLog.logSuperstructureEvent("GAME PIECE EJECTION PROCEDURE SUCESSFULL, GAME PIECE EJECTED");}})
     );

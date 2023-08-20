@@ -28,6 +28,7 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -48,7 +49,7 @@ import frc.robot.BreakerLib.util.logging.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import frc.robot.BreakerLib.util.test.selftest.SystemDiagnostics;
-import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.HandConstants;
 import frc.robot.subsystems.Hand.RollerState.RollerStateType;
 import frc.robot.subsystems.Hand.WristGoal.WristGoalType;
 
@@ -73,18 +74,18 @@ public class Hand extends SubsystemBase {
 
   private final SystemDiagnostics diagnostics;
   public Hand() {
-    wristMotor = new CANSparkMax(IntakeConstants.ACTUATOR_ID, MotorType.kBrushless);
-    rollerMotor = new CANSparkMax(IntakeConstants.ROLLER_ID, MotorType.kBrushless);
-    coneBeamBrake = new BreakerBeamBreak(IntakeConstants.CONE_BEAM_BRAKE_DIO_PORT, IntakeConstants.BEAM_BRAKE_BROKEN_ON_TRUE);
-    cubeBeamBrake = new BreakerBeamBreak(IntakeConstants.CUBE_BEAM_BRAKE_DIO_PORT, IntakeConstants.BEAM_BRAKE_BROKEN_ON_TRUE);
+    wristMotor = new CANSparkMax(HandConstants.WRIST_ID, MotorType.kBrushless);
+    rollerMotor = new CANSparkMax(HandConstants.ROLLER_ID, MotorType.kBrushless);
+    coneBeamBrake = new BreakerBeamBreak(HandConstants.CONE_BEAM_BRAKE_DIO_PORT, HandConstants.BEAM_BRAKE_BROKEN_ON_TRUE);
+    cubeBeamBrake = new BreakerBeamBreak(HandConstants.CUBE_BEAM_BRAKE_DIO_PORT, HandConstants.BEAM_BRAKE_BROKEN_ON_TRUE);
     
-    wristMotor.setSmartCurrentLimit(IntakeConstants.ACTUATOR_CURRENT_LIMIT);
-    wristMotor.setInverted(IntakeConstants.INVERT_ACTUATOR);
+    wristMotor.setSmartCurrentLimit(HandConstants.WRIST_CURRENT_LIMIT);
+    wristMotor.setInverted(HandConstants.INVERT_WRIST);
     wristMotor.setIdleMode(IdleMode.kBrake);
     wristMotor.enableVoltageCompensation(12.0);
     
 
-    rollerMotor.setInverted(IntakeConstants.INVERT_ROLLER);
+    rollerMotor.setInverted(HandConstants.INVERT_ROLLER);
     rollerMotor.setIdleMode(IdleMode.kBrake);
     rollerMotor.enableVoltageCompensation(12.0);
 
@@ -93,8 +94,8 @@ public class Hand extends SubsystemBase {
     retractLimitSwich = wristMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
     retractLimitSwich.enableLimitSwitch(true);
 
-    pid = new ProfiledPIDController(0, 0, 0, null);
-    ff = new ArmFeedforward(0, 0, 0, 0);
+    pid = new ProfiledPIDController(HandConstants.WRIST_KP, HandConstants.WRIST_KI, HandConstants.WRIST_KD, new Constraints(HandConstants.WRIST_MAX_VELOCITY_RADS, HandConstants.WRIST_MAX_ACCELERATION_RADS_PER_SEC));
+    ff = new ArmFeedforward(HandConstants.WRIST_KS, HandConstants.WRIST_KG, HandConstants.WRIST_KV, HandConstants.WRIST_KA);
     rollerState = RollerState.NEUTRAL;
     wristControlState = WristControlState.SEEKING;
 
@@ -183,38 +184,38 @@ public class Hand extends SubsystemBase {
   public void rollerIntakeCone() {
     if (wristGoalType == WristGoalType.PICKUP && !hasGamePiece()) {
       rollerState = RollerState.INTAKEING_CONE;
-      setRollerMotor(IntakeConstants.INTAKE_CONE_DUTY_CYCLE, IntakeConstants.INTAKE_CONE_CURENT_LIMIT);
+      setRollerMotor(HandConstants.INTAKE_CONE_DUTY_CYCLE, HandConstants.INTAKE_CONE_CURENT_LIMIT);
     }
   }
 
   public void rollerIntakeCube() {
     if (wristGoalType == WristGoalType.PICKUP && !hasGamePiece()) {
       rollerState = RollerState.INTAKEING_CUBE;
-      setRollerMotor(IntakeConstants.INTAKE_CUBE_DUTY_CYCLE, IntakeConstants.INTAKE_CUBE_CURENT_LIMIT);
+      setRollerMotor(HandConstants.INTAKE_CUBE_DUTY_CYCLE, HandConstants.INTAKE_CUBE_CURENT_LIMIT);
     }
   }
 
   public void rollerExtakeCone() {
     if ((wristGoalType != WristGoalType.STOW || wristGoalType != WristGoalType.UNKNOWN) && getControledGamePieceType() == ControledGamePieceType.CONE) {
       rollerState = RollerState.EXTAKEING_CONE;
-      setRollerMotor(IntakeConstants.EXTAKE_CONE_DUTY_CYCLE, IntakeConstants.EXTAKE_CONE_CURENT_LIMIT);
+      setRollerMotor(HandConstants.EXTAKE_CONE_DUTY_CYCLE, HandConstants.EXTAKE_CONE_CURENT_LIMIT);
     }
   }
 
   public void rollerExtakeCube() {
     if ((wristGoalType != WristGoalType.STOW || wristGoalType != WristGoalType.UNKNOWN) && getControledGamePieceType() == ControledGamePieceType.CUBE) {
       rollerState = RollerState.EXTAKEING_CUBE;
-      setRollerMotor(IntakeConstants.EXTAKE_CUBE_DUTY_CYCLE, IntakeConstants.EXTAKE_CUBE_CURENT_LIMIT);
+      setRollerMotor(HandConstants.EXTAKE_CUBE_DUTY_CYCLE, HandConstants.EXTAKE_CUBE_CURENT_LIMIT);
     }
   }
 
   private void rollerGrippCone() {
-    setRollerMotor(IntakeConstants.INTAKE_CONE_GRIP_DUTY_CYCLE, IntakeConstants.INTAKE_CONE_GRIP_CURENT_LIMIT);
+    setRollerMotor(HandConstants.INTAKE_CONE_GRIP_DUTY_CYCLE, HandConstants.INTAKE_CONE_GRIP_CURENT_LIMIT);
     rollerState = RollerState.GRIPPING_CONE;
   }
 
   private void rollerGrippCube() {
-    setRollerMotor(IntakeConstants.INTAKE_CUBE_GRIP_DUTY_CYCLE, IntakeConstants.INTAKE_CUBE_GRIP_CURENT_LIMIT);
+    setRollerMotor(HandConstants.INTAKE_CUBE_GRIP_DUTY_CYCLE, HandConstants.INTAKE_CUBE_GRIP_CURENT_LIMIT);
     rollerState = RollerState.GRIPPING_CUBE;
   }
 

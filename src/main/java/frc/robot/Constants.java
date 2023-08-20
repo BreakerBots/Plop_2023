@@ -223,20 +223,34 @@ public final class Constants {
 
   }
 
-  public static final class IntakeConstants {
-      public static final int ACTUATOR_ID = 40;
+  public static final class HandConstants {
+      public static final int WRIST_ID = 40;
       public static final int ROLLER_ID = 41;
       public static final int CONE_BEAM_BRAKE_DIO_PORT = 0;
       public static final int CUBE_BEAM_BRAKE_DIO_PORT = 1;
       public static final boolean BEAM_BRAKE_BROKEN_ON_TRUE = true;
 
-      public static final boolean INVERT_ACTUATOR = false;
+      public static final boolean INVERT_WRIST = false;
       public static final boolean INVERT_ROLLER= false;
 
-      public static final int ACTUATOR_CURRENT_LIMIT = 25;
+      public static final int WRIST_CURRENT_LIMIT = 25;
 
-      public static final double ACTUATOR_EXTEND_DUTY_CYCLE = 0.45;
-      public static final double ACTUATOR_RETRACT_DUTY_CYCLE = -0.45;
+      public static final double WRIST_EXTEND_DUTY_CYCLE = 0.45;
+      public static final double WRIST_RETRACT_DUTY_CYCLE = -0.45;
+
+      public static final double WRIST_KP = 20.0;
+      public static final double WRIST_KI = 0.00;
+      public static final double WRIST_KD = 0.00;
+
+      //Feedfoward Constants
+      public static final double WRIST_KS = 0.00;
+      public static final double WRIST_KG = -0.4;
+      public static final double WRIST_KV = 1.84;
+      public static final double WRIST_KA = 0.00;
+
+      //Trapezodial Profile Constants
+     public static final double WRIST_MAX_VELOCITY_RADS = 3;
+     public static final double WRIST_MAX_ACCELERATION_RADS_PER_SEC = 3.75;
 
       // Roller state constants
       public static final double INTAKE_CONE_DUTY_CYCLE = -0.5;

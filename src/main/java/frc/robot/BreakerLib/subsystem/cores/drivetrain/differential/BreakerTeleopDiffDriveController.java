@@ -10,7 +10,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerGenericGamepad;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.BreakerDiffDriveBase.BreakerDiffDriveBaseMovementPrefrences;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.BreakerDiffDrive.BreakerDiffDriveMovementPrefrences;
 import frc.robot.BreakerLib.util.math.functions.BreakerGenericMathFunction;
 
 public class BreakerTeleopDiffDriveController extends CommandBase {
@@ -22,7 +22,7 @@ public class BreakerTeleopDiffDriveController extends CommandBase {
   private SlewRateLimiter netRateLimiter, turnRateLimiter;
   private DoubleSupplier netSpeedPrecentSupplier, turnSpeedPrecentSupplier, overrideNetSup, overrideTurnSup;
   private final double DEFAULT_DEADBAND = 0.02;
-  private final BreakerDiffDriveBaseMovementPrefrences movementPrefrences = new BreakerDiffDriveBaseMovementPrefrences(true, );
+  private final BreakerDiffDriveMovementPrefrences movementPrefrences = new BreakerDiffDriveMovementPrefrences(true, );
   public BreakerTeleopDiffDriveController(BreakerDiffDrive baseDrivetrain, BreakerGenericGamepad controller) {
     this.controller = controller;
     this.baseDrivetrain = baseDrivetrain;

@@ -12,15 +12,15 @@ public enum SuperstructurePositionState {
     PLACE_HYBRID(ElevatorTargetState.PLACE_HYBRID, WristGoal.PLACE_HYBRID),
     PLACE_CONE_MID(ElevatorTargetState.PLACE_CONE_MID, WristGoal.PLACE_CONE_MID),
     PLACE_CONE_HIGH(ElevatorTargetState.PLACE_CONE_HIGH, WristGoal.PLACE_CONE_HIGH),
-    PLACE_CUBE_MID(WristGoalType.PLACE, Rotation2d.fromDegrees(0)),
-    PLACE_CUBE_HIGH(WristGoalType.PLACE, Rotation2d.fromDegrees(0)),
-    PICKUP_GROUND_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(0)),
-    PICKUP_GROUND_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(0)),
-    PICKUP_SINGLE_SUBSTATION_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(0)),
-    PICKUP_SINGLE_SUBSTATION_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(0)),
-    PICKUP_DOUBLE_SUBSTATION_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(0)),
-    PICKUP_DOUBLE_SUBSTATION_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(0)),
-    STOW(WristGoalType.STOW, Rotation2d.fromDegrees(0));
+    PLACE_CUBE_MID(ElevatorTargetState.PLACE_CUBE_MID, WristGoal.PLACE_CUBE_MID),
+    PLACE_CUBE_HIGH(ElevatorTargetState.PLACE_CUBE_HIGH, WristGoal.PLACE_CUBE_HIGH),
+    PICKUP_GROUND_CONE(ElevatorTargetState.PICKUP_GROUND_CONE, WristGoal.PICKUP_GROUND_CONE),
+    PICKUP_GROUND_CUBE(ElevatorTargetState.PICKUP_GROUND_CUBE, WristGoal.PICKUP_GROUND_CUBE),
+    PICKUP_SINGLE_SUBSTATION_CONE(ElevatorTargetState.PICKUP_SINGLE_SUBSTATION_CONE, WristGoal.PICKUP_SINGLE_SUBSTATION_CONE),
+    PICKUP_SINGLE_SUBSTATION_CUBE(ElevatorTargetState.PICKUP_SINGLE_SUBSTATION_CUBE, WristGoal.PICKUP_SINGLE_SUBSTATION_CUBE),
+    PICKUP_DOUBLE_SUBSTATION_CONE(ElevatorTargetState.PICKUP_DOUBLE_SUBSTATION_CONE, WristGoal.PICKUP_DOUBLE_SUBSTATION_CONE),
+    PICKUP_DOUBLE_SUBSTATION_CUBE(ElevatorTargetState.PICKUP_DOUBLE_SUBSTATION_CUBE, WristGoal.PICKUP_DOUBLE_SUBSTATION_CUBE),
+    STOW(ElevatorTargetState.STOW, WristGoal.STOW);
 
     private final ElevatorTargetState elevatorTargetState;
     private final WristGoal wristGoal;

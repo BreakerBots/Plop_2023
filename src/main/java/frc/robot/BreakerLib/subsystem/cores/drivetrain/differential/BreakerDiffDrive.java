@@ -206,30 +206,33 @@ public class BreakerDiffDrive extends BreakerGenericDrivetrain {
   }
 
   public static class BreakerDiffDriveMovementPrefrences {
-    protected final boolean squareInputsEnabled, headingCorrectionEnabled;
+    protected final boolean squareInputsEnabled /*, headingCorrectionEnabled */;
     protected final double inputDeadband;
     protected final SlowModeValue slowModeValue;
     public BreakerDiffDriveMovementPrefrences(boolean squareInputsEnabled, double inputDeadband, SlowModeValue slowModeValue) {
-      this(false, squareInputsEnabled, inputDeadband, slowModeValue);
-    }
-
-    protected BreakerDiffDriveMovementPrefrences(boolean headingCorrectionEnabled, boolean squareInputsEnabled, double inputDeadband, SlowModeValue slowModeValue) {
-      this.headingCorrectionEnabled = headingCorrectionEnabled;
       this.squareInputsEnabled = squareInputsEnabled;
       this.slowModeValue = slowModeValue;
       this.inputDeadband = inputDeadband;
+      //this(false, squareInputsEnabled, inputDeadband, slowModeValue);
     }
 
+    // protected BreakerDiffDriveMovementPrefrences(boolean headingCorrectionEnabled, boolean squareInputsEnabled, double inputDeadband, SlowModeValue slowModeValue) {
+    //   this.headingCorrectionEnabled = headingCorrectionEnabled;
+    //   this.squareInputsEnabled = squareInputsEnabled;
+    //   this.slowModeValue = slowModeValue;
+    //   this.inputDeadband = inputDeadband;
+    // }
+
     public BreakerDiffDriveMovementPrefrences withSquareInputsEnabled(boolean isEnabled) {
-      return new BreakerDiffDriveMovementPrefrences(headingCorrectionEnabled, squareInputsEnabled, inputDeadband, slowModeValue);
+      return new BreakerDiffDriveMovementPrefrences(/*headingCorrectionEnabled,*/ squareInputsEnabled, inputDeadband, slowModeValue);
     }
 
     public BreakerDiffDriveMovementPrefrences withSlowModeValue(SlowModeValue slowModeValue) {
-      return new BreakerDiffDriveMovementPrefrences(headingCorrectionEnabled, squareInputsEnabled, inputDeadband, slowModeValue);
+      return new BreakerDiffDriveMovementPrefrences(/*headingCorrectionEnabled,*/ squareInputsEnabled, inputDeadband, slowModeValue);
     }
 
     public BreakerDiffDriveMovementPrefrences withInputDeadband(double deadband) {
-      return new BreakerDiffDriveMovementPrefrences(headingCorrectionEnabled, squareInputsEnabled, deadband, slowModeValue);
+      return new BreakerDiffDriveMovementPrefrences(/*headingCorrectionEnabled,*/ squareInputsEnabled, deadband, slowModeValue);
     }
 
     public SlowModeValue getSlowModeValue() {
@@ -240,9 +243,9 @@ public class BreakerDiffDrive extends BreakerGenericDrivetrain {
         return squareInputsEnabled;
     }
 
-    public boolean getHeadingCorrectionEnabled() {
-        return headingCorrectionEnabled;
-    }
+    // public boolean getHeadingCorrectionEnabled() {
+    //     return headingCorrectionEnabled;
+    // }
 
     public double getInputDeadband() {
         return inputDeadband;

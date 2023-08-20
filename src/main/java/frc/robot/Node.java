@@ -13,7 +13,7 @@ import static frc.robot.Constants.ScoreingConstants.*;
 
  /** Add your docs here. */
 public enum Node {
-    //-------------------- BLUE LEFT GROUP --------------------
+    //-------------------- BLUE RIGHT GROUP --------------------
     C0_L(NodeCoulmn.C0, NodeHeight.LOW, NodeType.HYBRID),
     C0_M(NodeCoulmn.C0, NodeHeight.MID, NodeType.CONE),
     C0_H(NodeCoulmn.C0, NodeHeight.HIGH, NodeType.CONE),
@@ -37,7 +37,7 @@ public enum Node {
     C5_L(NodeCoulmn.C5, NodeHeight.LOW, NodeType.HYBRID),
     C5_M(NodeCoulmn.C5, NodeHeight.MID, NodeType.CONE),
     C5_H(NodeCoulmn.C5, NodeHeight.HIGH, NodeType.CONE),
-    //-------------------- BLUE RIGHT GROUP --------------------
+    //-------------------- BLUE LEFT GROUP --------------------
     C6_L(NodeCoulmn.C6, NodeHeight.LOW, NodeType.HYBRID),
     C6_M(NodeCoulmn.C6, NodeHeight.MID, NodeType.CONE),
     C6_H(NodeCoulmn.C6, NodeHeight.HIGH, NodeType.CONE),
@@ -84,7 +84,7 @@ public enum Node {
         return Optional.empty();
     }
     public enum NodeCoulmn {
-        C0(C0_BASE_ALLIGNMENT_POSE), //Far left for blue driver, far right for red
+        C0(C0_BASE_ALLIGNMENT_POSE), //Far right for blue driver, far left for red
         C1(C1_BASE_ALLIGNMENT_POSE),
         C2(C2_BASE_ALLIGNMENT_POSE),
         C3(C3_BASE_ALLIGNMENT_POSE),

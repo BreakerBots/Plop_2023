@@ -323,12 +323,12 @@ public final class Constants {
   }
 
   public static final class ScoreingConstants {
-      public static final int BLUE_LEFT_NODE_GROUP_CENTRAL_COULMN_ORDINAL = 1;
+      public static final int BLUE_LEFT_NODE_GROUP_CENTRAL_COULMN_ORDINAL = 7;
       public static final int BLUE_CENTER_NODE_GROUP_CENTRAL_COULMN_ORDINAL = 4;
-      public static final int BLUE_RIGHT_NODE_GROUP_CENTRAL_COULMN_ORDINAL = 7;
-      public static final int RED_LEFT_NODE_GROUP_CENTRAL_COULMN_ORDINAL = 7;
+      public static final int BLUE_RIGHT_NODE_GROUP_CENTRAL_COULMN_ORDINAL = 1;
+      public static final int RED_LEFT_NODE_GROUP_CENTRAL_COULMN_ORDINAL = 1;
       public static final int RED_CENTER_NODE_GROUP_CENTRAL_COULMN_ORDINAL = 4;
-      public static final int RED_RIGHT_NODE_GROUP_CENTRAL_COULMN_ORDINAL = 1;
+      public static final int RED_RIGHT_NODE_GROUP_CENTRAL_COULMN_ORDINAL = 7;
       public static final double TELEOP_SCOREING_MOVE_TO_POSE_MAX_LINEAR_VEL = 3.0;
 
       public static final double INTER_NODE_GOUP_Y_OFFSET = Units.inchesToMeters(66.0);

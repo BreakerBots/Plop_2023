@@ -5,46 +5,25 @@
 package frc.robot.subsystems;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
-import com.ctre.phoenix6.signals.ForwardLimitTypeValue;
-import com.ctre.phoenix6.signals.ForwardLimitValue;
-import com.ctre.phoenix6.signals.ReverseLimitSourceValue;
-import com.ctre.phoenix6.signals.ReverseLimitTypeValue;
-import com.ctre.phoenix6.signals.ReverseLimitValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.math.Drake;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.PIDSubsystem;
-import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
-import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.GamePieceType;
 import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
 import frc.robot.BreakerLib.driverstation.dashboard.BreakerDashboard;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.BreakerSwerveCANcoder;
-import frc.robot.BreakerLib.util.BreakerRoboRIO;
 import frc.robot.BreakerLib.util.logging.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
@@ -71,6 +50,8 @@ public class Hand extends SubsystemBase {
   private Rotation2d wristGoal;
   private WristGoalType wristGoalType;
   private CANcoder encoder;
+
+  private ControledGamePieceType prevControledGamePieceType;
 
   private final SystemDiagnostics diagnostics;
   public Hand() {
@@ -107,6 +88,7 @@ public class Hand extends SubsystemBase {
     BreakerDashboard.getMainTab().add("INTAKE", this);
 
     wristGoal = getWristRotation();
+    prevControledGamePieceType = ControledGamePieceType.NONE;
   }
 
   private void setRollerMotor(double dutyCycle, int currentLimit) {
@@ -241,7 +223,10 @@ public class Hand extends SubsystemBase {
   }
  
   private void calculateAndApplyPIDF() {
-    pid.calculate(getWristRotation().getRadians(), wristGoal.getRotations());
+    double pidOutput = pid.calculate(getWristRotation().getRadians(), wristGoal.getRotations());
+    State profiledSetpoint = pid.getSetpoint();
+    double ffOutput =  ff.calculate(profiledSetpoint.position, profiledSetpoint.velocity);
+    wristMotor.setVoltage(pidOutput + ffOutput);
   }
 
   public boolean atWristGoal() {
@@ -274,6 +259,19 @@ public class Hand extends SubsystemBase {
     } else {
       privateSetWristGoal(WristGoalType.UNKNOWN, getWristRotation());
       stopRoller();
+    }
+
+    ControledGamePieceType curControledGamePieceType = getControledGamePieceType();
+    if (curControledGamePieceType != prevControledGamePieceType) {
+      if (curControledGamePieceType == ControledGamePieceType.CONE || curControledGamePieceType == ControledGamePieceType.CUBE) {
+        BreakerLog.logSuperstructureEvent("ROBOT AQUIRED NEW GAME PIECE: " + curControledGamePieceType.toString());
+      } else if (curControledGamePieceType == ControledGamePieceType.NONE && prevControledGamePieceType != ControledGamePieceType.ERROR) {
+        BreakerLog.logSuperstructureEvent("ROBOT EJECTED GAME PIECE: " + prevControledGamePieceType.toString());
+      } else if (prevControledGamePieceType == ControledGamePieceType.ERROR) {
+        BreakerLog.logSuperstructureEvent("INTAKE BEAM BREAKS EXITED ERROR STATE, CURRENT GAME PIECE: " + curControledGamePieceType.toString());
+      } else {
+        BreakerLog.logSuperstructureEvent("INTKAE BEAM BREAKS ENTERED ERROR STATE");
+      }
     }
     
   }

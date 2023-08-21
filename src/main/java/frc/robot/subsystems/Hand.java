@@ -83,7 +83,6 @@ public class Hand extends SubsystemBase {
     wristMotor.setInverted(HandConstants.INVERT_WRIST);
     wristMotor.setIdleMode(IdleMode.kBrake);
     wristMotor.enableVoltageCompensation(12.0);
-    
 
     rollerMotor.setInverted(HandConstants.INVERT_ROLLER);
     rollerMotor.setIdleMode(IdleMode.kBrake);

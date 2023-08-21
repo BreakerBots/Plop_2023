@@ -217,6 +217,7 @@ public final class Constants {
       //Misc
       public static final double CALIBRATION_DUTY_CYCLE = 0.2;
       public static final double HIGHT_TOLARENCE = 0.01;
+      public static final double MAX_SAFE_VEL = 0.0;
 
       //Command configs
       public static final double MOVE_TO_HEIGHT_COMMAND_TIMEOUT = 5.0;

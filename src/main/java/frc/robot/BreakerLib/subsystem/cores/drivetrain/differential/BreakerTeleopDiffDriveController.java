@@ -10,6 +10,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerGenericGamepad;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain.SlowModeValue;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.BreakerDiffDrive.BreakerDiffDriveMovementPrefrences;
 import frc.robot.BreakerLib.util.math.functions.BreakerGenericMathFunction;
 
@@ -22,7 +23,7 @@ public class BreakerTeleopDiffDriveController extends CommandBase {
   private SlewRateLimiter netRateLimiter, turnRateLimiter;
   private DoubleSupplier netSpeedPrecentSupplier, turnSpeedPrecentSupplier, overrideNetSup, overrideTurnSup;
   private final double DEFAULT_DEADBAND = 0.02;
-  private final BreakerDiffDriveMovementPrefrences movementPrefrences = new BreakerDiffDriveMovementPrefrences(true, );
+  private final BreakerDiffDriveMovementPrefrences movementPrefrences = new BreakerDiffDriveMovementPrefrences(true, 0.1, SlowModeValue.DEFAULT);
   public BreakerTeleopDiffDriveController(BreakerDiffDrive baseDrivetrain, BreakerGenericGamepad controller) {
     this.controller = controller;
     this.baseDrivetrain = baseDrivetrain;
@@ -100,7 +101,7 @@ public class BreakerTeleopDiffDriveController extends CommandBase {
       turn = overrideTurnSup.getAsDouble();
     }
 
-    baseDrivetrain.arcadeDrive(MathUtil.clamp(net, -1.0, 1.0), MathUtil.clamp(turn, -1.0, 1.0));
+    baseDrivetrain.arcadeDrive(MathUtil.clamp(net, -1.0, 1.0), MathUtil.clamp(turn, -1.0, 1.0), movementPrefrences);
   }
 
   public void overrideInputs(DoubleSupplier netSpeedSupplier, DoubleSupplier turnSpeedSupplier) {

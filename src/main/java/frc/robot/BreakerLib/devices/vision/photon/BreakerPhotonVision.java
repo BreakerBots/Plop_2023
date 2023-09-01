@@ -7,6 +7,8 @@ package frc.robot.BreakerLib.devices.vision.photon;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import edu.wpi.first.apriltag.AprilTag;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -22,12 +24,12 @@ public class BreakerPhotonVision implements BreakerGenericOdometer {
     private BreakerPhotonCamera[] cameras;
     private BreakerVisionPoseFilter poseFilter;
     private BreakerVisionPoseFilterOdometer odometer;
-    public BreakerPhotonVision(double poseFilterTrustCoef, double poseFilterMaxUncertanty, BreakerPhotonCamera[] cameras, HashMap<Integer, Pose3d> fiducialTargetIDsAndPoses) {
-        targets = new BreakerFiducialPhotonTarget[fiducialTargetIDsAndPoses.size()];
+    public BreakerPhotonVision(double poseFilterTrustCoef, double poseFilterMaxUncertanty, BreakerPhotonCamera[] cameras, AprilTagFieldLayout aprilTagFieldLayout) {
+        targets = new BreakerFiducialPhotonTarget[aprilTagFieldLayout.getTags().size()];
         this.cameras = cameras;
         int i = 0;
-        for (Entry<Integer, Pose3d> ent: fiducialTargetIDsAndPoses.entrySet()) {
-            targets[i] = new BreakerFiducialPhotonTarget(ent.getKey(), ent.getValue(), cameras);
+        for (AprilTag at: aprilTagFieldLayout.getTags()) {
+            targets[i] = new BreakerFiducialPhotonTarget(at, cameras);
             i++;
         }
 
@@ -35,12 +37,12 @@ public class BreakerPhotonVision implements BreakerGenericOdometer {
         odometer = new BreakerVisionPoseFilterOdometer(poseFilter);
     }
 
-    public BreakerPhotonVision(double poseFilterTrustCoef, double poseFilterMaxUncertanty, double distanceScailFactor, double maxDistance, BreakerPhotonCamera[] cameras, HashMap<Integer, Pose3d> fiducialTargetIDsAndPoses) {
-        targets = new BreakerFiducialPhotonTarget[fiducialTargetIDsAndPoses.size()];
+    public BreakerPhotonVision(double poseFilterTrustCoef, double poseFilterMaxUncertanty, double distanceScailFactor, double maxDistance, BreakerPhotonCamera[] cameras, AprilTagFieldLayout aprilTagFieldLayout) {
+        targets = new BreakerFiducialPhotonTarget[aprilTagFieldLayout.getTags().size()];
         this.cameras = cameras;
         int i = 0;
-        for (Entry<Integer, Pose3d> ent: fiducialTargetIDsAndPoses.entrySet()) {
-            targets[i] = new BreakerFiducialPhotonTarget(ent.getKey(), ent.getValue(), cameras);
+        for (AprilTag at: aprilTagFieldLayout.getTags()) {
+            targets[i] = new BreakerFiducialPhotonTarget(at, cameras);
             i++;
         }
 

@@ -4,12 +4,15 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.sim.ChassisReference;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -136,7 +139,7 @@ public final class Constants {
       public static final double HEADING_COMPENSATION_ANGULAR_VEL_DEADBAND = 0.005;
       public static final double HEADING_COMPENSATION_MIN_ACTIVE_LINEAR_VEL = 0.01;
       public static final BreakerSwerveDriveBaseConfig DRIVE_BASE_CONFIG = new BreakerSwerveDriveBaseConfig(
-      MAX_LINEAR_VEL, MAX_LINEAR_VEL, MAX_ANGULAR_VEL, 
+      MAX_LINEAR_VEL, MAX_ANGULAR_VEL, 
       HEADING_COMPENSATION_ANGULAR_VEL_DEADBAND, HEADING_COMPENSATION_MIN_ACTIVE_LINEAR_VEL, 
       MODULE_WHEEL_SPEED_DEADBAND, MAX_ATTAINABLE_MODULE_WHEEL_SPEED, 
       X_PID, Y_PID, THETA_PID)
@@ -215,7 +218,9 @@ public final class Constants {
       public static final double MIN_ROT = MIN_HEIGHT / MOTOR_ROT_TO_METERS_SCALAR;
 
       //Misc
-      public static final double CALIBRATION_DUTY_CYCLE = 0.2;
+      public static final double BOTTOM_CALIBRATION_DUTY_CYCLE = -0.2;
+      public static final double TOP_CALIBRATION_DUTY_CYCLE = 0.2;
+      public static final double CALIBRATION_PAHSE_TIMEOUT = 7.5;
       public static final double HIGHT_TOLARENCE = 0.01;
       public static final double MAX_SAFE_VEL = 0.0;
 
@@ -272,6 +277,9 @@ public final class Constants {
       public static final double EXTAKE_CUBE_DUTY_CYCLE = -0.75;
       public static final int EXTAKE_CUBE_CURENT_LIMIT = 25;
 
+      public static final double CONE_TOF_MAX_DIST = 0.0;
+      public static final double CENTERED_CONE_TOF_DISTANCE = 0.0;
+
       // command constants
       public static final double EJECT_COMMAND_CUTOFF_TRALING_DELAY = 1.0;
       public static final double EJECT_COMMAND_CUTOFF_TIMEOUT = 4.0;
@@ -300,7 +308,17 @@ public final class Constants {
       public static final double POSE_FILTER_DISTANCE_SCALE_FACTOR = 0.75;
       public static final double POSE_FILTER_MAX_DISTANCE = 8.5;
 
-      public static final HashMap<Integer, Pose3d> APRILTAG_IDS_AND_LOCATIONS = new HashMap<Integer, Pose3d>();
+      public static final AprilTagFieldLayout APRILTAG_FIELD_LAYOUT = exceptionSafeReadApriltags();
+
+      private static AprilTagFieldLayout exceptionSafeReadApriltags() {
+        AprilTagFieldLayout layout;
+        try {
+            layout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
+        } catch (Exception e) {
+            layout = new AprilTagFieldLayout(new ArrayList<AprilTag>(), FieldConstants.FIELD_LENGTH_X, 8.001);
+        }
+        return layout;
+      }
   }
 
   public static final class MiscConstants {
@@ -309,6 +327,7 @@ public final class Constants {
       public static final double IMU_MOUNT_POSE_YAW = 0.0;
       public static final double IMU_MOUNT_POSE_ROLL = 0.0;
       public static final String CANIVORE_1 = "CANivore_1";
+      public static final boolean ALLOW_MANUAL_SCOREING_REALIGNMENT = true;
       // public static final double AUTO_BALANCE_MIN
   }
 

@@ -18,6 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.BreakerLib.devices.sensors.gyro.BreakerGenericGyro;
+import frc.robot.BreakerLib.physics.vector.BreakerVector2;
 import frc.robot.BreakerLib.position.movement.BreakerMovementState2d;
 import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
 import frc.robot.BreakerLib.position.odometry.swerve.BreakerSwerveDriveFusedVisionPoseEstimator;
@@ -210,7 +211,8 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain implements Brea
     double clampedX = MathUtil.clamp(percentX, -1.0, 1.0);
     double clampedY = MathUtil.clamp(percentY, -1.0, 1.0);
     double clampedOmega = MathUtil.clamp(percentOmega, -1.0, 1.0);
-    return new ChassisSpeeds(clampedX * config.getMaxForwardVel(), clampedY  * config.getMaxSidewaysVel(), clampedOmega * config.getMaxAngleVel());
+    BreakerVector2 linearVelVec = new BreakerVector2(clampedX, clampedY).times(config.getMaxLinearVel());
+    return new ChassisSpeeds(linearVelVec.getX(), linearVelVec.getY(), clampedOmega * config.getMaxAngleVel());
   }
 
   public SwerveDriveKinematics getKinematics() {

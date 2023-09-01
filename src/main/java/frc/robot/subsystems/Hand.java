@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import java.util.Optional;
 
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.playingwithfusion.TimeOfFlight.RangingMode;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -20,9 +21,12 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.AllianceManager;
 import frc.robot.GamePieceType;
 import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
+import frc.robot.BreakerLib.devices.sensors.rangefinder.BreakerSEN36005;
 import frc.robot.BreakerLib.driverstation.dashboard.BreakerDashboard;
 import frc.robot.BreakerLib.util.logging.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
@@ -49,7 +53,9 @@ public class Hand extends SubsystemBase {
   private WristControlState wristControlState;
   private Rotation2d wristGoal;
   private WristGoalType wristGoalType;
+
   private CANcoder encoder;
+  private BreakerSEN36005 coneTOF;
 
   private ControledGamePieceType prevControledGamePieceType;
 
@@ -87,8 +93,25 @@ public class Hand extends SubsystemBase {
     rollerMotor.burnFlash();
     BreakerDashboard.getMainTab().add("INTAKE", this);
 
+    coneTOF = new BreakerSEN36005(0);
+    coneTOF.setRangingMode(RangingMode.Short, 999);
+    coneTOF.setRangeOfInterest(9,9,11,11);
+
     wristGoal = getWristRotation();
     prevControledGamePieceType = ControledGamePieceType.NONE;
+  }
+
+  public Optional<Double> getConeOffset() {
+    Optional<Alliance> ally = AllianceManager.getAlliance();
+    double leftDist = coneTOF.getRange();
+    boolean invalidDist = leftDist >= HandConstants.CONE_TOF_MAX_DIST || !coneTOF.isRangeValid();
+    if (getControledGamePieceType() != ControledGamePieceType.CONE || invalidDist || ally.isEmpty()) {
+      return Optional.empty();
+    } else if (ally.get() == Alliance.Blue) {
+      return Optional.of((coneTOF.getRange() - HandConstants.CENTERED_CONE_TOF_DISTANCE) / 1000.0);
+    }
+    return Optional.of((HandConstants.CENTERED_CONE_TOF_DISTANCE - coneTOF.getRange()) / 1000.0);
+    // return Optional.of(pos + HandConstants.CONTROLED_CONE_AVG_RADIUS);
   }
 
   private void setRollerMotor(double dutyCycle, int currentLimit) {

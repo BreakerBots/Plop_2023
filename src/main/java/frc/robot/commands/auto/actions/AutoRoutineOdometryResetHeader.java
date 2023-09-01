@@ -21,7 +21,11 @@ public class AutoRoutineOdometryResetHeader extends CommandBase {
   private final Timer timer = new Timer();
   private boolean hasSetPose;
   public AutoRoutineOdometryResetHeader(Drive drivetrain, Vision vision, PathPlannerTrajectory trajectory, double waitForVisionTargetTimeout) {
-    // Use addRequirements() here to declare subsystem dependencies.
+    this.drivetrain = drivetrain;
+    this.vision = vision;
+    this.trajectory = trajectory;
+    this.waitForVisionTargetTimeout = waitForVisionTargetTimeout;
+    addRequirements(drivetrain);
   }
 
   // Called when the command is initially scheduled.

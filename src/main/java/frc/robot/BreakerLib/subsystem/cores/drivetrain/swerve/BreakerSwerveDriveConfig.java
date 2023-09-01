@@ -11,8 +11,7 @@ import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider;
 /** Config class for {@link BreakerLegacySwerveDrive}. */
 public class BreakerSwerveDriveConfig {
 
-    private double maxForwardVel;
-    private double maxSidewaysVel;
+    private double maxLinearVel;
     private double maxAngleVel;
     private double slowModeLinearMultiplier;
     private double slowModeTurnMultiplier;
@@ -32,10 +31,9 @@ public class BreakerSwerveDriveConfig {
      * @param wheelspeedDeadband             The min value (+/-) in m/s^2 that each modules wheel speed can be set too before being ingored
      * @param maxAttainableModuleWheelSpeed  The physical maximum speed (in m/s^2) your swerve modules are capable of achiving
      */
-    public BreakerSwerveDriveConfig(double maxForwardVel, double maxSidewaysVel, double maxAngVel, double moduleWheelSpeedDeadband, double maxAttainableModuleWheelSpeed) {
+    public BreakerSwerveDriveConfig(double maxLinearVel, double maxAngVel, double moduleWheelSpeedDeadband, double maxAttainableModuleWheelSpeed) {
 
-        this.maxForwardVel = maxForwardVel;
-        this.maxSidewaysVel = maxSidewaysVel;
+        this.maxLinearVel = maxLinearVel;
         this.maxAngleVel = maxAngVel;
         this.maxAttainableModuleWheelSpeed = maxAttainableModuleWheelSpeed;
         this.moduleWheelSpeedDeadband = moduleWheelSpeedDeadband;
@@ -55,14 +53,9 @@ public class BreakerSwerveDriveConfig {
         return this;
     }
 
-    /** @return Max forward velocity of swerve drive in m/s. Usually the same as max sideways velocity. */
-    public double getMaxForwardVel() {
-        return maxForwardVel;
-    }
-
-    /** @return Max sideways velocity of swerve drive in m/s. Usually the same as max forward velocity. */
-    public double getMaxSidewaysVel() {
-        return maxSidewaysVel;
+    /** @return Max linear velocity magnitude of swerve drive in m/s. Usually the same as max sideways velocity. */
+    public double getMaxLinearVel() {
+        return maxLinearVel;
     }
 
     /** @return Max angular velocity of swerve drive in rad/s.*/

@@ -10,6 +10,7 @@ import java.util.Objects;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -27,10 +28,9 @@ public class BreakerFiducialPhotonTarget extends SubsystemBase implements Breake
 
     private BreakerPhotonCamera camera;
     private BreakerPhotonCamera[] cameras;
-    private Pose3d targetPose;
     private boolean assignedTargetFound = false;
     private boolean assignedTargetFoundInCycle = false; 
-    private int fiducialID;
+    private final AprilTag aprilTag;
 
     /**
      * AprilTag/fiducial marker for cameras to track.
@@ -39,9 +39,8 @@ public class BreakerFiducialPhotonTarget extends SubsystemBase implements Breake
      * @param targetPose - The 3 dimensional orientation of the target relative the the field origin.
      * @param cameras - Any and all cameras that will be used to track the target.
      */
-    public BreakerFiducialPhotonTarget(int fiducialID, Pose3d targetPose, BreakerPhotonCamera... cameras) {
-        this.targetPose = targetPose;
-        this.fiducialID = fiducialID;
+    public BreakerFiducialPhotonTarget(AprilTag aprilTag, BreakerPhotonCamera... cameras) {
+        this.aprilTag = aprilTag;
         this.cameras = cameras;
     }
 
@@ -53,7 +52,7 @@ public class BreakerFiducialPhotonTarget extends SubsystemBase implements Breake
         for (BreakerPhotonCamera cam: cameras) { // Loops through all cameras
             if (cam.hasTargets()) {
                 for (PhotonTrackedTarget prospTgt: cam.getAllRawTrackedTargets()) { // Goes through all targets found
-                    if (!Objects.isNull(prospTgt) && prospTgt.getFiducialId() == fiducialID) {
+                    if (!Objects.isNull(prospTgt) && prospTgt.getFiducialId() == aprilTag.ID) {
                         assignedTargetFound = true;
                         if (!assignedTargetFoundInCycle) { // runs only if bestTgt has not been assigned this cycle
                             bestTgt = prospTgt;
@@ -70,6 +69,11 @@ public class BreakerFiducialPhotonTarget extends SubsystemBase implements Breake
         }
         assignedTarget = bestTgt;
         camera = bestCam;
+    }
+
+    @Override
+    public AprilTag getBaseApriltag() {
+        return aprilTag;
     }
 
     /** @return Timestamp of last target found. */
@@ -90,7 +94,7 @@ public class BreakerFiducialPhotonTarget extends SubsystemBase implements Breake
 
     /** @return 3d pose of camera. */
     public Pose3d getCameraPose3d() {
-        return targetPose.transformBy(assignedTarget.getBestCameraToTarget().inverse());
+        return aprilTag.pose.transformBy(assignedTarget.getBestCameraToTarget().inverse());
     }
 
     /** @return 2d pose of camera. */
@@ -165,7 +169,7 @@ public class BreakerFiducialPhotonTarget extends SubsystemBase implements Breake
 
     /** @return ID of fiducial target */
     public int getFiducialID() {
-        return fiducialID;
+        return aprilTag.ID;
     }
 
     /** @return Ambiguity of pose, from 0 to 1. 0 = most accurate, 1 = least accurate. Anything above 0.2 is likely inaccurate. */

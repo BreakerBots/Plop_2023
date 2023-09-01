@@ -84,6 +84,8 @@ public class Elevator extends SubsystemBase {
 
     private boolean isForceStoped = false;
 
+    private CalibrationRoutine calibrationRoutine;
+
    
     public Elevator() {
         leftMotor = new TalonFX(ElevatorConstants.LEFT_MOTOR_ID, MiscConstants.CANIVORE_1);
@@ -142,6 +144,7 @@ public class Elevator extends SubsystemBase {
         diagnostics.addPhoenix6TalonFXs(leftMotor, rightMotor);
         diagnostics.addSupplier(this::healthCheck);
 
+        calibrationRoutine = new CalibrationRoutine();
        // simManager = this.new ElevatorSimManager();
        BreakerDashboard.getMainTab().add(this);
     }
@@ -291,11 +294,8 @@ public class Elevator extends SubsystemBase {
                     break;
                 case CALIBRATING:
                     if (RobotBase.isReal()) {
-                        leftMotor.setControl(dutyCycleRequest.withOutput(ElevatorConstants.CALIBRATION_DUTY_CYCLE));
-                        if (getForwardLimitTriggered()) {
-                            currentState = ElevatorControlMode.AUTOMATIC;
-                            hasBeenCalibrated = true;
-                            BreakerLog.logSuperstructureEvent("Elevator zero-point calibration sucessfull");
+                        if (!calibrationRoutine.isScheduled() && DriverStation.isEnabled()) {
+                            calibrationRoutine.schedule();
                         }
                     } else {
                         currentState = ElevatorControlMode.AUTOMATIC;
@@ -316,6 +316,69 @@ public class Elevator extends SubsystemBase {
             rightMotor.setControl(lockRequest);
         }
     }
+
+    private class CalibrationRoutine extends CommandBase {
+        /** Creates a new CalibrationRoutine. */
+        private final Timer timer = new Timer();
+        private boolean bottomCalibration;
+        public CalibrationRoutine() {}
+      
+        // Called when the command is initially scheduled.
+        @Override
+        public void initialize() {
+            bottomCalibration = true;
+            timer.restart();
+        }
+      
+        // Called every time the scheduler runs while the command is scheduled.
+        @Override
+        public void execute() {
+
+            if (DriverStation.isDisabled()) {
+                this.cancel();
+            }
+
+            if (bottomCalibration) {
+                leftMotor.setControl(dutyCycleRequest.withOutput(ElevatorConstants.BOTTOM_CALIBRATION_DUTY_CYCLE));
+                if (timer.hasElapsed(ElevatorConstants.CALIBRATION_PAHSE_TIMEOUT)) {
+                    bottomCalibration = false;
+                }
+            } else {
+                leftMotor.setControl(dutyCycleRequest.withOutput(ElevatorConstants.BOTTOM_CALIBRATION_DUTY_CYCLE));
+                if (timer.hasElapsed(ElevatorConstants.CALIBRATION_PAHSE_TIMEOUT * 2)) {
+                    this.cancel();
+                }
+            }  
+        }
+      
+        // Called once the command ends or is interrupted.
+        @Override
+        public void end(boolean interrupted) {
+            if (interrupted) {
+                currentState = ElevatorControlMode.LOCKED;
+                hasBeenCalibrated = false;
+                BreakerLog.logSuperstructureEvent(String.format("Elevator zero-point calibration FAILED (timeout or robot disable) (Time: %.2f)", timer.get()));
+            } else {
+                currentState = ElevatorControlMode.AUTOMATIC;
+                hasBeenCalibrated = true;
+            }
+            timer.stop();
+        }
+      
+        // Returns true when the command should end.
+        @Override
+        public boolean isFinished() {
+            boolean topLim = getForwardLimitTriggered();
+            boolean botLim = getReverseLimitTriggered();
+            if (topLim) {
+                BreakerLog.logSuperstructureEvent(String.format("Elevator zero-point calibration sucessfull (FWD) (Time: %.2f)", timer.get()));
+            }
+            if (botLim) {
+                BreakerLog.logSuperstructureEvent(String.format("Elevator zero-point calibration sucessfull (REV) (Time: %.2f)", timer.get()));
+            }
+          return topLim || botLim;
+        }
+      }
 
     public static enum ElevatorControlMode {
         CALIBRATING,
@@ -357,4 +420,6 @@ public class Elevator extends SubsystemBase {
             return Optional.empty();
         }
     }
+
+
 }

@@ -167,10 +167,10 @@ public class BreakerSwerveDriveBase extends BreakerSwerveDrive {
         private PIDController xController, yController, thetaController, headingCompensationController;
         private PPHolonomicDriveController driveController;
         private double headingCompensationAngularVelDeadband, headingCompensationMinActiveLinearSpeed;
-        public BreakerSwerveDriveBaseConfig(double maxForwardVel, double maxSidewaysVel, double maxAngVel, 
+        public BreakerSwerveDriveBaseConfig(double maxLinearVel, double maxAngVel, 
                 double headingCompensationAngularVelDeadband, double headingCompensationMinActiveLinearSpeed, double moduleWheelSpeedDeadband, double maxAttainableModuleWheelSpeed,
                 PIDController xController, PIDController yController, PIDController thetaController) {
-            super(maxForwardVel, maxSidewaysVel, maxAngVel, moduleWheelSpeedDeadband, maxAttainableModuleWheelSpeed);
+            super(maxLinearVel, maxAngVel, moduleWheelSpeedDeadband, maxAttainableModuleWheelSpeed);
             this.xController = xController;
             this.yController = yController;
             this.thetaController = thetaController;

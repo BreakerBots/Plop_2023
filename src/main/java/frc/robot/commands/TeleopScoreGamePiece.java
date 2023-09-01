@@ -10,6 +10,9 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -57,19 +60,24 @@ public class TeleopScoreGamePiece extends CommandBase {
   public void initialize() {
     BreakerLog.logEvent("TeleopScoreGamePiece instance started");
     Optional<Node> selectedNodeOptional = operatorControlPad.getSelectedScoringNode();
+
+    // checks wheather oporator still has a target node fully selected, the if true, pulls the slecetd node
     if (selectedNodeOptional.isPresent()) {
       selectedNode = selectedNodeOptional.get();
       Optional<GamePieceType> controledGamePiece = hand.getControledGamePieceType().getGamePieceType();
+
       if (controledGamePiece.isPresent()) {
         if (selectedNode.getType().isGamePieceSupported(controledGamePiece.get())) {
+
           ElevatorTargetState elevatorTgt = getElevatorTarget();
           Pose2d allignmentPose = selectedNode.getAllignmentPose();
           BreakerLog.logEvent(String.format("TeleopScoreGamePiece instance selected node indentified, scoreing sequince starting (node: %s) (elevator tgt: %s) (allignment pose: %s)", selectedNode.toString(), elevatorTgt.toString(), allignmentPose.toString()));
           new SinglePulseRumble(driverController).schedule();
+          Optional<Double> scoringConeOffsetY =  hand.getConeOffset();
           scoreingSequince = 
           new SequentialCommandGroup(
             new ParallelCommandGroup(
-              new MoveToPose(selectedNode.getAllignmentPose(), ScoreingConstants.TELEOP_SCOREING_MOVE_TO_POSE_MAX_LINEAR_VEL, drivetrain), 
+              new MoveToPose(selectedNode.getAllignmentPose().plus(new Transform2d(new Translation2d(0.0, (scoringConeOffsetY.isPresent() ? hand.getConeOffset().get() : 0.0)), new Rotation2d())), ScoreingConstants.TELEOP_SCOREING_MOVE_TO_POSE_MAX_LINEAR_VEL, drivetrain), 
               new ElevatorMoveToHight(elevator, getElevatorTarget())
             ),
             new ConditionalCommand(new EjectGamePiece(hand), new InstantCommand(this::cancel), () -> preEjectCheck(elevatorTgt)),

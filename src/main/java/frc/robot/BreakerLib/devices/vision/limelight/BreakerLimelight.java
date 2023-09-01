@@ -4,6 +4,7 @@
 
 package frc.robot.BreakerLib.devices.vision.limelight;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -139,6 +140,12 @@ public class BreakerLimelight implements BreakerGenericVisionOdometer {
         public double getPoseAmbiguity() {
             // TODO Auto-generated method stub
             return 0;
+        }
+
+        @Override
+        public AprilTag getBaseApriltag() {
+            // TODO Auto-generated method stub
+            return null;
         }
         
     }

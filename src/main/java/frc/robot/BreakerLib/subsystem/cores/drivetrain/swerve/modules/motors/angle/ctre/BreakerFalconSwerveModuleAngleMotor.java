@@ -50,7 +50,7 @@ public class BreakerFalconSwerveModuleAngleMotor extends BreakerGenericSwerveMod
                 turnConfig.Feedback.FeedbackRemoteSensorID = cancoder.getDeviceID();
                 turnConfig.Feedback.RotorToSensorRatio = azimuthGearRatio;
                 turnConfig.Feedback.SensorToMechanismRatio = 1.0;
-                turnConfig.Slot0.kP = pidConfig.kP;
+                turnConfig.Slot0.kP = pidConfig.kP; 
                 turnConfig.Slot0.kI = pidConfig.kI;
                 turnConfig.Slot0.kD = pidConfig.kD;
                 turnConfig.ClosedLoopGeneral.ContinuousWrap = true;

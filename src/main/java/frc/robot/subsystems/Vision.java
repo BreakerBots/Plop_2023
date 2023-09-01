@@ -22,16 +22,11 @@ public class Vision extends SubsystemBase implements BreakerGenericVisionOdomete
   private BreakerPhotonCamera frontCam, leftCam, rightCam, backCam;
   private BreakerPhotonVision vision;
   public Vision() {
-    configApriltags();
     frontCam = new BreakerPhotonCamera(VisionConstants.FRONT_CAMERA_NAME, VisionConstants.FRONT_CAMERA_POSE);
     leftCam  = new BreakerPhotonCamera(VisionConstants.LEFT_CAMERA_NAME, VisionConstants.LEFT_CAMERA_POSE);
     rightCam = new BreakerPhotonCamera(VisionConstants.RIGHT_CAMERA_NAME, VisionConstants.RIGHT_CAMERA_POSE);
     backCam = new BreakerPhotonCamera(VisionConstants.BACK_CAMERA_NAME, VisionConstants.BACK_CAMERA_POSE);
-    vision = new BreakerPhotonVision(VisionConstants.POSE_FILTER_TRUST_COEF, VisionConstants.POSE_FILTER_MAX_UNCERTANTY, VisionConstants.POSE_FILTER_DISTANCE_SCALE_FACTOR, VisionConstants.POSE_FILTER_MAX_DISTANCE, new BreakerPhotonCamera[]{frontCam, leftCam, rightCam, backCam}, VisionConstants.APRILTAG_IDS_AND_LOCATIONS);
-  }
-
-  private static void configApriltags() {
-    VisionConstants.APRILTAG_IDS_AND_LOCATIONS.put(0, new Pose3d());
+    vision = new BreakerPhotonVision(VisionConstants.POSE_FILTER_TRUST_COEF, VisionConstants.POSE_FILTER_MAX_UNCERTANTY, VisionConstants.POSE_FILTER_DISTANCE_SCALE_FACTOR, VisionConstants.POSE_FILTER_MAX_DISTANCE, new BreakerPhotonCamera[]{frontCam, leftCam, rightCam, backCam}, VisionConstants.APRILTAG_FIELD_LAYOUT);
   }
 
   @Override

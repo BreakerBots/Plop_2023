@@ -230,8 +230,8 @@ public class BreakerLegacySwerveDrive extends BreakerGenericDrivetrain
    */
   public void moveWithPercentInput(double forwardPercent, double horizontalPercent, double turnPercent, SlowModeValue slowModeValue) {
     move(
-        (forwardPercent * config.getMaxForwardVel()),
-        (horizontalPercent * config.getMaxSidewaysVel()),
+        (forwardPercent * config.getMaxLinearVel()),
+        (horizontalPercent * config.getMaxLinearVel()),
         (turnPercent * config.getMaxAngleVel()),
         slowModeValue);
   }
@@ -311,8 +311,8 @@ public class BreakerLegacySwerveDrive extends BreakerGenericDrivetrain
    * @param turnPercent       Rotation speed percent (-1 to 1).
    */
   public void moveWithPercentInputRelativeToField(double forwardPercent, double horizontalPercent, double turnPercent) {
-    double fwdV = forwardPercent * config.getMaxForwardVel();
-    double horzV = horizontalPercent * config.getMaxSidewaysVel();
+    double fwdV = forwardPercent * config.getMaxLinearVel();
+    double horzV = horizontalPercent * config.getMaxLinearVel();
     double thetaV = turnPercent * config.getMaxAngleVel();
     moveRelativeToField(fwdV, horzV, thetaV, new BreakerSwerveFieldRelativeMovementPreferences());
   }
@@ -334,8 +334,8 @@ public class BreakerLegacySwerveDrive extends BreakerGenericDrivetrain
    */
   public void moveWithPercentInputRelativeToField(double forwardPercent, double horizontalPercent, double turnPercent,
       BreakerSwerveFieldRelativeMovementPreferences prefrences) {
-    double fwdV = forwardPercent * config.getMaxForwardVel();
-    double horzV = horizontalPercent * config.getMaxSidewaysVel();
+    double fwdV = forwardPercent * config.getMaxLinearVel();
+    double horzV = horizontalPercent * config.getMaxLinearVel();
     double thetaV = turnPercent * config.getMaxAngleVel();
     moveRelativeToField(fwdV, horzV, thetaV, prefrences);
   }

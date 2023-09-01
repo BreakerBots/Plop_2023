@@ -10,6 +10,7 @@ import java.util.Objects;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -19,6 +20,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /** Fiducial marker target. Use if using AprilTags w/ 3D calibrated camera. */
 public interface BreakerGenericFiducialTarget { 
+
+    public abstract AprilTag getBaseApriltag();
 
     /** @return Timestamp of last target found. */
     public abstract double getLastTargetFoundTimestamp();

@@ -15,8 +15,8 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.BreakerLib.position.movement.BreakerMovementState2d;
 import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
-import frc.robot.BreakerLib.position.odometry.vision.BreakerVisionPoseFilterOdometer;
-import frc.robot.BreakerLib.position.odometry.vision.BreakerVisionPoseFilter;
+import frc.robot.BreakerLib.position.odometry.vision.posefilter.BreakerVisionPoseFilter;
+import frc.robot.BreakerLib.position.odometry.vision.posefilter.BreakerVisionPoseFilterOdometer;
 
 /** WIP */
 public class BreakerPhotonVision implements BreakerGenericOdometer {

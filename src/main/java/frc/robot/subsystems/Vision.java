@@ -14,7 +14,7 @@ import frc.robot.BreakerLib.devices.vision.photon.BreakerPhotonCamera;
 import frc.robot.BreakerLib.devices.vision.photon.BreakerPhotonVision;
 import frc.robot.BreakerLib.position.movement.BreakerMovementState2d;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerGenericVisionOdometer;
-import frc.robot.BreakerLib.position.odometry.vision.BreakerVisionPoseFilterOdometer;
+import frc.robot.BreakerLib.position.odometry.vision.posefilter.BreakerVisionPoseFilterOdometer;
 import frc.robot.Constants.VisionConstants;
 
 public class Vision extends SubsystemBase implements BreakerGenericVisionOdometer {

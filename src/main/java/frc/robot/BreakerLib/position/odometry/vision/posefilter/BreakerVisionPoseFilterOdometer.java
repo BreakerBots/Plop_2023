@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.BreakerLib.position.odometry.vision;
+package frc.robot.BreakerLib.position.odometry.vision.posefilter;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -10,6 +10,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.BreakerLib.position.movement.BreakerMovementState2d;
 import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
+import frc.robot.BreakerLib.position.odometry.vision.BreakerGenericVisionOdometer;
 
 /** Add your docs here. */
 public class BreakerVisionPoseFilterOdometer extends SubsystemBase implements BreakerGenericVisionOdometer {

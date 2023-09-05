@@ -1,10 +1,12 @@
 package frc.robot.BreakerLib.util.logging.advantagekit.inputs;
-
-import org.littletonrobotics.conduit.ConduitApi;
+import frc.robot.BreakerLib.util.BreakerRoboRIO;
 import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
 import frc.robot.BreakerLib.util.logging.advantagekit.Logger;
 
 import edu.wpi.first.hal.can.CANStatus;
+import edu.wpi.first.hal.simulation.DriverStationDataJNI;
+import edu.wpi.first.hal.simulation.RoboRioDataJNI;
+import edu.wpi.first.wpilibj.RobotController;
 
 /**
  * Manages logging general system data.
@@ -76,73 +78,38 @@ public class LoggedSystemStats {
       table.put("CANBus/TransmitErrorCount", canStatus.transmitErrorCount);
       table.put("EpochTimeMicros", epochTime);
     }
-
-    @Override
-    public void fromLog(LogTable table) {
-      voltageVin = table.getDouble("BatteryVoltage", voltageVin);
-      currentVin = table.getDouble("BatteryCurrent", currentVin);
-
-      userVoltage3v3 = table.getDouble("3v3Rail/Voltage", userVoltage3v3);
-      userCurrent3v3 = table.getDouble("3v3Rail/Current", userCurrent3v3);
-      userActive3v3 = table.getBoolean("3v3Rail/Active", userActive3v3);
-      userCurrentFaults3v3 = (int) table.getInteger("3v3Rail/CurrentFaults", userCurrentFaults3v3);
-
-      userVoltage5v = table.getDouble("5vRail/Voltage", userVoltage5v);
-      userCurrent5v = table.getDouble("5vRail/Current", userCurrent5v);
-      userActive5v = table.getBoolean("5vRail/Active", userActive5v);
-      userCurrentFaults5v = (int) table.getInteger("5vRail/CurrentFaults", userCurrentFaults5v);
-
-      userVoltage6v = table.getDouble("6vRail/Voltage", userVoltage6v);
-      userCurrent6v = table.getDouble("6vRail/Current", userCurrent6v);
-      userActive6v = table.getBoolean("6vRail/Active", userActive6v);
-      userCurrentFaults6v = (int) table.getInteger("6vRail/CurrentFaults", userCurrentFaults6v);
-
-      brownedOut = table.getBoolean("BrownedOut", brownedOut);
-      systemActive = table.getBoolean("SystemActive", systemActive);
-
-      canStatus.setStatus(
-          table.getDouble("CANBus/Utilization", canStatus.percentBusUtilization),
-          (int) table.getInteger("CANBus/OffCount", canStatus.busOffCount),
-          (int) table.getInteger("CANBus/TxFullCount", canStatus.txFullCount),
-          (int) table.getInteger("CANBus/ReceiveErrorCount", canStatus.receiveErrorCount),
-          (int) table.getInteger("CANBus/TransmitErrorCount", canStatus.transmitErrorCount));
-      epochTime = table.getInteger("EpochTimeMicros", epochTime);
-    }
   }
 
   public void periodic() {
     // Update inputs from conduit
-    if (!logger.hasReplaySource()) {
-      ConduitApi conduit = ConduitApi.getInstance();
+      sysInputs.voltageVin = RoboRioDataJNI.getVInVoltage();
+      sysInputs.currentVin = RoboRioDataJNI.getVInCurrent();
 
-      sysInputs.voltageVin = conduit.getVoltageVin();
-      sysInputs.currentVin = conduit.getCurrentVin();
+      sysInputs.userVoltage3v3 = RoboRioDataJNI.getUserVoltage3V3();
+      sysInputs.userCurrent3v3 = RoboRioDataJNI.getUserCurrent3V3();
+      sysInputs.userActive3v3 = RoboRioDataJNI.getUserActive3V3();
+      sysInputs.userCurrentFaults3v3 = RoboRioDataJNI.getUserFaults3V3();
 
-      sysInputs.userVoltage3v3 = conduit.getUserVoltage3v3();
-      sysInputs.userCurrent3v3 = conduit.getUserCurrent3v3();
-      sysInputs.userActive3v3 = conduit.getUserActive3v3();
-      sysInputs.userCurrentFaults3v3 = conduit.getUserCurrentFaults3v3();
+      sysInputs.userVoltage5v = RoboRioDataJNI.getUserVoltage5V();
+      sysInputs.userCurrent5v = RoboRioDataJNI.getUserCurrent5V();
+      sysInputs.userActive5v = RoboRioDataJNI.getUserActive5V();
+      sysInputs.userCurrentFaults5v = RoboRioDataJNI.getUserFaults5V();
 
-      sysInputs.userVoltage5v = conduit.getUserVoltage5v();
-      sysInputs.userCurrent5v = conduit.getUserCurrent5v();
-      sysInputs.userActive5v = conduit.getUserActive5v();
-      sysInputs.userCurrentFaults5v = conduit.getUserCurrentFaults5v();
+      sysInputs.userVoltage6v = RoboRioDataJNI.getUserVoltage6V();
+      sysInputs.userCurrent6v = RoboRioDataJNI.getUserCurrent6V();
+      sysInputs.userActive6v = RoboRioDataJNI.getUserActive6V();
+      sysInputs.userCurrentFaults6v = RoboRioDataJNI.getUserFaults6V();
 
-      sysInputs.userVoltage6v = conduit.getUserVoltage6v();
-      sysInputs.userCurrent6v = conduit.getUserCurrent6v();
-      sysInputs.userActive6v = conduit.getUserActive6v();
-      sysInputs.userCurrentFaults6v = conduit.getUserCurrentFaults6v();
-
-      sysInputs.brownedOut = conduit.getBrownedOut();
-      sysInputs.systemActive = conduit.getSystemActive();
+      sysInputs.brownedOut = RobotController.isBrownedOut();
+      sysInputs.systemActive = RobotController.isSysActive();
+      CANStatus canStatus = RobotController.getCANStatus();
       sysInputs.canStatus.setStatus(
-          conduit.getCANBusUtilization(),
-          (int) conduit.getBusOffCount(),
-          (int) conduit.getTxFullCount(),
-          (int) conduit.getReceiveErrorCount(),
-          (int) conduit.getTransmitErrorCount());
-      sysInputs.epochTime = conduit.getEpochTime();
-    }
+          canStatus.percentBusUtilization,
+          (int) canStatus.busOffCount,
+          (int) canStatus.txFullCount,
+          (int) canStatus.receiveErrorCount,
+          (int) canStatus.transmitErrorCount);
+      sysInputs.epochTime = RobotController.getFPGATime();
 
     logger.processInputs("SystemStats", sysInputs);
   }

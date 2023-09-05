@@ -10,13 +10,7 @@ import java.util.concurrent.BlockingQueue;
 
 import frc.robot.BreakerLib.util.logging.advantagekit.networktables.LoggedDashboardInput;
 
-import edu.wpi.first.hal.FRCNetComm.tInstances;
-import edu.wpi.first.hal.FRCNetComm.tResourceType;
-import edu.wpi.first.hal.HAL;
 import edu.wpi.first.hal.HALUtil;
-import edu.wpi.first.math.MathShared;
-import edu.wpi.first.math.MathSharedStore;
-import edu.wpi.first.math.MathUsageId;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -29,7 +23,7 @@ import frc.robot.BreakerLib.util.logging.advantagekit.console.RIOConsoleSource;
 import frc.robot.BreakerLib.util.logging.advantagekit.console.SimConsoleSource;
 import frc.robot.BreakerLib.util.logging.advantagekit.inputs.LoggableInputs;
 import frc.robot.BreakerLib.util.logging.advantagekit.inputs.LoggedDriverStation;
-import frc.robot.BreakerLib.util.logging.advantagekit.inputs.LoggedPowerDistribution;
+//import frc.robot.BreakerLib.util.logging.advantagekit.inputs.LoggedPowerDistribution;
 import frc.robot.BreakerLib.util.logging.advantagekit.inputs.LoggedSystemStats;
 
 /** Central class for recording and replaying log data. */
@@ -160,7 +154,7 @@ public class Logger {
    * Periodic method to be called before robotInit and each loop cycle. Updates
    * timestamp and globally logged data.
    */
-  void periodicBeforeUser() {
+  public void periodicBeforeUser() {
     if (running) {
       // Get next entry
       entry.setTimestamp(getRealTimestamp());
@@ -169,10 +163,10 @@ public class Logger {
       long saveDataStart = getRealTimestamp();
       LoggedDriverStation.getInstance().periodic();
       LoggedSystemStats.getInstance().periodic();
-      LoggedPowerDistribution loggedPowerDistribution = LoggedPowerDistribution.getInstance();
-      if (loggedPowerDistribution != null) {
-        loggedPowerDistribution.periodic();
-      }
+      //LoggedPowerDistribution loggedPowerDistribution = LoggedPowerDistribution.getInstance();
+      // if (loggedPowerDistribution != null) {
+      //   loggedPowerDistribution.periodic();
+      // }
       for (int i = 0; i < dashboardInputs.size(); i++) {
         dashboardInputs.get(i).periodic();
       }
@@ -184,10 +178,10 @@ public class Logger {
     } else {
       // Retrieve new data even if logger is disabled
       LoggedDriverStation.getInstance().periodic();
-      LoggedPowerDistribution loggedPowerDistribution = LoggedPowerDistribution.getInstance();
-      if (loggedPowerDistribution != null) {
-        loggedPowerDistribution.periodic();
-      }
+      //LoggedPowerDistribution loggedPowerDistribution = LoggedPowerDistribution.getInstance();
+      // if (loggedPowerDistribution != null) {
+      //   loggedPowerDistribution.periodic();
+      // }
       LoggedSystemStats.getInstance().periodic();
     }
   }
@@ -197,7 +191,7 @@ public class Logger {
    * to data receivers. Running this after user code allows IO operations to
    * occur between cycles rather than interferring with the main thread.
    */
-  void periodicAfterUser() {
+  public void periodicAfterUser() {
     if (running) {
       try {
         // Update console output

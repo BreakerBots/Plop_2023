@@ -1,0 +1,15 @@
+package frc.robot.BreakerLib.util.logging.advantagekit.inputs;
+
+import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
+
+/**
+ * A set of values which can be logged and replayed (for example, the hardware
+ * inputs for a subsystem). Data is stored in LogTable objects.
+ */
+public interface LoggableInputs {
+  /**
+   * Updates a LogTable with the data to log.
+   */
+  public void toLog(LogTable table);
+
+}

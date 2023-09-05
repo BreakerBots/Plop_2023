@@ -7,6 +7,8 @@ package frc.robot.subsystems;
 import java.util.Optional;
 
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxLimitSwitch;
@@ -28,6 +30,7 @@ import frc.robot.GamePieceType;
 import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
 import frc.robot.BreakerLib.devices.sensors.rangefinder.BreakerSEN36005;
 import frc.robot.BreakerLib.driverstation.dashboard.BreakerDashboard;
+import frc.robot.BreakerLib.util.factory.BreakerCANCoderFactory;
 import frc.robot.BreakerLib.util.logging.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
@@ -84,6 +87,8 @@ public class Hand extends SubsystemBase {
     ff = new ArmFeedforward(HandConstants.WRIST_KS, HandConstants.WRIST_KG, HandConstants.WRIST_KV, HandConstants.WRIST_KA);
     rollerState = RollerState.NEUTRAL;
     wristControlState = WristControlState.SEEKING;
+
+    encoder = BreakerCANCoderFactory.createCANCoder(0, AbsoluteSensorRangeValue.Signed_PlusMinusHalf, 0.0, SensorDirectionValue.CounterClockwise_Positive);
 
     diagnostics = new SystemDiagnostics("Intake");
     diagnostics.addSparkMaxs(wristMotor, rollerMotor);

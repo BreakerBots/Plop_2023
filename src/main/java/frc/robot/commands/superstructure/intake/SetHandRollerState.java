@@ -20,7 +20,7 @@ public class SetHandRollerState extends InstantCommand {
   public SetHandRollerState(Hand hand, IntakeRollerStateRequest stateRequest) {
     this.hand = hand;
     this.stateRequest = stateRequest;
-    addRequirements(hand);
+    // addRequirements(hand); // Instant command so should be fine 
   }
 
   // Called when the command is initially scheduled.

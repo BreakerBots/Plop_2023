@@ -17,7 +17,7 @@ import frc.robot.BreakerLib.control.BreakerHolonomicDriveController;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain.SlowModeValue;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerSwerveMovementPreferences;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerSwerveMovementPreferences.SwerveMovementRefrenceFrame;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 
 /** Add your docs here. */
 public class BreakerSwervePoseWaypointPathFollower extends CommandBase {
@@ -73,7 +73,7 @@ public class BreakerSwervePoseWaypointPathFollower extends CommandBase {
     timer.stop();
     timer.reset();
     curTargetWaypointIndex = 0;
-    BreakerLog.logBreakerLibEvent("A new BreakerSwerveWaypointFollower instance has started");
+    BreakerLog.getInstance().logBreakerLibEvent("A new BreakerSwerveWaypointFollower instance has started");
     prevWp = config.getOdometer().getOdometryPoseMeters();
     driveController.reset(prevWp);
     totalDistance += waypoints.get(curTargetWaypointIndex).getTranslation().getDistance(prevWp.getTranslation());
@@ -129,7 +129,7 @@ public class BreakerSwervePoseWaypointPathFollower extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    BreakerLog.logBreakerLibEvent("A BreakerSwerveWaypointFollower instance has ended");
+    BreakerLog.getInstance().logBreakerLibEvent("A BreakerSwerveWaypointFollower instance has ended");
     if (stopAtPathEnd) {
       config.getDrivetrain().stop();
     }

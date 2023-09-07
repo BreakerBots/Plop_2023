@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.BreakerLib.devices.sensors.imu.ctre.BreakerPigeon2;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.subsystems.Drive;
 
@@ -34,7 +34,7 @@ public class BalanceChargeingStation extends CommandBase {
   @Override
   public void initialize() {
     timer.restart();
-    BreakerLog.logEvent("BalanceChargingStation command instance started");
+    BreakerLog.getInstance().logEvent("BalanceChargingStation command instance started");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -57,9 +57,9 @@ public class BalanceChargeingStation extends CommandBase {
     timer.stop();
     timer.reset();
     if (interrupted) {
-      BreakerLog.logEvent("BalanceChargingStation command instance TIMED OUT or was CANCLED, command did not neccicaraly fail");
+      BreakerLog.getInstance().logEvent("BalanceChargingStation command instance TIMED OUT or was CANCLED, command did not neccicaraly fail");
     } else if (endOnBalance) {
-      BreakerLog.logEvent("BalanceChargingStation command instance was SUCESSFULL, robot is balanced witn tolerence and command has ended");
+      BreakerLog.getInstance().logEvent("BalanceChargingStation command instance was SUCESSFULL, robot is balanced witn tolerence and command has ended");
     }
   }
 

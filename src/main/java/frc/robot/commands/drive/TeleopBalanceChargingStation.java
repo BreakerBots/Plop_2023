@@ -14,7 +14,7 @@ import frc.robot.BreakerLib.devices.sensors.imu.ctre.BreakerPigeon2;
 import frc.robot.BreakerLib.driverstation.gamepad.BreakerGamepadTimedRumbleCommand;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.commands.rumble.DoublePulseRumble;
 import frc.robot.commands.rumble.TriplePulseRumble;
@@ -43,7 +43,7 @@ public class TeleopBalanceChargingStation extends CommandBase {
     timer.restart();
     new BreakerGamepadTimedRumbleCommand(driverController, 1.0, 0.5, 0.5).schedule();
     driveController.overrideForwardInput(this::getCalculatedTargetVelX);
-    BreakerLog.logEvent("TeleopBalanceChargingStation command instance started");
+    BreakerLog.getInstance().logEvent("TeleopBalanceChargingStation command instance started");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -68,9 +68,9 @@ public class TeleopBalanceChargingStation extends CommandBase {
     timer.stop();
     timer.reset();
     if (interrupted) {
-      BreakerLog.logEvent("TeleopBalanceChargingStation command instance TIMED OUT or was CANCLED, command did not neccicaraly fail");
+      BreakerLog.getInstance().logEvent("TeleopBalanceChargingStation command instance TIMED OUT or was CANCLED, command did not neccicaraly fail");
     } else if (endOnBalance) {
-      BreakerLog.logEvent("TeleopBalanceChargingStation command instance was SUCESSFULL, robot is balanced witn tolerence and command has ended");
+      BreakerLog.getInstance().logEvent("TeleopBalanceChargingStation command instance was SUCESSFULL, robot is balanced witn tolerence and command has ended");
     }
 
     if (isBalanced()) {

@@ -12,6 +12,9 @@ import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerGenericVisionOdometer;
 import frc.robot.BreakerLib.position.odometry.vision.posefilter.BreakerVisionPoseFilterOdometer;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLogUtil;
+import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 
 /** Estimates swerve drive pose based on vision odometry. */
 public class BreakerSwerveDriveFusedVisionPoseEstimator
@@ -82,5 +85,12 @@ public class BreakerSwerveDriveFusedVisionPoseEstimator
     @Override
     public void periodic() {
         updateOdometry();
+    }
+
+    @Override
+    public void toLog(LogTable table) {
+        BreakerGenericOdometer.super.toLog(table);
+        vision.toLog(table.getSubtable("BaseVisionOdometer"));
+        poseEstimator.toLog(table.getSubtable("BasePoseEstimator"));
     }
 }

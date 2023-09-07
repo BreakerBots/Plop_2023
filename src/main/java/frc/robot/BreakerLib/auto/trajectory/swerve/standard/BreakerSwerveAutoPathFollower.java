@@ -19,7 +19,7 @@ import frc.robot.BreakerLib.auto.trajectory.management.conditionalcommand.Breake
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain.SlowModeValue;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerSwerveMovementPreferences;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerSwerveMovementPreferences.SwerveMovementRefrenceFrame;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 
 /**
  * A command that allows a {@link BreakerLegacySwerveDrive} to follow a
@@ -82,7 +82,7 @@ public class BreakerSwerveAutoPathFollower extends CommandBase implements Breake
 
   @Override
   public void initialize() {
-    BreakerLog.logBreakerLibEvent("A new BreakerSwerveAutoPathFollower instance has started");
+    BreakerLog.getInstance().logBreakerLibEvent("A new BreakerSwerveAutoPathFollower instance has started");
     timer.reset();
     timer.start();
   }
@@ -117,9 +117,9 @@ public class BreakerSwerveAutoPathFollower extends CommandBase implements Breake
       config.getDrivetrain().stop();
     }
     if (interrupted) {
-      BreakerLog.logBreakerLibEvent("A BreakerSwerveAutoPathFollower instance was interrupted");
+      BreakerLog.getInstance().logBreakerLibEvent("A BreakerSwerveAutoPathFollower instance was interrupted");
     } else {
-      BreakerLog.logBreakerLibEvent("A BreakerSwerveAutoPathFollower instance has ended normaly");
+      BreakerLog.getInstance().logBreakerLibEvent("A BreakerSwerveAutoPathFollower instance has ended normaly");
     }
 
   }

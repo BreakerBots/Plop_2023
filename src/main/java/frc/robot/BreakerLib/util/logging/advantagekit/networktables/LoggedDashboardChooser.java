@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
-import frc.robot.BreakerLib.util.logging.advantagekit.Logger;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.logging.advantagekit.inputs.LoggableInputs;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -34,7 +34,7 @@ public class LoggedDashboardChooser<V> implements LoggedDashboardInput {
     this.key = key;
     SmartDashboard.putData(key, sendableChooser);
     periodic();
-    Logger.getInstance().registerDashboardInput(this);
+    BreakerLog.getInstance().registerDashboardInput(this);
   }
 
   /** Adds a new option to the chooser. */
@@ -68,6 +68,6 @@ public class LoggedDashboardChooser<V> implements LoggedDashboardInput {
 
   public void periodic() {
     selectedValue = sendableChooser.getSelected();
-    Logger.getInstance().processInputs(prefix, inputs);
+    BreakerLog.getInstance().processInputs(prefix, inputs);
   }
 }

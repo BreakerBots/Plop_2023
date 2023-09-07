@@ -5,7 +5,7 @@
 package frc.robot.commands.drive;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Vision;
 
@@ -26,7 +26,7 @@ public class SetOdometryToVisionMeasurment extends CommandBase {
     poseReset = false;
     resetPose();
     if (!waitForTargets && !poseReset) {
-      BreakerLog.logEvent("Drivetrain odometry pose reset to current vision measurment FAILED, no targets visable, instant fallthrough true");
+      BreakerLog.getInstance().logEvent("Drivetrain odometry pose reset to current vision measurment FAILED, no targets visable, instant fallthrough true");
     }
   }
 
@@ -40,7 +40,7 @@ public class SetOdometryToVisionMeasurment extends CommandBase {
   private void resetPose() {
     if (vision.isAnyTargetVisable()) {
       drivetrain.setAbsoluteOdometryPosition(vision.getOdometryPoseMeters());
-      BreakerLog.logEvent("Drivetrain odometry pose reset to current vision measurment");
+      BreakerLog.getInstance().logEvent("Drivetrain odometry pose reset to current vision measurment");
       poseReset = true;
     } else {
       poseReset = false;

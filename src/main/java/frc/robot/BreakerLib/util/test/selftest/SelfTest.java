@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.BreakerLib.devices.cosmetic.music.BreakerFalconOrchestra;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 
 /**
  * Core class of BreakerLib's SelfTest fuctionality, handling periodic passive
@@ -152,7 +152,7 @@ public class SelfTest extends SubsystemBase {
       lastCheckPassed = true;
     }
     lastSystemCheck = work.toString();
-    BreakerLog.log(lastSystemCheck);
+    BreakerLog.getInstance().logMessage(lastSystemCheck);
   }
 
   @Override

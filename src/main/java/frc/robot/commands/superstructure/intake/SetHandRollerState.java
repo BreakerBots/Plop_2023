@@ -5,7 +5,7 @@
 package frc.robot.commands.superstructure.intake;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.subsystems.Hand;
 import frc.robot.subsystems.Hand.ControledGamePieceType;
 import frc.robot.subsystems.Hand.RollerState;
@@ -33,27 +33,27 @@ public class SetHandRollerState extends InstantCommand {
       case EXTAKE:
 
 
-        BreakerLog.logEvent("Intake roller start requested (request: EXTAKE)");
+        BreakerLog.getInstance().logEvent("Intake roller start requested (request: EXTAKE)");
         if (hand.getWristGoalType() != WristGoalType.STOW || hand.getWristGoalType() != WristGoalType.UNKNOWN) {
           switch (controledGamePiece) {
             case CONE:
               hand.rollerExtakeCone();
-              BreakerLog.logSuperstructureEvent("INTAKE ROLLER EXTAKE REQUEST SUCESSSFULL, ROLLER STARTED EXTAKEING CONE (request: EXTAKE)");
+              BreakerLog.getInstance().logSuperstructureEvent("INTAKE ROLLER EXTAKE REQUEST SUCESSSFULL, ROLLER STARTED EXTAKEING CONE (request: EXTAKE)");
               break;
             case CUBE:
               hand.rollerExtakeCube();
-              BreakerLog.logSuperstructureEvent("INTAKE ROLLER EXTAKE REQUEST SUCESSSFULL, ROLLER STARTED EXTAKEING CUBE (request: EXTAKE)");
+              BreakerLog.getInstance().logSuperstructureEvent("INTAKE ROLLER EXTAKE REQUEST SUCESSSFULL, ROLLER STARTED EXTAKEING CUBE (request: EXTAKE)");
               break;
             case ERROR:
-              BreakerLog.logEvent("Intake roller extake request FAILED, roller can not enter an extake state while an ERROR beambreak state is detected (request: EXTAKE)");
+              BreakerLog.getInstance().logEvent("Intake roller extake request FAILED, roller can not enter an extake state while an ERROR beambreak state is detected (request: EXTAKE)");
               break;
             case NONE:
             default:
-              BreakerLog.logEvent("Intake roller extake request FAILED, roller can not enter an extake state with no controled game piece detected (request: EXTAKE)");
+              BreakerLog.getInstance().logEvent("Intake roller extake request FAILED, roller can not enter an extake state with no controled game piece detected (request: EXTAKE)");
               break;
           }
         } else {
-          BreakerLog.logEvent("Intake roller extake request FAILED, roller can not enter an extake state while the intake is retracted (request: EXTAKE)");
+          BreakerLog.getInstance().logEvent("Intake roller extake request FAILED, roller can not enter an extake state while the intake is retracted (request: EXTAKE)");
         }
         break;
 
@@ -61,16 +61,16 @@ public class SetHandRollerState extends InstantCommand {
       case INTAKE_CONE:
 
 
-        BreakerLog.logEvent("Intake roller start requested (request: INTAKE_CONE)");
+        BreakerLog.getInstance().logEvent("Intake roller start requested (request: INTAKE_CONE)");
         if (hand.getWristGoalType() != WristGoalType.STOW || hand.getWristGoalType() != WristGoalType.UNKNOWN) {
           if (!hand.hasGamePiece()) {
             hand.rollerIntakeCone();
-            BreakerLog.logSuperstructureEvent("INTAKE ROLLER START REQUEST SUCESSSFULL, ROLLER STARTED INTAKEING (request: INTAKE_CONE)");
+            BreakerLog.getInstance().logSuperstructureEvent("INTAKE ROLLER START REQUEST SUCESSSFULL, ROLLER STARTED INTAKEING (request: INTAKE_CONE)");
           } else {
-            BreakerLog.logEvent("Intake roller start request FAILED, roller can not enter an intake state while it has a game piece (request: INTAKE_CONE)");
+            BreakerLog.getInstance().logEvent("Intake roller start request FAILED, roller can not enter an intake state while it has a game piece (request: INTAKE_CONE)");
           }
         } else {
-          BreakerLog.logEvent("Intake roller start request FAILED, roller can not enter an intake state while the intake is retracted (request: INTAKE_CONE)");
+          BreakerLog.getInstance().logEvent("Intake roller start request FAILED, roller can not enter an intake state while the intake is retracted (request: INTAKE_CONE)");
         }
         break;
 
@@ -78,16 +78,16 @@ public class SetHandRollerState extends InstantCommand {
         case INTAKE_CUBE:
 
 
-        BreakerLog.logEvent("Intake roller start requested (request: INTAKE_CUBE)");
+        BreakerLog.getInstance().logEvent("Intake roller start requested (request: INTAKE_CUBE)");
         if (hand.getWristGoalType() != WristGoalType.STOW || hand.getWristGoalType() != WristGoalType.UNKNOWN) {
           if (!hand.hasGamePiece()) {
             hand.rollerIntakeCube();
-            BreakerLog.logSuperstructureEvent("INTAKE ROLLER START REQUEST SUCESSSFULL, ROLLER STARTED INTAKEING  (request: INTAKE_CUBE)");
+            BreakerLog.getInstance().logSuperstructureEvent("INTAKE ROLLER START REQUEST SUCESSSFULL, ROLLER STARTED INTAKEING  (request: INTAKE_CUBE)");
           } else {
-            BreakerLog.logEvent("Intake roller start request FAILED, roller can not enter an intake state while it has a game piece (request: INTAKE_CUBE)");
+            BreakerLog.getInstance().logEvent("Intake roller start request FAILED, roller can not enter an intake state while it has a game piece (request: INTAKE_CUBE)");
           }
         } else {
-          BreakerLog.logEvent("Intake roller start request FAILED, roller can not enter an intake state while the intake is retracted (request: INTAKE_CUBE)");
+          BreakerLog.getInstance().logEvent("Intake roller start request FAILED, roller can not enter an intake state while the intake is retracted (request: INTAKE_CUBE)");
         }
         break;
 
@@ -96,16 +96,16 @@ public class SetHandRollerState extends InstantCommand {
 
   
       default:
-        BreakerLog.logEvent("Intake roller stop requested (request: STOP)");
+        BreakerLog.getInstance().logEvent("Intake roller stop requested (request: STOP)");
         if (hand.getRollerState() != RollerState.NEUTRAL) {
           if (!hand.hasGamePiece()) {
             hand.stopRoller();
-            BreakerLog.logSuperstructureEvent("INTAKE ROLLER STOP REQUEST SUCESSFULL, INTAKE ROLLER STOPED (request: STOP)");
+            BreakerLog.getInstance().logSuperstructureEvent("INTAKE ROLLER STOP REQUEST SUCESSFULL, INTAKE ROLLER STOPED (request: STOP)");
           } else {
-            BreakerLog.logEvent("Intake roller stop request FAILED, intake can not be stoped while gripping game piece (request: STOP)");
+            BreakerLog.getInstance().logEvent("Intake roller stop request FAILED, intake can not be stoped while gripping game piece (request: STOP)");
           }
         } else {
-          BreakerLog.logEvent("Intake roller stop request FAILED, intake allready stoped (request: STOP)");
+          BreakerLog.getInstance().logEvent("Intake roller stop request FAILED, intake allready stoped (request: STOP)");
         }
         break;
       

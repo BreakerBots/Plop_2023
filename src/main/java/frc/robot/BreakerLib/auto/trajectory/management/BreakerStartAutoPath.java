@@ -7,7 +7,7 @@ package frc.robot.BreakerLib.auto.trajectory.management;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 
 public class BreakerStartAutoPath extends InstantCommand {
   private BreakerGenericOdometer odometryProvider;
@@ -27,7 +27,7 @@ public class BreakerStartAutoPath extends InstantCommand {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    BreakerLog.logBreakerLibEvent("A Trajectory Path has been started - A BreakerStartTrajectoryPath instance has been created and ran");
+    BreakerLog.getInstance().logBreakerLibEvent("A Trajectory Path has been started - A BreakerStartTrajectoryPath instance has been created and ran");
     odometryProvider.setOdometryPosition(startingPose);
   }
 }

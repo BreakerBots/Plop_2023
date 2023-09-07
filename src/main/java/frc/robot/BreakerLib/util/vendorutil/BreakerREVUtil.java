@@ -12,7 +12,7 @@ import com.revrobotics.CANSparkMax.FaultID;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.Pair;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 
 /** Util class for REV devices. */
@@ -39,7 +39,7 @@ public class BreakerREVUtil {
    */
   public static void checkError(REVLibError error, String message) {
     if (error != REVLibError.kOk) {
-      BreakerLog.logError(error + " - " + message);
+      BreakerLog.getInstance().logError(error + " - " + message);
     }
   }
 

@@ -104,4 +104,14 @@ public class BreakerFalconSwerveModuleDriveMotor extends BreakerGenericSwerveMod
     public double getTargetVelocity() {
         return targetVelocity;
     }
+
+    @Override
+    public double getSupplyCurrent() {
+        return motor.getSupplyCurrent().getValue();
+    }
+
+    @Override
+    public double getMotorOutput() {
+        return motor.getClosedLoopOutput().getValue();
+    }
 }

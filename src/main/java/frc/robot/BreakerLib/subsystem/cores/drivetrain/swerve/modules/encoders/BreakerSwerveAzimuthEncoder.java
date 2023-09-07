@@ -6,6 +6,8 @@ package frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Rotation2d;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLoggable;
+import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 

@@ -6,7 +6,7 @@ package frc.robot.BreakerLib.util.test.suites;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 
 /** A base class extended by all tests found in a given system's "TestSuite" implamentation */
 public class BreakerTestBase extends CommandBase {
@@ -20,13 +20,13 @@ public class BreakerTestBase extends CommandBase {
     }
 
     public void logStart() {
-        BreakerLog.logEvent(startString);
+        BreakerLog.getInstance().logEvent(startString);
     }
 
     public void logEnd(String results) {
-        BreakerLog.logEvent("TEST ( " + testName + " ) ENDED AT: (T+) " + Timer.getFPGATimestamp());
+        BreakerLog.getInstance().logEvent("TEST ( " + testName + " ) ENDED AT: (T+) " + Timer.getFPGATimestamp());
         if (logType != BreakerTestSuiteDataLogType.NONE) {
-            BreakerLog.log("RESULTS FOR ( " + testName + " ): " + results);
+            BreakerLog.getInstance().logMessage("RESULTS FOR ( " + testName + " ): " + results);
         }
     }
 

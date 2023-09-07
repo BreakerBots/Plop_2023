@@ -19,7 +19,7 @@ import frc.robot.BreakerLib.auto.trajectory.management.BreakerTrajectoryPath;
 import frc.robot.BreakerLib.auto.trajectory.management.conditionalcommand.BreakerConditionalEvent;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain.SlowModeValue;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerSwerveMovementPreferences;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 
 /** Add your docs here. */
 public class BreakerLTVUnicycleSwerveAutoPathFollower extends CommandBase implements BreakerGenericAutoPathFollower {
@@ -72,7 +72,7 @@ public class BreakerLTVUnicycleSwerveAutoPathFollower extends CommandBase implem
 
   @Override
   public void initialize() {
-    BreakerLog.logBreakerLibEvent("A new BreakerLTVUnicycleSwerveAutoPathFollower instance has started");
+    BreakerLog.getInstance().logBreakerLibEvent("A new BreakerLTVUnicycleSwerveAutoPathFollower instance has started");
     timer.reset();
     timer.start();
   }
@@ -113,9 +113,9 @@ public class BreakerLTVUnicycleSwerveAutoPathFollower extends CommandBase implem
       config.getDrivetrain().stop();
     }
     if (interrupted) {
-      BreakerLog.logBreakerLibEvent("A BreakerLTVUnicycleSwerveAutoPathFollower instance was interrupted");
+      BreakerLog.getInstance().logBreakerLibEvent("A BreakerLTVUnicycleSwerveAutoPathFollower instance was interrupted");
     } else {
-      BreakerLog.logBreakerLibEvent("A BreakerLTVUnicycleSwerveAutoPathFollower instance has ended normally");
+      BreakerLog.getInstance().logBreakerLibEvent("A BreakerLTVUnicycleSwerveAutoPathFollower instance has ended normally");
     }
 
   }

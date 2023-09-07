@@ -87,4 +87,14 @@ public class BreakerNeoSwerveModuleDriveMotor extends BreakerGenericSwerveModule
     private double getMetersPerSecToNativeVelUnits(double speedMetersPerSec) {
         return ((speedMetersPerSec * 60.0) * driveGearRatio) / (wheelDiameter * Math.PI);
     }
+
+    @Override
+    public double getSupplyCurrent() {
+        return motor.getOutputCurrent();
+    }
+
+    @Override
+    public double getMotorOutput() {
+        return motor.getAppliedOutput();
+    }
 }

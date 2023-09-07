@@ -4,11 +4,16 @@
 
 package frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules;
 
+import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.BreakerLib.devices.BreakerGenericDevice;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLogUtil;
+import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.test.selftest.BreakerSelfTestable;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import edu.wpi.first.util.sendable.Sendable;
@@ -114,5 +119,12 @@ public abstract class BreakerGenericSwerveModule extends BreakerGenericDevice im
         builder.addDoubleProperty("Target Angle", () -> this.getModuleTargetState().angle.getDegrees(), null); 
         builder.addDoubleProperty("Actual Velocity", () -> this.getModuleVelMetersPerSec(), null);
         builder.addDoubleProperty("Actual Angle", () -> this.getModuleAbsoluteAngle(), null); 
+    }
+
+    @Override
+    public void toLog(LogTable table) {
+        table.put("ModuleState", BreakerLogUtil.formatSwerveModuleStateForLog(getModuleState()));
+        table.put("WheelDistanceMeters", getModuleDriveDistanceMeters());
+        table.put("OverallHealth", getHealth().toString());
     }
 }

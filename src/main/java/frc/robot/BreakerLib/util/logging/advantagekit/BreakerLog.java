@@ -5,11 +5,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 import frc.robot.BreakerLib.util.logging.advantagekit.networktables.LoggedDashboardInput;
-
+import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -18,6 +19,8 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import frc.robot.BreakerLib.util.BreakerLibVersion;
+import frc.robot.BreakerLib.util.BreakerRoboRIO.RobotOperatingMode;
 import frc.robot.BreakerLib.util.logging.advantagekit.console.ConsoleSource;
 import frc.robot.BreakerLib.util.logging.advantagekit.console.RIOConsoleSource;
 import frc.robot.BreakerLib.util.logging.advantagekit.console.SimConsoleSource;
@@ -27,29 +30,31 @@ import frc.robot.BreakerLib.util.logging.advantagekit.inputs.LoggedDriverStation
 import frc.robot.BreakerLib.util.logging.advantagekit.inputs.LoggedSystemStats;
 
 /** Central class for recording and replaying log data. */
-public class Logger {
+public class BreakerLog {
   private static final int receiverQueueCapcity = 500; // 10s at 50Hz
 
-  private static Logger instance;
+  private static BreakerLog instance;
 
   private boolean running = false;
   private LogTable entry = new LogTable(0);
   private LogTable outputTable;
+  private LogTable messageTable;
   private Map<String, String> metadata = new HashMap<>();
   private ConsoleSource console;
   private List<LoggedDashboardInput> dashboardInputs = new ArrayList<>();
   private boolean deterministicTimestamps = true;
+  private Map<String, BreakerLoggable> loggables = new HashMap<>();
 
   private final BlockingQueue<LogTable> receiverQueue = new ArrayBlockingQueue<LogTable>(receiverQueueCapcity);
   private final ReceiverThread receiverThread = new ReceiverThread(receiverQueue);
   private boolean receiverQueueFault = false;
 
-  private Logger() {
+  private BreakerLog() {
   }
 
-  public static Logger getInstance() {
+  public static BreakerLog getInstance() {
     if (instance == null) {
-      instance = new Logger();
+      instance = new BreakerLog();
     }
     return instance;
   }
@@ -70,6 +75,10 @@ public class Logger {
    */
   public void registerDashboardInput(LoggedDashboardInput dashboardInput) {
     dashboardInputs.add(dashboardInput);
+  }
+
+  public void registerLogable(String key, BreakerLoggable logable) {
+    loggables.put(key, logable);
   }
 
   /**
@@ -120,6 +129,7 @@ public class Logger {
 
       // Create output table
       outputTable = entry.getSubtable("RealOutputs");
+      messageTable = entry.getSubtable("Messages");
 
       // Record metadata
       LogTable metadataTable = entry.getSubtable("RealMetadata");
@@ -194,11 +204,14 @@ public class Logger {
   public void periodicAfterUser() {
     if (running) {
       try {
+        for (Entry<String, BreakerLoggable> ent: loggables.entrySet()) {
+          processInputs(ent.getKey(), ent.getValue());
+        }
         // Update console output
         long consoleCaptureStart = getRealTimestamp();
         String consoleData = console.getNewData();
         if (!consoleData.isEmpty()) {
-          recordOutput("Console", consoleData.trim());
+          messageTable.put("Console", consoleData.trim());
         }
         long consoleCaptureEnd = getRealTimestamp();
         recordOutput("Logger/ConsolePeriodicMS", (consoleCaptureEnd - consoleCaptureStart) / 1000.0);
@@ -490,26 +503,104 @@ public class Logger {
     recordOutput(key, data);
   }
 
-  /**
-   * Records a single output field for easy access when viewing the log. On the
-   * simulator, use this method to record extra data based on the original inputs.
-   * 
-   * The current position of the Mechanism2d is logged once as a set of nested
-   * fields. If the position is updated, this method must be called again.
-   * 
-   * @param key   The name of the field to record. It will be stored under
-   *              "/RealOutputs" or "/ReplayOutputs"
-   * @param value The value of the field.
-   */
-  public void recordOutput(String key, Mechanism2d value) {
-    if (running) {
-      try {
-        // Use reflection because we don't explicitly depend on the shimmed classes
-        Mechanism2d.class.getMethod("akitLog", LogTable.class).invoke(value, outputTable.getSubtable(key));
-      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
-          | SecurityException e) {
-        e.printStackTrace();
-      }
-    }
+  // /**
+  //  * Records a single output field for easy access when viewing the log. On the
+  //  * simulator, use this method to record extra data based on the original inputs.
+  //  * 
+  //  * The current position of the Mechanism2d is logged once as a set of nested
+  //  * fields. If the position is updated, this method must be called again.
+  //  * 
+  //  * @param key   The name of the field to record. It will be stored under
+  //  *              "/RealOutputs" or "/ReplayOutputs"
+  //  * @param value The value of the field.
+  //  */
+  // public void recordOutput(String key, Mechanism2d value) {
+  //   if (running) {
+  //     try {
+  //       // Use reflection because we don't explicitly depend on the shimmed classes
+  //       Mechanism2d.class.getMethod("akitLog", LogTable.class).invoke(value, outputTable.getSubtable(key));
+  //     } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+  //         | SecurityException e) {
+  //       e.printStackTrace();
+  //     }
+  //   }
+  // }
+
+   /** Startup message for robot. */
+   public void logRobotStarted(BreakerRobotStartConfig startConfig) {
+    StringBuilder work = new StringBuilder(" | ---------------- ROBOT STARTED ---------------- |\n\n");
+    work.append(" TEAM: " + startConfig.getTeamNum() + " - " + startConfig.getTeamName() + "\n");
+    work.append(" ROBOT: " + startConfig.getRobotName() + " - " + startConfig.getRobotYear() + "\n");
+    work.append(" BREAKERLIB: " + BreakerLibVersion.Version + " | " + "ROBOT SOFTWARE: "
+        + startConfig.getRobotSoftwareVersion() + "\n");
+    work.append(" AUTHORS: " + startConfig.getAuthorNames() + "\n\n");
+    work.append(" | ---------------------------------------------- | \n\n\n");
+    logMessage(work.toString());
   }
+
+  /**
+   * Logs robot mode change and plays enable tune. (automatically called by
+   * BreakerRoboRIO)
+   */
+  public void logRobotChangedMode(RobotOperatingMode newMode) {
+    logMessage("| ---- ROBOT MODE CHANGED TO: " + newMode + " ---- |");
+  }
+
+  /** Logs given event. */
+  public void logEvent(String event) {
+    String message = " EVENT: " + event;
+    if (running) {
+      messageTable.put("Events", message);
+    }
+    System.out.println(message);
+  }
+
+  /**
+   * Internal logging function for breakerlib classes to sepreate automated
+   * breakerlib logging from user loging
+   */
+  public void logBreakerLibEvent(String event) {
+    String message = " BREAKERLIB INTERNAL EVENT: " + event;
+    if (running) {
+      messageTable.put("BreakerLibInternalEvents", message);
+    }
+    System.out.println(message);
+  }
+
+  /**
+   * Logs either exceptions thrown by code, or suer difigned errors either from
+   * code or physical errors
+   */
+  public void logError(String error) {
+    String message = " ERROR: " + error;
+    if (running) {
+      messageTable.put("Errors", message);
+    }
+    System.out.println(message);
+  }
+
+  public void logError(Exception e) {
+    logError(" ERROR: " + e.toString() + " : " + e.getStackTrace().toString());
+  }
+
+  /**
+   * Logs robot superstructure (physical) events (i.e. intake activated, shooter
+   * enabled)
+   */
+  public void logSuperstructureEvent(String event) {
+    String message = " ROBOT SUPERSTRUCTURE EVENT: " + event;
+    if (running) {
+      messageTable.put("SuperstructureEvents", message);
+    }
+    System.out.println(message);
+  }
+
+  /** Write custom message to log. */
+  public void logMessage(String message) {
+    if (running) {
+      messageTable.put("Messages", message);
+    }
+    System.out.println(message);
+  }
+
 }

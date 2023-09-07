@@ -20,7 +20,7 @@ import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwe
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModuleBuilder;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.BreakerSwerveAzimuthEncoder;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.BreakerSwerveCANcoder;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.BreakerLib.util.math.BreakerMath.MirrorSymetryAxis2d;
 import frc.robot.Constants.FieldConstants;
@@ -88,6 +88,8 @@ public class Drive extends BreakerSwerveDriveBase {
         BreakerDashboard.getDiagnosticsTab().add("FR Module", frontRightModule);
         BreakerDashboard.getDiagnosticsTab().add("BL Module", backLeftModule);
         BreakerDashboard.getDiagnosticsTab().add("BR Module", backRightModule);
+
+        BreakerLog.getInstance().registerLogable("Drive", this);
     }
 
     @Override

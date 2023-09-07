@@ -25,8 +25,6 @@ import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.B
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.BreakerSwerveSparkDutyCycleEncoder;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.angle.BreakerGenericSwerveModuleAngleMotor;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.angle.BreakerSwerveAzimuthControler;
-//import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule.BreakerSwerveModulePIDConfig;
-import frc.robot.BreakerLib.util.factory.BreakerLegacyCANCoderFactory;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import frc.robot.BreakerLib.util.vendorutil.BreakerPhoenix5Util;
 import frc.robot.BreakerLib.util.vendorutil.BreakerREVUtil;
@@ -55,7 +53,7 @@ public class BreakerNeoSwerveModuleAngleMotor extends BreakerGenericSwerveModule
             sparkPID.setPositionPIDWrappingMaxInput(0.5);
             sparkPID.setPositionPIDWrappingMinInput(-0.5);
             sparkPID.setFeedbackDevice((AbsoluteEncoder) encoder.getBaseEncoder());
-            azimuthControler = new BreakerSwerveAzimuthControler((Rotation2d tgt) -> {sparkPID.setReference(tgt.getRotations(), ControlType.kPosition);} );
+            azimuthControler = new BreakerSwerveAzimuthControler((Rotation2d tgt) -> {sparkPID.setReference(tgt.getRotations(), ControlType.kPosition);});
         }
 
         if (Objects.isNull(azimuthControler)) {
@@ -109,6 +107,16 @@ public class BreakerNeoSwerveModuleAngleMotor extends BreakerGenericSwerveModule
                 faultStr += " ENCODER_FAULTS : " + encoderPair.getSecond();
             }
         }
+    }
+
+    @Override
+    public double getSupplyCurrent() {
+        return motor.getOutputCurrent();
+    }
+
+    @Override
+    public double getMotorOutput() {
+        return motor.getAppliedOutput();
     }
 
 }

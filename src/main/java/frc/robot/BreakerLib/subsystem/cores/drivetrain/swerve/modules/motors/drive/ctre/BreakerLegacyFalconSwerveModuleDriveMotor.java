@@ -103,4 +103,14 @@ public class BreakerLegacyFalconSwerveModuleDriveMotor extends BreakerGenericSwe
         return (speedMetersPerSec / 10) * Units.inchesToMeters(
                 BreakerMath.getTicksPerInch(2048, driveGearRatio, wheelDiameter));
     }
+
+    @Override
+    public double getSupplyCurrent() {
+        return motor.getSupplyCurrent();
+    }
+
+    @Override
+    public double getMotorOutput() {
+        return motor.getMotorOutputPercent();
+    }
 }

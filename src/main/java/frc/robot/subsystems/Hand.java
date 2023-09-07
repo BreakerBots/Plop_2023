@@ -31,7 +31,7 @@ import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
 import frc.robot.BreakerLib.devices.sensors.rangefinder.BreakerSEN36005;
 import frc.robot.BreakerLib.driverstation.dashboard.BreakerDashboard;
 import frc.robot.BreakerLib.util.factory.BreakerCANCoderFactory;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import frc.robot.BreakerLib.util.test.selftest.SystemDiagnostics;
@@ -292,13 +292,13 @@ public class Hand extends SubsystemBase {
     ControledGamePieceType curControledGamePieceType = getControledGamePieceType();
     if (curControledGamePieceType != prevControledGamePieceType) {
       if (curControledGamePieceType == ControledGamePieceType.CONE || curControledGamePieceType == ControledGamePieceType.CUBE) {
-        BreakerLog.logSuperstructureEvent("ROBOT AQUIRED NEW GAME PIECE: " + curControledGamePieceType.toString());
+        BreakerLog.getInstance().logSuperstructureEvent("ROBOT AQUIRED NEW GAME PIECE: " + curControledGamePieceType.toString());
       } else if (curControledGamePieceType == ControledGamePieceType.NONE && prevControledGamePieceType != ControledGamePieceType.ERROR) {
-        BreakerLog.logSuperstructureEvent("ROBOT EJECTED GAME PIECE: " + prevControledGamePieceType.toString());
+        BreakerLog.getInstance().logSuperstructureEvent("ROBOT EJECTED GAME PIECE: " + prevControledGamePieceType.toString());
       } else if (prevControledGamePieceType == ControledGamePieceType.ERROR) {
-        BreakerLog.logSuperstructureEvent("INTAKE BEAM BREAKS EXITED ERROR STATE, CURRENT GAME PIECE: " + curControledGamePieceType.toString());
+        BreakerLog.getInstance().logSuperstructureEvent("INTAKE BEAM BREAKS EXITED ERROR STATE, CURRENT GAME PIECE: " + curControledGamePieceType.toString());
       } else {
-        BreakerLog.logSuperstructureEvent("INTKAE BEAM BREAKS ENTERED ERROR STATE");
+        BreakerLog.getInstance().logSuperstructureEvent("INTKAE BEAM BREAKS ENTERED ERROR STATE");
       }
     }
     

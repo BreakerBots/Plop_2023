@@ -3,7 +3,7 @@ package frc.robot.BreakerLib.util.logging.advantagekit.networktables;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
-import frc.robot.BreakerLib.util.logging.advantagekit.Logger;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.logging.advantagekit.inputs.LoggableInputs;
 
 public class LoggedDashboardBoolean implements LoggedDashboardInput {
@@ -44,7 +44,7 @@ public class LoggedDashboardBoolean implements LoggedDashboardInput {
     this.value = defaultValue;
     SmartDashboard.putBoolean(key, SmartDashboard.getBoolean(key, defaultValue));
     periodic();
-    Logger.getInstance().registerDashboardInput(this);
+    BreakerLog.getInstance().registerDashboardInput(this);
   }
 
   /** Updates the default value, which is used if no value in NT is found. */
@@ -67,6 +67,6 @@ public class LoggedDashboardBoolean implements LoggedDashboardInput {
 
   public void periodic() {
     value = SmartDashboard.getBoolean(key, defaultValue);
-    Logger.getInstance().processInputs(prefix, inputs);
+    BreakerLog.getInstance().processInputs(prefix, inputs);
   }
 }

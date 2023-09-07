@@ -32,7 +32,7 @@
 // import frc.robot.GamePieceType;
 // import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
 // import frc.robot.BreakerLib.driverstation.dashboard.BreakerDashboard;
-// import frc.robot.BreakerLib.util.logging.BreakerLog;
+// import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 // import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 // import frc.robot.BreakerLib.util.test.selftest.SystemDiagnostics;
 // import frc.robot.Constants.IntakeConstants;
@@ -216,7 +216,7 @@
 
 //   public void setActuatorMotorState(ActuatorMotorState newState) {
 //     if (actuatorMotorState != newState) {
-//       BreakerLog.logSuperstructureEvent(String.format("INTAKE NOW %s", newState));
+//       BreakerLog.getInstance().logSuperstructureEvent(String.format("INTAKE NOW %s", newState));
 //     }
 //     actuatorMotorState = newState;
 //     privateSetActuatorMotorState(newState);

@@ -4,10 +4,16 @@
 
 package frc.robot.BreakerLib.util.robot;
 
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.BreakerLib.auto.trajectory.management.BreakerAutoManager;
 import frc.robot.BreakerLib.devices.cosmetic.music.BreakerFalconOrchestra;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.networktables.NT4Publisher;
+import frc.robot.BreakerLib.util.logging.advantagekit.wpilog.WPILOGWriter;
 import frc.robot.BreakerLib.util.test.selftest.SelfTest;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.brakemode.BreakerAutoBrakeManager;
@@ -32,15 +38,25 @@ public class BreakerRobotManager {
      * @param robotConfig Robot configuration.
      */
     public static void setup(BreakerGenericDrivetrain baseDrivetrain, BreakerRobotConfig robotConfig) {
-            BreakerLog.startLog(robotConfig.networkTablesLoggingEnabled());
-            test = new SelfTest(robotConfig.getSecondsBetweenSelfChecks(),
+        BreakerLog logger = BreakerLog.getInstance();
+    
+        // Set up data receivers & replay source
+        if (RobotBase.isReal()) {
+            logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
+            logger.addDataReceiver(new NT4Publisher());
+        } else {
+            logger.addDataReceiver(new WPILOGWriter(""));
+            logger.addDataReceiver(new NT4Publisher());
+        }
+        logger.start();
+         test = new SelfTest(robotConfig.getSecondsBetweenSelfChecks(),
                     robotConfig.getAutoRegisterDevices());
         BreakerRobotManager.baseDrivetrain = baseDrivetrain;
         BreakerRobotManager.autoManager = robotConfig.usesPaths() ? new BreakerAutoManager(robotConfig.getAutoPaths())
                 : new BreakerAutoManager();
         BreakerRobotManager.brakeModeManager = new BreakerAutoBrakeManager(
                 new BreakerAutoBrakeManagerConfig(baseDrivetrain));
-        BreakerLog.logRobotStarted(robotConfig.getStartConfig());
+        BreakerLog.getInstance().logRobotStarted(robotConfig.getStartConfig());
     }
 
     /** @return Brake mode manager object. */

@@ -1,7 +1,7 @@
 package frc.robot.BreakerLib.util.logging.advantagekit.inputs;
 import frc.robot.BreakerLib.util.BreakerRoboRIO;
 import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
-import frc.robot.BreakerLib.util.logging.advantagekit.Logger;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 
 import edu.wpi.first.hal.can.CANStatus;
 import edu.wpi.first.hal.simulation.DriverStationDataJNI;
@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.RobotController;
 public class LoggedSystemStats {
 
   private static LoggedSystemStats instance;
-  private static final Logger logger = Logger.getInstance();
+  private static final BreakerLog logger = BreakerLog.getInstance();
 
   private final SystemStatsInputs sysInputs = new SystemStatsInputs();
 

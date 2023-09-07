@@ -4,7 +4,7 @@ import edu.wpi.first.hal.DriverStationJNI;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.wpilibj.IterativeRobotBase;
-import frc.robot.BreakerLib.util.logging.advantagekit.Logger;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.hal.NotifierJNI;
 
@@ -41,7 +41,7 @@ public class BreakerTimedRobot extends IterativeRobotBase {
   protected BreakerTimedRobot(double period) {
     super(period);
     this.periodUs = (long) (period * 1000000);
-    NotifierJNI.setNotifierName(notifier, "LoggedRobot");
+    NotifierJNI.setNotifierName(notifier, "BreakerTimedRobot");
 
     HAL.report(tResourceType.kResourceType_Framework, tInstances.kFramework_Timed);
   }
@@ -64,7 +64,7 @@ public class BreakerTimedRobot extends IterativeRobotBase {
     }
 
     // Save data from init cycle
-    Logger.getInstance().periodicAfterUser();
+    BreakerLog.getInstance().periodicAfterUser();
 
     // Tell the DS that the robot is ready to be enabled
     System.out.println("********** Robot program startup complete **********");
@@ -73,7 +73,7 @@ public class BreakerTimedRobot extends IterativeRobotBase {
     // Loop forever, calling the appropriate mode-dependent function
     while (true) {
       if (useTiming) {
-        long currentTimeUs = Logger.getInstance().getRealTimestamp();
+        long currentTimeUs = BreakerLog.getInstance().getRealTimestamp();
         if (nextCycleUs < currentTimeUs) {
           // Loop overrun, start next cycle immediately
           nextCycleUs = currentTimeUs;
@@ -85,16 +85,16 @@ public class BreakerTimedRobot extends IterativeRobotBase {
         nextCycleUs += periodUs;
       }
 
-      long loopCycleStart = Logger.getInstance().getRealTimestamp();
-      Logger.getInstance().periodicBeforeUser();
-      long userCodeStart = Logger.getInstance().getRealTimestamp();
+      long loopCycleStart = BreakerLog.getInstance().getRealTimestamp();
+      BreakerLog.getInstance().periodicBeforeUser();
+      long userCodeStart = BreakerLog.getInstance().getRealTimestamp();
       loopFunc();
-      long loopCycleEnd = Logger.getInstance().getRealTimestamp();
-      Logger.getInstance().recordOutput("LoggedRobot/FullCycleMS", (loopCycleEnd - loopCycleStart) / 1000.0);
-      Logger.getInstance().recordOutput("LoggedRobot/LogPeriodicMS", (userCodeStart - loopCycleStart) / 1000.0);
-      Logger.getInstance().recordOutput("LoggedRobot/UserCodeMS", (loopCycleEnd - userCodeStart) / 1000.0);
+      long loopCycleEnd = BreakerLog.getInstance().getRealTimestamp();
+      BreakerLog.getInstance().recordOutput("BreakerTimedRobot/FullCycleMS", (loopCycleEnd - loopCycleStart) / 1000.0);
+      BreakerLog.getInstance().recordOutput("BreakerTimedRobot/LogPeriodicMS", (userCodeStart - loopCycleStart) / 1000.0);
+      BreakerLog.getInstance().recordOutput("BreakerTimedRobot/UserCodeMS", (loopCycleEnd - userCodeStart) / 1000.0);
 
-      Logger.getInstance().periodicAfterUser(); // Save data
+      BreakerLog.getInstance().periodicAfterUser(); // Save data
     }
   }
 

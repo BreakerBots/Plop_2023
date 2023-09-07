@@ -8,7 +8,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Vision;
 
@@ -45,7 +45,7 @@ public class AutoRoutineOdometryResetHeader extends CommandBase {
       if (timer.hasElapsed(waitForVisionTargetTimeout) || waitForVisionTargetTimeout == 0.0) {
         drivetrain.setAbsoluteOdometryPosition(trajectory.getInitialHolonomicPose());
         hasSetPose = true;
-        BreakerLog.logEvent("Robot odometry position reset trajectory initial state, no vision targets visiable");
+        BreakerLog.getInstance().logEvent("Robot odometry position reset trajectory initial state, no vision targets visiable");
       } else {
         visionSet();
       }
@@ -56,7 +56,7 @@ public class AutoRoutineOdometryResetHeader extends CommandBase {
     if (vision.isAnyTargetVisable()) {
       drivetrain.setAbsoluteOdometryPosition(vision.getOdometryPoseMeters());
       hasSetPose = true;
-      BreakerLog.logEvent("Robot odometry position reset to vision measurment");
+      BreakerLog.getInstance().logEvent("Robot odometry position reset to vision measurment");
     }
   }
 

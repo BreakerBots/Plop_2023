@@ -117,4 +117,14 @@ public class BreakerProFalconSwerveModuleAngleMotor extends BreakerGenericSwerve
         }
     }
 
+    @Override
+    public double getSupplyCurrent() {
+        return motor.getSupplyCurrent().getValue();
+    }
+
+    @Override
+    public double getMotorOutput() {
+        return motor.getClosedLoopOutput().getValue();
+    }
+
 }

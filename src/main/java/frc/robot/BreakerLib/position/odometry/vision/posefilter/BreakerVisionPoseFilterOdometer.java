@@ -45,19 +45,19 @@ public class BreakerVisionPoseFilterOdometer extends SubsystemBase implements Br
 
     @Override
     public BreakerMovementState2d getMovementState() {
-        return null;
+        return new BreakerMovementState2d();
     }
 
     @Override
     public ChassisSpeeds getRobotRelativeChassisSpeeds() {
         // TODO Auto-generated method stub
-        return null;
+        return new ChassisSpeeds();
     }
 
     @Override
     public ChassisSpeeds getFieldRelativeChassisSpeeds() {
         // TODO Auto-generated method stub
-        return null;
+        return new ChassisSpeeds();
     }
 
     private void updateChassisSpeeds() {}

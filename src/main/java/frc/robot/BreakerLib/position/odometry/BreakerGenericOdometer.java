@@ -4,14 +4,20 @@
 
 package frc.robot.BreakerLib.position.odometry;
 
+import javax.swing.text.TabExpander;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.BreakerLib.position.movement.BreakerMovementState2d;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLoggable;
+import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLogUtil;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 
 /** Interface for all BreakerLib classes capable of generteing odometry data */
-public interface BreakerGenericOdometer {
+public interface BreakerGenericOdometer extends BreakerLoggable {
 
   /**
    * Set the odometer's current position.
@@ -64,4 +70,11 @@ public interface BreakerGenericOdometer {
 
   /** @return Chassis speeds relative to field. */
   public abstract ChassisSpeeds getFieldRelativeChassisSpeeds();
+
+  @Override
+  default void toLog(LogTable table) {
+      table.put("RobotPose", BreakerLogUtil.formatPose2dForLog(getOdometryPoseMeters()));
+      table.put("RobotRelativeChassisSpeeds", BreakerLogUtil.formatChassisSpeedsForLog(getRobotRelativeChassisSpeeds()));
+      table.put("FieldRelativeChassisSpeeds", BreakerLogUtil.formatChassisSpeedsForLog(getFieldRelativeChassisSpeeds()));
+  }
 }

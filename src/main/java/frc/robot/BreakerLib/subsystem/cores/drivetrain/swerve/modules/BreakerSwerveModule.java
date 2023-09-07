@@ -10,6 +10,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.angle.BreakerGenericSwerveModuleAngleMotor;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.BreakerGenericSwerveModuleDriveMotor;
+import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.BreakerLib.util.power.BreakerPowerManagementConfig;
 import frc.robot.BreakerLib.util.power.DevicePowerMode;
@@ -100,6 +101,13 @@ public class BreakerSwerveModule extends BreakerGenericSwerveModule {
                 faultStr += angleMotor.getFaults();
             }
         }
+    }
+
+    @Override
+    public void toLog(LogTable table) {
+        super.toLog(table);
+        angleMotor.toLog(table.getSubtable("AngleMotor"));
+        angleMotor.toLog(table.getSubtable("DriveMotor"));
     }
 
     public static class BreakerSwerveMotorPIDConfig {

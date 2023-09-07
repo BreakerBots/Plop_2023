@@ -6,7 +6,7 @@ package frc.robot.commands.superstructure.elevator;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorControlMode;
 import frc.robot.subsystems.Elevator.ElevatorTargetState;
@@ -30,7 +30,7 @@ public class ElevatorMoveToHight extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    BreakerLog.logSuperstructureEvent(String.format("AN ElevatorMoveToHight COMMAND INSTANCE HAS BEEN INITALZED (tgt: %.2f meters)", targetHightMeters));
+    BreakerLog.getInstance().logSuperstructureEvent(String.format("AN ElevatorMoveToHight COMMAND INSTANCE HAS BEEN INITALZED (tgt: %.2f meters)", targetHightMeters));
     elevator.setTarget(targetHightMeters);
     timer.restart();
   }
@@ -45,9 +45,9 @@ public class ElevatorMoveToHight extends CommandBase {
   @Override
   public void end(boolean interrupted) {
       if (interrupted) {
-        BreakerLog.logSuperstructureEvent(String.format("AN ElevatorMoveToHight COMMAND INSTANCE TIMED OUT, WAS INTERRUPTED, OR ERRORED OUT (tgt: %.2f meters)", targetHightMeters));
+        BreakerLog.getInstance().logSuperstructureEvent(String.format("AN ElevatorMoveToHight COMMAND INSTANCE TIMED OUT, WAS INTERRUPTED, OR ERRORED OUT (tgt: %.2f meters)", targetHightMeters));
       }
-      BreakerLog.logSuperstructureEvent(String.format("AN ElevatorMoveToHight COMMAND INSTANCE ENDED NORMALY AND WAS SUCCESSFULL (tgt: %.2f meters)", targetHightMeters));
+      BreakerLog.getInstance().logSuperstructureEvent(String.format("AN ElevatorMoveToHight COMMAND INSTANCE ENDED NORMALY AND WAS SUCCESSFULL (tgt: %.2f meters)", targetHightMeters));
   }
   
   // Returns true when the command should end.

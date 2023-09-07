@@ -13,7 +13,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.subsystems.Drive;
 import frc.robot.Constants.DriveConstants;
@@ -36,7 +36,7 @@ public class MoveToPose extends CommandBase {
   @Override
   public void initialize() {
     timer.restart();
-    BreakerLog.logEvent(String.format("MoveToPose command instance STARTED (tgt: %s)", goal.toString()));
+    BreakerLog.getInstance().logEvent(String.format("MoveToPose command instance STARTED (tgt: %s)", goal.toString()));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -56,9 +56,9 @@ public class MoveToPose extends CommandBase {
     timer.reset();
     drivetrain.stop();
     if (interrupted) {
-      BreakerLog.logEvent(String.format("MoveToPose command instance FAILED, command timed out or was cancled (tgt: %s)", goal.toString()));
+      BreakerLog.getInstance().logEvent(String.format("MoveToPose command instance FAILED, command timed out or was cancled (tgt: %s)", goal.toString()));
     } else {
-      BreakerLog.logEvent(String.format("MoveToPose command instance SUCSEEDED, command reached tgt pose (tgt: %s)", goal.toString()));
+      BreakerLog.getInstance().logEvent(String.format("MoveToPose command instance SUCSEEDED, command reached tgt pose (tgt: %s)", goal.toString()));
     }
   }
 

@@ -11,7 +11,7 @@ import frc.robot.BreakerLib.util.logging.advantagekit.LogDataReceiver;
 import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
 import frc.robot.BreakerLib.util.logging.advantagekit.LogTable.LogValue;
 import frc.robot.BreakerLib.util.logging.advantagekit.LogTable.LoggableType;
-import frc.robot.BreakerLib.util.logging.advantagekit.Logger;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -101,8 +101,8 @@ public class WPILOGWriter implements LogDataReceiver {
       if (logDate == null) {
         if (DriverStation.isDSAttached() || RobotBase.isSimulation()) {
           if (dsAttachedTime == null) {
-            dsAttachedTime = Logger.getInstance().getRealTimestamp() / 1000000.0;
-          } else if (Logger.getInstance().getRealTimestamp() / 1000000.0 - dsAttachedTime > timestampUpdateDelay
+            dsAttachedTime = BreakerLog.getInstance().getRealTimestamp() / 1000000.0;
+          } else if (BreakerLog.getInstance().getRealTimestamp() / 1000000.0 - dsAttachedTime > timestampUpdateDelay
               || RobotBase.isSimulation()) {
             logDate = new Date();
           }

@@ -16,7 +16,7 @@ import com.ctre.phoenix6.hardware.core.CoreTalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.Pair;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 
 /** Add your docs here. */
@@ -30,7 +30,7 @@ public class BreakerPhoenix6Util {
    */
   public static void checkStatusCode(StatusCode statusCode, String message) {
     if (statusCode != StatusCode.OK) {
-      BreakerLog.logError(statusCode + " - " + message);
+      BreakerLog.getInstance().logError(statusCode + " - " + message);
     }
   }
 

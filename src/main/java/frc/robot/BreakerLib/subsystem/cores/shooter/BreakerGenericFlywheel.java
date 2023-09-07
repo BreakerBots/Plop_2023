@@ -6,7 +6,7 @@ package frc.robot.BreakerLib.subsystem.cores.shooter;
 
 import frc.robot.BreakerLib.devices.BreakerGenericLoopedDevice;
 import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.BreakerLib.util.test.suites.BreakerGenericTestSuiteImplementation;
 import frc.robot.BreakerLib.util.test.suites.flywheel.BreakerFlywheelTestSuite;
@@ -54,7 +54,7 @@ public abstract class BreakerGenericFlywheel extends BreakerGenericLoopedDevice 
     /** sets flywheel speed to 0 RPM */
     public void stopFlywheel() {
         setFlywheelSpeed(0);
-        BreakerLog.logSuperstructureEvent("flywheel stoped");
+        BreakerLog.getInstance().logSuperstructureEvent("flywheel stoped");
     }
 
 

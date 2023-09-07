@@ -23,7 +23,7 @@ import frc.robot.Node;
 import frc.robot.Node.NodeType;
 import frc.robot.OperatorControlPad;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ScoreingConstants;
@@ -58,7 +58,7 @@ public class TeleopScoreGamePiece extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    BreakerLog.logEvent("TeleopScoreGamePiece instance started");
+    BreakerLog.getInstance().logEvent("TeleopScoreGamePiece instance started");
     Optional<Node> selectedNodeOptional = operatorControlPad.getSelectedScoringNode();
 
     // checks wheather oporator still has a target node fully selected, the if true, pulls the slecetd node
@@ -71,7 +71,7 @@ public class TeleopScoreGamePiece extends CommandBase {
 
           ElevatorTargetState elevatorTgt = getElevatorTarget();
           Pose2d allignmentPose = selectedNode.getAllignmentPose();
-          BreakerLog.logEvent(String.format("TeleopScoreGamePiece instance selected node indentified, scoreing sequince starting (node: %s) (elevator tgt: %s) (allignment pose: %s)", selectedNode.toString(), elevatorTgt.toString(), allignmentPose.toString()));
+          BreakerLog.getInstance().logEvent(String.format("TeleopScoreGamePiece instance selected node indentified, scoreing sequince starting (node: %s) (elevator tgt: %s) (allignment pose: %s)", selectedNode.toString(), elevatorTgt.toString(), allignmentPose.toString()));
           new SinglePulseRumble(driverController).schedule();
           Optional<Double> scoringConeOffsetY =  hand.getConeOffset();
           scoreingSequince = 
@@ -84,16 +84,16 @@ public class TeleopScoreGamePiece extends CommandBase {
             new InstantCommand(this::postEjectCheck)
             );
         } else {
-          BreakerLog.logEvent(String.format("TeleopScoreGamePiece instance FAILED, selected node type is not compatable with currently controled game piece (node: %s) (controled game piece: %s)", selectedNode.toString(), controledGamePiece.get().toString()));
+          BreakerLog.getInstance().logEvent(String.format("TeleopScoreGamePiece instance FAILED, selected node type is not compatable with currently controled game piece (node: %s) (controled game piece: %s)", selectedNode.toString(), controledGamePiece.get().toString()));
           this.cancel();
         }
       } else {
-        BreakerLog.logEvent("TeleopScoreGamePiece instance FAILED, cannot score while robot does not control a game piece");
+        BreakerLog.getInstance().logEvent("TeleopScoreGamePiece instance FAILED, cannot score while robot does not control a game piece");
         this.cancel();
       }
       
     } else {
-      BreakerLog.logEvent("TeleopScoreGamePiece instance FAILED, no node selected");
+      BreakerLog.getInstance().logEvent("TeleopScoreGamePiece instance FAILED, no node selected");
       this.cancel();
     }
   
@@ -102,7 +102,7 @@ public class TeleopScoreGamePiece extends CommandBase {
   @Override
   public void execute() {
       if (operatorControlPad.getScrollClick().getAsBoolean()) {
-        BreakerLog.logEvent("TeleopScoreGamePiece instance MANUALY CANCLED, command has ended");
+        BreakerLog.getInstance().logEvent("TeleopScoreGamePiece instance MANUALY CANCLED, command has ended");
         this.cancel();
       }
   }
@@ -110,9 +110,9 @@ public class TeleopScoreGamePiece extends CommandBase {
   private boolean preEjectCheck(ElevatorTargetState elevatorTarget) {
     boolean check = (elevator.atTargetHeight() && (elevator.getTargetHeightMeters() == elevatorTarget.getTargetHeight())) && BreakerMath.epsilonEqualsPose2d(selectedNode.getAllignmentPose(), drivetrain.getOdometryPoseMeters(), DriveConstants.BHDC_POSE_TOLERENCE);
     if (!check) {
-      BreakerLog.logEvent("TeleopScoreGamePiece instance FAILED, game piece eject procedure pre init check failed, elevator or drive not at desired states");
+      BreakerLog.getInstance().logEvent("TeleopScoreGamePiece instance FAILED, game piece eject procedure pre init check failed, elevator or drive not at desired states");
     } else {
-      BreakerLog.logEvent("TeleopScoreGamePiece instance game piece eject procedure pre init check PASSED, begining eject");
+      BreakerLog.getInstance().logEvent("TeleopScoreGamePiece instance game piece eject procedure pre init check PASSED, begining eject");
     }
     return check;
 
@@ -120,10 +120,10 @@ public class TeleopScoreGamePiece extends CommandBase {
 
   private void postEjectCheck() {
     if (hand.hasGamePiece()) {
-      BreakerLog.logEvent("TeleopScoreGamePiece instance FAILED, post eject check failed, game piece not sucessfully ejected");
+      BreakerLog.getInstance().logEvent("TeleopScoreGamePiece instance FAILED, post eject check failed, game piece not sucessfully ejected");
       this.cancel();
     } else {
-      BreakerLog.logEvent("TeleopScoreGamePiece instance SUCESFULL, post eject check passed, game piece sucessfully ejected");
+      BreakerLog.getInstance().logEvent("TeleopScoreGamePiece instance SUCESFULL, post eject check passed, game piece sucessfully ejected");
     }
   }
  

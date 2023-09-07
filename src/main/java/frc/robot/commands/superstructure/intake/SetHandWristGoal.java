@@ -6,10 +6,10 @@ package frc.robot.commands.superstructure.intake;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.Constants.HandConstants;
 import frc.robot.subsystems.Hand;
 import frc.robot.subsystems.Hand.WristGoal;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
 
 
 public class SetHandWristGoal extends CommandBase {
@@ -34,7 +34,7 @@ public class SetHandWristGoal extends CommandBase {
       timer.restart();
     }
     hand.setWristGoal(wristGoal);
-    BreakerLog.logEvent("SetHandWristGoal command instace started, (set goal: " + wristGoal.toString() + ")");
+    BreakerLog.getInstance().logEvent("SetHandWristGoal command instace started, (set goal: " + wristGoal.toString() + ")");
   }
 
   @Override
@@ -49,11 +49,11 @@ public class SetHandWristGoal extends CommandBase {
     timer.stop();
     timer.reset();
     if (interrupted) {
-      BreakerLog.logEvent("SetHandWristGoal command instance FAILED, command timed out or was cancled");
+      BreakerLog.getInstance().logEvent("SetHandWristGoal command instance FAILED, command timed out or was cancled");
     } else if (!isInstant) {
-      BreakerLog.logEvent("SetHandWristGoal command instance SUCESSFULL, intake reached desired state");
+      BreakerLog.getInstance().logEvent("SetHandWristGoal command instance SUCESSFULL, intake reached desired state");
     } else {
-      BreakerLog.logEvent("SetHandWristGoal command ran and finished whout checks, desired end state not garrentieed");
+      BreakerLog.getInstance().logEvent("SetHandWristGoal command ran and finished whout checks, desired end state not garrentieed");
     }
   }
 

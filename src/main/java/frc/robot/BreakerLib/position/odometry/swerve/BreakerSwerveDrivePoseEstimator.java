@@ -15,6 +15,8 @@ import frc.robot.BreakerLib.devices.sensors.gyro.BreakerGenericGyro;
 import frc.robot.BreakerLib.position.movement.BreakerMovementState2d;
 import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive;
+import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLogUtil;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 public class BreakerSwerveDrivePoseEstimator extends SubsystemBase implements BreakerGenericOdometer  {
     private BreakerGenericGyro gyro;
@@ -22,6 +24,8 @@ public class BreakerSwerveDrivePoseEstimator extends SubsystemBase implements Br
     private BreakerSwerveDrive drivetrain;
     private double lastUpdateTimestamp;
     private Pose2d prevPose;
+    private Pose2d lastVisionPose;
+    private double lastVisionTimestamp;
     private ChassisSpeeds fieldRelativeChassisSpeeds = new ChassisSpeeds();
     private BreakerMovementState2d prevMovementState = new BreakerMovementState2d();
     private BreakerMovementState2d curMovementState = new BreakerMovementState2d();
@@ -42,12 +46,15 @@ public class BreakerSwerveDrivePoseEstimator extends SubsystemBase implements Br
             new MatBuilder<>(Nat.N3(), Nat.N1()).fill(stateStandardDeveation),
             new MatBuilder<>(Nat.N3(), Nat.N1()).fill(visionStanderdDeveation));
         prevPose = getOdometryPoseMeters();
+        lastVisionPose = getOdometryPoseMeters();
         lastUpdateTimestamp = Timer.getFPGATimestamp();
     }
 
     public Pose2d addVisionMeasurment(Pose2d robotPoseFromVision, double visionDataTimestamp) {
         poseEstimator.addVisionMeasurement(robotPoseFromVision,
                 visionDataTimestamp);
+        lastVisionPose = robotPoseFromVision;
+        lastVisionTimestamp = visionDataTimestamp;
         return poseEstimator.getEstimatedPosition();
     }
 
@@ -105,6 +112,14 @@ public class BreakerSwerveDrivePoseEstimator extends SubsystemBase implements Br
         poseEstimator.update(gyro.getYawRotation2d(), drivetrain.getSwerveModulePositions());
         updateChassisSpeeds();
         lastUpdateTimestamp = Timer.getFPGATimestamp();
+    }
+
+    @Override
+    public void toLog(LogTable table) {
+        BreakerGenericOdometer.super.toLog(table);
+        LogTable visionTable = table.getSubtable("Vision");
+        visionTable.put("LastAddedVisionPose", BreakerLogUtil.formatPose2dForLog(lastVisionPose));
+        visionTable.put("LastAddedVisionMeasurmentTimestamp", lastVisionTimestamp);
     }
 
 }

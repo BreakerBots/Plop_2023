@@ -8,6 +8,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.BreakerLib.devices.BreakerGenericLoopedDevice;
 import frc.robot.BreakerLib.devices.sensors.gyro.BreakerGenericGyro;
 import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
+import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
 
 /** Contianer class for methods common to all drivetrain types */
 public abstract class BreakerGenericDrivetrain extends BreakerGenericLoopedDevice implements BreakerGenericOdometer {
@@ -46,6 +47,12 @@ public abstract class BreakerGenericDrivetrain extends BreakerGenericLoopedDevic
         DISABLED,
         /** Applys slow mode scailar if the drivetrains global slow mode is enabled */
         DEFAULT
+    }
+
+    @Override
+    public void toLog(LogTable table) {
+        super.toLog(table);
+        BreakerGenericOdometer.super.toLog(table.getSubtable("Odometry"));
     }
 
 }

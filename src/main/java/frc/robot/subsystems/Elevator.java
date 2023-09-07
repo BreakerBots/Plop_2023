@@ -52,7 +52,7 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.NetworkButton;
 import frc.robot.BreakerLib.driverstation.dashboard.BreakerDashboard;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import frc.robot.BreakerLib.util.test.selftest.SystemDiagnostics;
@@ -234,12 +234,12 @@ public class Elevator extends SubsystemBase {
     /** */
     public void forceStop() {
         isForceStoped = true;
-        BreakerLog.logEvent("ELEVATOR FORCE STOPED - Elevator now unresponsive and locked");
+        BreakerLog.getInstance().logEvent("ELEVATOR FORCE STOPED - Elevator now unresponsive and locked");
     }
 
     public void endForceStop() {
         isForceStoped = false;
-        BreakerLog.logEvent("ELEVATOR FORCE STOP ENDED - Elevator now responsive and functional");
+        BreakerLog.getInstance().logEvent("ELEVATOR FORCE STOP ENDED - Elevator now responsive and functional");
     }
 
     public boolean isForceStoped() {
@@ -300,7 +300,7 @@ public class Elevator extends SubsystemBase {
                     } else {
                         currentState = ElevatorControlMode.AUTOMATIC;
                             hasBeenCalibrated = true;
-                            BreakerLog.logSuperstructureEvent("Elevator calibation not supported in sim, action fallthrough");
+                            BreakerLog.getInstance().logSuperstructureEvent("Elevator calibation not supported in sim, action fallthrough");
                     }
                     break;
                 case NEUTRAL:
@@ -357,7 +357,7 @@ public class Elevator extends SubsystemBase {
             if (interrupted) {
                 currentState = ElevatorControlMode.LOCKED;
                 hasBeenCalibrated = false;
-                BreakerLog.logSuperstructureEvent(String.format("Elevator zero-point calibration FAILED (timeout or robot disable) (Time: %.2f)", timer.get()));
+                BreakerLog.getInstance().logSuperstructureEvent(String.format("Elevator zero-point calibration FAILED (timeout or robot disable) (Time: %.2f)", timer.get()));
             } else {
                 currentState = ElevatorControlMode.AUTOMATIC;
                 hasBeenCalibrated = true;
@@ -371,10 +371,10 @@ public class Elevator extends SubsystemBase {
             boolean topLim = getForwardLimitTriggered();
             boolean botLim = getReverseLimitTriggered();
             if (topLim) {
-                BreakerLog.logSuperstructureEvent(String.format("Elevator zero-point calibration sucessfull (FWD) (Time: %.2f)", timer.get()));
+                BreakerLog.getInstance().logSuperstructureEvent(String.format("Elevator zero-point calibration sucessfull (FWD) (Time: %.2f)", timer.get()));
             }
             if (botLim) {
-                BreakerLog.logSuperstructureEvent(String.format("Elevator zero-point calibration sucessfull (REV) (Time: %.2f)", timer.get()));
+                BreakerLog.getInstance().logSuperstructureEvent(String.format("Elevator zero-point calibration sucessfull (REV) (Time: %.2f)", timer.get()));
             }
           return topLim || botLim;
         }

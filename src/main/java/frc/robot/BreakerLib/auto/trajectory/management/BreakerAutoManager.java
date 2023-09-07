@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.BreakerLib.driverstation.dashboard.BreakerDashboard;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 
 /** Class that manages all avalable autopaths for dashboard chooser */
 public class BreakerAutoManager {
@@ -54,7 +54,7 @@ public class BreakerAutoManager {
 
     /**Returns base command group autopath from selected BreakerAutoPath. */
     public Command getSelectedAutoPath() {
-        BreakerLog.logBreakerLibEvent(" New Autopath Started: " + getSelected().getPathName()); 
+        BreakerLog.getInstance().logBreakerLibEvent(" New Autopath Started: " + getSelected().getPathName()); 
         return getSelected().getBaseAutoPath();
     }
 }

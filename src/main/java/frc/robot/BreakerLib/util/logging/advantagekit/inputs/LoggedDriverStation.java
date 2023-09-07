@@ -1,7 +1,7 @@
 package frc.robot.BreakerLib.util.logging.advantagekit.inputs;
 
 import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
-import frc.robot.BreakerLib.util.logging.advantagekit.Logger;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.IntegerPublisher;
@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 public class LoggedDriverStation {
 
   private static LoggedDriverStation instance;
-  private static final Logger logger = Logger.getInstance();
+  private static final BreakerLog logger = BreakerLog.getInstance();
 
   private final DriverStationInputs dsInputs = new DriverStationInputs();
   private final JoystickInputs[] joystickInputs = { new JoystickInputs(), new JoystickInputs(), new JoystickInputs(),

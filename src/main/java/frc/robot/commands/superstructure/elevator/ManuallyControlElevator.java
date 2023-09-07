@@ -6,7 +6,7 @@ package frc.robot.commands.superstructure.elevator;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorControlMode;
 
@@ -23,7 +23,7 @@ public class ManuallyControlElevator extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    BreakerLog.logSuperstructureEvent("ELEVATOR SWITCHED TO MANUAL CONTROL");
+    BreakerLog.getInstance().logSuperstructureEvent("ELEVATOR SWITCHED TO MANUAL CONTROL");
     elevator.setManual(0.0);
   }
 
@@ -36,7 +36,7 @@ public class ManuallyControlElevator extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    BreakerLog.logSuperstructureEvent("ELEVATOR RETURNED TO AUTOMATIC CONTROL");
+    BreakerLog.getInstance().logSuperstructureEvent("ELEVATOR RETURNED TO AUTOMATIC CONTROL");
     elevator.setTarget(elevator.getHeight());
   }
 

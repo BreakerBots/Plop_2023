@@ -4,14 +4,25 @@
 
 package frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive;
 
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.BreakerGenericSwerveModuleMotor;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLoggable;
+import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
 import frc.robot.BreakerLib.util.test.selftest.BreakerSelfTestableBase;
 
 /** Add your docs here. */
-public abstract class BreakerGenericSwerveModuleDriveMotor extends BreakerSelfTestableBase {
+public abstract class BreakerGenericSwerveModuleDriveMotor extends BreakerGenericSwerveModuleMotor {
     public abstract void setTargetVelocity(double targetMetersPerSecond);
     public abstract double getVelocity();
     public abstract double getDistance();
     public abstract void resetDistance();
     public abstract void setBrakeMode(boolean isEnabled);
     public abstract double getTargetVelocity();
+    @Override
+    public void toLog(LogTable table) {
+        super.toLog(table);
+        table.put("VelocityMetersPerSec", getVelocity());
+        table.put("TargetVelocityMetersPerSec", getTargetVelocity());
+        table.put("WheelDistanceMeters", getDistance());
+    }
+
 }

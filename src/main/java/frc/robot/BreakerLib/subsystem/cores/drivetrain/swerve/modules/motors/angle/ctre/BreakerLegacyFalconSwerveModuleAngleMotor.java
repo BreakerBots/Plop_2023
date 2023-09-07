@@ -118,4 +118,14 @@ public class BreakerLegacyFalconSwerveModuleAngleMotor extends BreakerGenericSwe
         }
     }
 
+    @Override
+    public double getSupplyCurrent() {
+        return motor.getSupplyCurrent();
+    }
+
+    @Override
+    public double getMotorOutput() {
+        return motor.getMotorOutputPercent();
+    }
+
 }

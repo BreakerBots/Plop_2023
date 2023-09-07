@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.subsystems.Drive;
 
@@ -35,7 +35,7 @@ public class TeleopSnapDriveToCardinalHeading extends CommandBase {
   @Override
   public void initialize() {
     timer.restart();
-    BreakerLog.logEvent(String.format("TeleopSnapDriveToCardinalHeading instance started (goal: %s)", cardinal.toString()));
+    BreakerLog.getInstance().logEvent(String.format("TeleopSnapDriveToCardinalHeading instance started (goal: %s)", cardinal.toString()));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -53,9 +53,9 @@ public class TeleopSnapDriveToCardinalHeading extends CommandBase {
     timer.stop();
     timer.reset();
     if (interrupted) {
-      BreakerLog.logEvent(String.format("TeleopSnapDriveToCardinalHeading instance timed out or was cancled, command FAIL, (goal: %s)", cardinal.toString()));
+      BreakerLog.getInstance().logEvent(String.format("TeleopSnapDriveToCardinalHeading instance timed out or was cancled, command FAIL, (goal: %s)", cardinal.toString()));
     } else {
-      BreakerLog.logEvent(String.format("TeleopSnapDriveToCardinalHeading instance SUCESSFULLY reached its goal and relinquished azimuth control to driver (goal: %s)", cardinal.toString()));
+      BreakerLog.getInstance().logEvent(String.format("TeleopSnapDriveToCardinalHeading instance SUCESSFULLY reached its goal and relinquished azimuth control to driver (goal: %s)", cardinal.toString()));
     }
   }
 

@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import frc.robot.BreakerLib.auto.trajectory.management.BreakerTrajectoryPath;
 import frc.robot.BreakerLib.auto.trajectory.management.conditionalcommand.BreakerConditionalEvent;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 
 public class BreakerRamsete extends CommandBase {
   /** Creates a new BreakerRamsete. */
@@ -34,7 +34,7 @@ public class BreakerRamsete extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    BreakerLog.logBreakerLibEvent(" A BreakerRamsete instance has been started ");
+    BreakerLog.getInstance().logBreakerLibEvent(" A BreakerRamsete instance has been started ");
     ramsete.schedule();
     timer.reset();
     timer.start();
@@ -50,7 +50,7 @@ public class BreakerRamsete extends CommandBase {
         if (ev.checkCondition(timer.get(), config.getOdometer().getOdometryPoseMeters())) {
           ev.getBaseCommand().schedule();
           iterator.remove();
-          BreakerLog.logBreakerLibEvent(" An auto path conditional event has been triggered ");
+          BreakerLog.getInstance().logBreakerLibEvent(" An auto path conditional event has been triggered ");
         }
       }
     }
@@ -62,7 +62,7 @@ public class BreakerRamsete extends CommandBase {
       if (trajectoryPath.stopAtEnd()) {
         config.getDrivetrain().stop();
       }
-      BreakerLog.logBreakerLibEvent(" A BreakerRamsete instance has been started ");
+      BreakerLog.getInstance().logBreakerLibEvent(" A BreakerRamsete instance has been started ");
   }
 
   // Returns true when the command should end.

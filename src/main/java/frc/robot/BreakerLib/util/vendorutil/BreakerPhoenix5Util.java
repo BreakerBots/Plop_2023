@@ -16,7 +16,7 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderFaults;
 
 import edu.wpi.first.math.Pair;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 
 /** Util class for CTRE devices */
@@ -46,7 +46,7 @@ public class BreakerPhoenix5Util {
    */
   public static void checkError(ErrorCode error, String message) {
     if (error != ErrorCode.OK) {
-      BreakerLog.logError(error + " - " + message);
+      BreakerLog.getInstance().logError(error + " - " + message);
     }
   }
 

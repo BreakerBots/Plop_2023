@@ -7,7 +7,7 @@ package frc.robot.BreakerLib.util;
 
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.BreakerLib.util.logging.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerUnits;
 import static edu.wpi.first.wpilibj.RobotState.*;
 
@@ -61,7 +61,7 @@ public class BreakerRoboRIO extends SubsystemBase {
             roboRIO.currentMode = RobotOperatingMode.TEST;
         }
         if (robotModeHasChanged()) {
-            BreakerLog.logRobotChangedMode(roboRIO.currentMode);
+            BreakerLog.getInstance().logRobotChangedMode(roboRIO.currentMode);
         }
     }
 
@@ -99,9 +99,9 @@ public class BreakerRoboRIO extends SubsystemBase {
         if (curBrownoutState != prevBrownoutState) {
             if (curBrownoutState) {
                 brownoutNum ++;
-                BreakerLog.logEvent(" ROBORIO BROWNOUT DETECTED! ( #" + brownoutNum + ")");
+                BreakerLog.getInstance().logEvent(" ROBORIO BROWNOUT DETECTED! ( #" + brownoutNum + ")");
             } else {
-                BreakerLog.logEvent(" ROBORIO BROWNOUT ENDED! ( #" + brownoutNum + ")");
+                BreakerLog.getInstance().logEvent(" ROBORIO BROWNOUT ENDED! ( #" + brownoutNum + ")");
             }
         }
     }

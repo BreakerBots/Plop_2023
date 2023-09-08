@@ -10,6 +10,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 import frc.robot.BreakerLib.util.logging.advantagekit.networktables.LoggedDashboardInput;
+import frc.robot.BreakerLib.util.power.BreakerPowerDistribution;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -173,10 +174,10 @@ public class BreakerLog {
       long saveDataStart = getRealTimestamp();
       LoggedDriverStation.getInstance().periodic();
       LoggedSystemStats.getInstance().periodic();
-      //LoggedPowerDistribution loggedPowerDistribution = LoggedPowerDistribution.getInstance();
-      // if (loggedPowerDistribution != null) {
-      //   loggedPowerDistribution.periodic();
-      // }
+      BreakerPowerDistribution loggedPowerDistribution = BreakerPowerDistribution.getInstance();
+      if (loggedPowerDistribution != null) {
+        loggedPowerDistribution.periodic();
+      }
       for (int i = 0; i < dashboardInputs.size(); i++) {
         dashboardInputs.get(i).periodic();
       }
@@ -536,6 +537,11 @@ public class BreakerLog {
     work.append(" AUTHORS: " + startConfig.getAuthorNames() + "\n\n");
     work.append(" | ---------------------------------------------- | \n\n\n");
     logMessage(work.toString());
+    recordMetadata("Team", Integer.toString(startConfig.getTeamNum()));
+    recordMetadata("Robot", startConfig.getRobotName());
+    recordMetadata("BreakerLibVersion", BreakerLibVersion.Version);
+    recordMetadata("RobotSoftware", startConfig.getRobotSoftwareVersion());
+    recordMetadata("Authors", startConfig.getAuthorNames());
   }
 
   /**

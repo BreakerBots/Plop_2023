@@ -42,14 +42,13 @@ public class BreakerRobotManager {
     
         // Set up data receivers & replay source
         if (RobotBase.isReal()) {
-            logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
+            logger.addDataReceiver(new WPILOGWriter(robotConfig.getRealLogFilePath()));
             logger.addDataReceiver(new NT4Publisher());
         } else {
-            logger.addDataReceiver(new WPILOGWriter(""));
+            logger.addDataReceiver(new WPILOGWriter(robotConfig.getSimLogFilePath()));
             logger.addDataReceiver(new NT4Publisher());
         }
-        logger.start();
-         test = new SelfTest(robotConfig.getSecondsBetweenSelfChecks(),
+        test = new SelfTest(robotConfig.getSecondsBetweenSelfChecks(),
                     robotConfig.getAutoRegisterDevices());
         BreakerRobotManager.baseDrivetrain = baseDrivetrain;
         BreakerRobotManager.autoManager = robotConfig.usesPaths() ? new BreakerAutoManager(robotConfig.getAutoPaths())
@@ -57,6 +56,7 @@ public class BreakerRobotManager {
         BreakerRobotManager.brakeModeManager = new BreakerAutoBrakeManager(
                 new BreakerAutoBrakeManagerConfig(baseDrivetrain));
         BreakerLog.getInstance().logRobotStarted(robotConfig.getStartConfig());
+        logger.start();
     }
 
     /** @return Brake mode manager object. */

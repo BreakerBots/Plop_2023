@@ -27,6 +27,7 @@ import frc.robot.BreakerLib.position.odometry.vision.BreakerGenericVisionOdomete
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerSwerveMovementPreferences.SwerveMovementRefrenceFrame;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerGenericSwerveModule;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLogUtil;
 import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
 import frc.robot.BreakerLib.util.logging.advantagekit.inputs.LoggableInputs;
 import frc.robot.BreakerLib.util.math.BreakerMath;
@@ -345,6 +346,8 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain implements Brea
   @Override
   public void toLog(LogTable table) {
     table.put("DeviceHealth", getHealth().toString());
+    table.put("RealModuleStates", BreakerLogUtil.formatSwerveModuleStateForLog(getSwerveModuleStates()));
+    table.put("TargetModuleStates", BreakerLogUtil.formatSwerveModuleStateForLog(targetModuleStates));
     odometer.toLog(table.getSubtable("Odometry"));
     LogTable moduleTable = table.getSubtable("Modules");
     for (BreakerGenericSwerveModule module: swerveModules) {

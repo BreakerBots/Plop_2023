@@ -4,19 +4,21 @@
 
 package frc.robot.BreakerLib.util.robot;
 
+import edu.wpi.first.wpilibj.PowerDistribution;
 import frc.robot.BreakerLib.auto.trajectory.management.BreakerAutoPath;
 import frc.robot.BreakerLib.devices.cosmetic.music.BreakerFalconOrchestra;
+import frc.robot.BreakerLib.util.power.BreakerPowerDistribution;
 
 /** Config class for the robot, used by {@link BreakerRobotManager}. */
 public class BreakerRobotConfig {
 
     private double secondsBetweenSelfChecks;
-    private boolean networkTablesLogging;
     private boolean autoRegisterDevices;
     private boolean useBrakeModeManager;
     private BreakerAutoPath[] autoPaths;
     private boolean usesPaths;
     private BreakerRobotStartConfig startConfig;
+    private String realLogPath, simLogPath;
 
     /**
      * Default robot configuration. Pre-assigned settings are listed below:
@@ -39,12 +41,22 @@ public class BreakerRobotConfig {
         this.startConfig = startConfig;
 
         this.secondsBetweenSelfChecks = 5;
-        this.networkTablesLogging = false;
         this.autoRegisterDevices = true;
         this.useBrakeModeManager = true;
-
+        this.simLogPath = "";
+        this.realLogPath = "";
         this.autoPaths = new BreakerAutoPath[0];
         usesPaths = false;
+    }
+
+    public void setPowerDistributionModule(int module, PowerDistribution.ModuleType moduleType) {
+        BreakerPowerDistribution.getInstance(module, moduleType);
+    }
+
+    //"/media/sda1/"
+    public void setLogFilePaths(String realLogPath, String simLogPath) {
+        this.realLogPath = realLogPath;
+        this.simLogPath = simLogPath;
     }
 
     /**
@@ -64,15 +76,6 @@ public class BreakerRobotConfig {
      */
     public void setStartConfig(BreakerRobotStartConfig startConfig) {
         this.startConfig = startConfig;
-    }
-
-    /**
-     * Sets whether or not to enable logging of NetworkTables.
-     * 
-     * @param enabled True for enable, false for disable.
-     */
-    public void setNetworkTablesLogging(boolean enabled) {
-        networkTablesLogging = enabled;
     }
 
     /**
@@ -123,11 +126,6 @@ public class BreakerRobotConfig {
         return secondsBetweenSelfChecks;
     }
 
-    /** @return If NetworkTables are logged. */
-    public boolean networkTablesLoggingEnabled() {
-        return networkTablesLogging;
-    }
-
     /** @return If auto paths are enabled. */
     public boolean usesPaths() {
         return usesPaths;
@@ -136,6 +134,14 @@ public class BreakerRobotConfig {
     /** @return Robot start config. */
     public BreakerRobotStartConfig getStartConfig() {
         return startConfig;
+    }
+
+    public String getRealLogFilePath() {
+        return realLogPath;
+    }
+
+    public String getSimLogFilePath() {
+        return simLogPath;
     }
 
 }

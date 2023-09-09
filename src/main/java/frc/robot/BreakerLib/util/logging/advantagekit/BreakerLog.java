@@ -19,13 +19,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import frc.robot.BreakerLib.util.BreakerLibVersion;
 import frc.robot.BreakerLib.util.BreakerRoboRIO.RobotOperatingMode;
 import frc.robot.BreakerLib.util.logging.advantagekit.console.ConsoleSource;
 import frc.robot.BreakerLib.util.logging.advantagekit.console.RIOConsoleSource;
 import frc.robot.BreakerLib.util.logging.advantagekit.console.SimConsoleSource;
-import frc.robot.BreakerLib.util.logging.advantagekit.inputs.LoggableInputs;
 import frc.robot.BreakerLib.util.logging.advantagekit.inputs.LoggedDriverStation;
 //import frc.robot.BreakerLib.util.logging.advantagekit.inputs.LoggedPowerDistribution;
 import frc.robot.BreakerLib.util.logging.advantagekit.inputs.LoggedSystemStats;
@@ -110,6 +110,12 @@ public class BreakerLog {
    */
   public void disableDeterministicTimestamps() {
     deterministicTimestamps = false;
+  }
+
+  public void start(BreakerRobotStartConfig startConfig) {
+    recordRobotMetadata(startConfig);
+    start();
+    logRobotStarted(startConfig);
   }
 
   /**
@@ -265,7 +271,7 @@ public class BreakerLog {
    * @param key    The name used to identify this set of inputs.
    * @param inputs The inputs to log or update.
    */
-  public void processInputs(String key, LoggableInputs inputs) {
+  public void processInputs(String key, BreakerLoggable inputs) {
     if (running) {
       inputs.toLog(entry.getSubtable(key));
     }
@@ -527,6 +533,15 @@ public class BreakerLog {
   //   }
   // }
 
+  public void recordRobotMetadata(BreakerRobotStartConfig startConfig) {
+    recordMetadata("Team", Integer.toString(startConfig.getTeamNum()));
+    recordMetadata("Robot", startConfig.getRobotName());
+    recordMetadata("BreakerLibVersion", BreakerLibVersion.Version);
+    recordMetadata("RobotSoftware", startConfig.getRobotSoftwareVersion());
+    recordMetadata("Authors", startConfig.getAuthorNames());
+    recordMetadata("RobotControllerSerialNumber", RobotController.getSerialNumber());
+  }
+
    /** Startup message for robot. */
    public void logRobotStarted(BreakerRobotStartConfig startConfig) {
     StringBuilder work = new StringBuilder(" | ---------------- ROBOT STARTED ---------------- |\n\n");
@@ -537,11 +552,6 @@ public class BreakerLog {
     work.append(" AUTHORS: " + startConfig.getAuthorNames() + "\n\n");
     work.append(" | ---------------------------------------------- | \n\n\n");
     logMessage(work.toString());
-    recordMetadata("Team", Integer.toString(startConfig.getTeamNum()));
-    recordMetadata("Robot", startConfig.getRobotName());
-    recordMetadata("BreakerLibVersion", BreakerLibVersion.Version);
-    recordMetadata("RobotSoftware", startConfig.getRobotSoftwareVersion());
-    recordMetadata("Authors", startConfig.getAuthorNames());
   }
 
   /**

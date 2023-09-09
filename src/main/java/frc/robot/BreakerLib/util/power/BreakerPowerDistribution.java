@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import frc.robot.BreakerLib.devices.BreakerGenericDevice;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
-import frc.robot.BreakerLib.util.logging.advantagekit.inputs.LoggableInputs;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLoggable;
 
 /**
  * Class for getting voltage, current, temperature, power and energy from the CTRE Power
@@ -240,7 +240,7 @@ public class BreakerPowerDistribution extends BreakerGenericDevice implements Se
         value -> PowerDistributionJNI.setSwitchableChannel(handle, value));
   }
 
-  public static class PowerDistributionInputs implements LoggableInputs {
+  public static class PowerDistributionInputs implements BreakerLoggable {
     public double pdpTemperature;
     public double pdpVoltage;
     public double[] pdpChannelCurrents = new double[24];

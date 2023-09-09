@@ -3,15 +3,15 @@ package frc.robot.BreakerLib.util.logging.advantagekit.networktables;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLoggable;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
-import frc.robot.BreakerLib.util.logging.advantagekit.inputs.LoggableInputs;
 
 public class LoggedDashboardBoolean implements LoggedDashboardInput {
   private final String key;
   private boolean defaultValue;
   private boolean value;
 
-  private final LoggableInputs inputs = new LoggableInputs() {
+  private final BreakerLoggable inputs = new BreakerLoggable() {
     public void toLog(LogTable table) {
       table.put(key, value);
     }

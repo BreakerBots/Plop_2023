@@ -1,9 +1,8 @@
 package frc.robot.BreakerLib.util.logging.advantagekit.networktables;
 
 import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLoggable;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
-import frc.robot.BreakerLib.util.logging.advantagekit.inputs.LoggableInputs;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LoggedDashboardNumber implements LoggedDashboardInput {
@@ -11,7 +10,7 @@ public class LoggedDashboardNumber implements LoggedDashboardInput {
   private double defaultValue;
   private double value;
 
-  private final LoggableInputs inputs = new LoggableInputs() {
+  private final BreakerLoggable inputs = new BreakerLoggable() {
     public void toLog(LogTable table) {
       table.put(key, value);
     }

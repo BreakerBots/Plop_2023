@@ -4,11 +4,16 @@
 
 package frc.robot.BreakerLib.util.robot;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import edu.wpi.first.wpilibj.RobotController;
+
 /** Configures info in robot startup message. */
 public class BreakerRobotStartConfig {
     private int teamNum;
     private String teamName;
-    private String robotName;
+    private BreakerRobotNameConfig robotNameConfig;
     private int robotYear;
     private String robotSoftwareVersion;
     private String authorNames;
@@ -23,23 +28,13 @@ public class BreakerRobotStartConfig {
      * @param robotSoftwareVersion Robot software version.
      * @param authorNames Names of code authors. 
      */
-    public BreakerRobotStartConfig(int teamNum, String teamName, String robotName, int robotYear, String robotSoftwareVersion, String authorNames) {
+    public BreakerRobotStartConfig(int teamNum, String teamName, BreakerRobotNameConfig robotNameConfig, int robotYear, String robotSoftwareVersion, String authorNames) {
         this.teamNum = teamNum;
         this.teamName = teamName;
-        this.robotName = robotName;
+        this.robotNameConfig = robotNameConfig;
         this.robotYear = robotYear;
         this.robotSoftwareVersion = robotSoftwareVersion;
         this.authorNames = authorNames;
-    }
-
-    /** Creates a default start configuration. Not for general use. */
-    public BreakerRobotStartConfig() {
-        this.teamNum = 0000;
-        this.teamName = "FRC Team";
-        this.robotName = "FRC Robot";
-        this.robotYear = 9999;
-        this.robotSoftwareVersion = "V0.0";
-        this.authorNames = "Unknown";
     }
 
     /** @return Code author names. */
@@ -49,7 +44,7 @@ public class BreakerRobotStartConfig {
 
     /** @return Name of robot. */
     public String getRobotName() {
-        return robotName;
+        return robotNameConfig.getRobotName();
     }
 
     /** @return Robot software version. */
@@ -70,6 +65,43 @@ public class BreakerRobotStartConfig {
     /** @return Team number. */
     public int getTeamNum() {
         return teamNum;
+    }
+
+    public static class BreakerRobotNameConfig {
+        private Map<String, String> robotControllerSerialNumbersAndRobotNames;
+        private String defaultName = "UNKNOWN ROBOT";
+        public BreakerRobotNameConfig(Map<String, String> robotControllerSerialNumbersAndRobotNames) {
+            this.robotControllerSerialNumbersAndRobotNames = robotControllerSerialNumbersAndRobotNames;
+        }
+
+        public BreakerRobotNameConfig(String robotName) {
+            this(new HashMap<>());
+            setDefaultName(robotName);
+        }
+
+        public BreakerRobotNameConfig() {
+            this(new HashMap<>());
+        }
+
+        public BreakerRobotNameConfig addRobot(String robotControllerSerialNumber, String robotName) {
+            robotControllerSerialNumbersAndRobotNames.put(robotControllerSerialNumber, robotName);
+            return this;
+        }
+
+        public void setDefaultName(String defaultName) {
+            this.defaultName = defaultName;
+        }
+
+        public String getRobotName(String serialNumber) {
+            if (robotControllerSerialNumbersAndRobotNames.containsKey(serialNumber)) {
+                return robotControllerSerialNumbersAndRobotNames.get(serialNumber);
+            } 
+            return defaultName; 
+        }
+
+        public String getRobotName() {
+            return getRobotName(RobotController.getSerialNumber());
+        }
     }
 
 }

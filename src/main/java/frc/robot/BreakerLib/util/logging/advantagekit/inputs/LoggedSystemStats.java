@@ -1,6 +1,7 @@
 package frc.robot.BreakerLib.util.logging.advantagekit.inputs;
 import frc.robot.BreakerLib.util.BreakerRoboRIO;
 import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLoggable;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 
 import edu.wpi.first.hal.can.CANStatus;
@@ -28,7 +29,7 @@ public class LoggedSystemStats {
     return instance;
   }
 
-  public static class SystemStatsInputs implements LoggableInputs {
+  public static class SystemStatsInputs implements BreakerLoggable {
     public double voltageVin;
     public double currentVin;
     public double userVoltage3v3;

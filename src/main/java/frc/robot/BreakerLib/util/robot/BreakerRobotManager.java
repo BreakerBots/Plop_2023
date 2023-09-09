@@ -56,7 +56,7 @@ public class BreakerRobotManager {
         BreakerRobotManager.brakeModeManager = new BreakerAutoBrakeManager(
                 new BreakerAutoBrakeManagerConfig(baseDrivetrain));
         BreakerLog.getInstance().logRobotStarted(robotConfig.getStartConfig());
-        logger.start();
+        logger.start(robotConfig.getStartConfig());
     }
 
     /** @return Brake mode manager object. */

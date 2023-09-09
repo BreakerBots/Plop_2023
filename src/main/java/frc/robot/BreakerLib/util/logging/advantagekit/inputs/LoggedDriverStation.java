@@ -1,6 +1,7 @@
 package frc.robot.BreakerLib.util.logging.advantagekit.inputs;
 
 import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLoggable;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 
 import edu.wpi.first.networktables.BooleanPublisher;
@@ -37,7 +38,7 @@ public class LoggedDriverStation {
   /**
    * General driver station data that needs to be updated throughout the match.
    */
-  public static class DriverStationInputs implements LoggableInputs {
+  public static class DriverStationInputs implements BreakerLoggable {
     public long allianceStation = 0;
     public String eventName = "";
     public String gameSpecificMessage = "";
@@ -74,7 +75,7 @@ public class LoggedDriverStation {
   /**
    * All of the required inputs for a single joystick.
    */
-  public static class JoystickInputs implements LoggableInputs {
+  public static class JoystickInputs implements BreakerLoggable {
     public String name = "";
     public long type = 0;
     public boolean xbox = false;

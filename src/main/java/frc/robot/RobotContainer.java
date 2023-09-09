@@ -10,8 +10,10 @@ import java.util.HashMap;
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.controls.StaticBrake;
 
+import edu.wpi.first.hal.simulation.RoboRioDataJNI;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -29,6 +31,7 @@ import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerv
 import frc.robot.BreakerLib.util.robot.BreakerRobotConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotManager;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
+import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameConfig;
 import frc.robot.commands.TeleopScoreGamePiece;
 import frc.robot.commands.auto.routines.DemoPath;
 import frc.robot.commands.drive.TeleopBalanceChargingStation;
@@ -145,8 +148,18 @@ public class RobotContainer {
   }
 
   private void configureRobotManager() {
-    BreakerRobotConfig robotConfig = new BreakerRobotConfig(new BreakerRobotStartConfig(5104, "BreakerBots",
-    "Plop", 2023, "v1", "Roman Abrahamson"));
+    BreakerRobotConfig robotConfig = 
+    new BreakerRobotConfig(
+      new BreakerRobotStartConfig(
+        5104, 
+        "BreakerBots", 
+        new BreakerRobotNameConfig()
+          .addRobot(MiscConstants.ROBORIO_SN, "Plop"), 
+        2023, 
+        "v1",
+        "Roman Abrahamson"
+        )
+      );
     robotConfig.setAutoPaths(new BreakerAutoPath("Demo Path", new DemoPath(drivetrainSys, visionSys, imuSys)));
     BreakerRobotManager.setup(drivetrainSys, robotConfig);
   }

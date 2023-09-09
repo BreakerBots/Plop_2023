@@ -328,6 +328,7 @@ public final class Constants {
       public static final double IMU_MOUNT_POSE_ROLL = 0.0;
       public static final String CANIVORE_1 = "CANivore_1";
       public static final boolean ALLOW_MANUAL_SCOREING_REALIGNMENT = true;
+      public static final String ROBORIO_SN = "A";
       // public static final double AUTO_BALANCE_MIN
   }
 

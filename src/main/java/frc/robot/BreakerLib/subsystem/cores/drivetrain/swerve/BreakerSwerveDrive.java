@@ -29,7 +29,7 @@ import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerGenericSwerveModule;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLogUtil;
 import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
-import frc.robot.BreakerLib.util.logging.advantagekit.inputs.LoggableInputs;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLoggable;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import frc.robot.BreakerLib.util.test.suites.BreakerGenericTestSuiteImplementation;

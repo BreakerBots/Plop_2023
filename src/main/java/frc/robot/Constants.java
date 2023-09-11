@@ -35,6 +35,7 @@ import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule.BreakerSwerveMotorPIDConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModuleBuilder.BreakerSwerveModuleConfig;
 import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider;
+import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider.FeedForwardUnits;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -77,14 +78,14 @@ public final class Constants {
       public static final Translation2d BR_TRANSLATION = new Translation2d(-0.2635, -0.2635);
 
       //Module Azimuth PIDF constants
-      public static final double MODULE_AZIMUTH_KP = 0.85;
+      public static final double MODULE_AZIMUTH_KP = 20.419941348973605;
       public static final double MODULE_AZIMUTH_KI = 0.0;
       public static final double MODULE_AZIMUTH_KD = 0.0;
       public static final double MODULE_AZIMUTH_KF = 0.0;
       public static final BreakerSwerveMotorPIDConfig MODULE_ANGLE_PID_CONFIG = new BreakerSwerveMotorPIDConfig(MODULE_AZIMUTH_KP, MODULE_AZIMUTH_KI, MODULE_AZIMUTH_KD, MODULE_AZIMUTH_KF);
 
       //Module Drive Velocity PIDF constants
-      public static final double MODULE_VELOCITY_KP = -0.045; // 0.01
+      public static final double MODULE_VELOCITY_KP = -0.10810557184750733;
       public static final double MODULE_VELOCITY_KI = 0.0;
       public static final double MODULE_VELOCITY_KD = 0.0;
       public static final double MODULE_VELOCITY_KF = 0.0;
@@ -93,7 +94,7 @@ public final class Constants {
       //Module Drive Arbitrary FeedForward
       public static final double FF_STATIC_FRICTION_COEFFICIENT = 0.3;
       public static final double FF_VELOCITY_COEFFICIENT = 2.82;
-      public static final BreakerArbitraryFeedforwardProvider MODULE_VELOCITY_FF = new BreakerArbitraryFeedforwardProvider(FF_STATIC_FRICTION_COEFFICIENT, FF_VELOCITY_COEFFICIENT);
+      public static final BreakerArbitraryFeedforwardProvider MODULE_VELOCITY_FF = new BreakerArbitraryFeedforwardProvider(FF_STATIC_FRICTION_COEFFICIENT, FF_VELOCITY_COEFFICIENT, FeedForwardUnits.VOLTAGE);
 
       //Module physical constants
       public static final double MAX_ATTAINABLE_MODULE_WHEEL_SPEED = 4.2;

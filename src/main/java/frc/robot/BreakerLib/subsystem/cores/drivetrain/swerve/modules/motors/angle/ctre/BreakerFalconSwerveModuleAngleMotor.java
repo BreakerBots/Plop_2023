@@ -11,6 +11,7 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
@@ -34,11 +35,11 @@ public class BreakerFalconSwerveModuleAngleMotor extends BreakerGenericSwerveMod
     private BreakerSwerveAzimuthEncoder encoder;
     private Rotation2d targetAngle;
     private BreakerSwerveAzimuthControler azimuthControler;
-    private final PositionDutyCycle positionRequest;
+    private final PositionVoltage positionRequest;
     public BreakerFalconSwerveModuleAngleMotor(TalonFX motor, BreakerSwerveAzimuthEncoder encoder, double encoderAbsoluteAngleOffsetDegrees, double azimuthGearRatio, double supplyCurrentLimit, boolean isMotorInverted,  BreakerSwerveMotorPIDConfig pidConfig) {
         this.motor = motor;
         this.encoder = encoder;
-        positionRequest = new PositionDutyCycle(0.0, false, 0.0, 0, false);
+        positionRequest = new PositionVoltage(0.0, false, 0.0, 0, false);
 
         encoder.config(false, encoderAbsoluteAngleOffsetDegrees);
         azimuthControler = null;

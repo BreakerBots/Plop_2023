@@ -9,6 +9,7 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.Pair;
+import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider.FeedForwardUnits;
 import frc.robot.BreakerLib.util.power.BreakerPowerManagementConfig;
 import frc.robot.BreakerLib.util.power.DevicePowerMode;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
@@ -51,7 +52,7 @@ public class BreakerNeoFlywheel extends BreakerGenericFlywheel {
     @Override
     protected void runFlywheel() {
         double flySetSpd = flywheelTargetRPM * config.getFlywheelGearRatio();
-        double feedforward = ffProvider.getArbitraryFeedforwardValue(flywheelTargetRPM);
+        double feedforward = ffProvider.getArbitraryFeedforwardValue(flywheelTargetRPM, FeedForwardUnits.DUTY_CYCLE);
         lFlyMotor.getPIDController().setReference(flySetSpd, CANSparkMax.ControlType.kVelocity , 0, feedforward, ArbFFUnits.kPercentOut);
     }
 

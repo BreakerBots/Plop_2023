@@ -4,8 +4,6 @@
 
 package frc.robot.BreakerLib.subsystem.cores.drivetrain.differential;
 
-import com.ctre.phoenix6.controls.ControlRequest;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.DifferentialDriveWheelVoltages;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -15,7 +13,6 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.BreakerLib.devices.sensors.gyro.BreakerGenericGyro;
 import frc.robot.BreakerLib.position.movement.BreakerMovementState2d;
 import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
@@ -25,7 +22,7 @@ import frc.robot.BreakerLib.position.odometry.differential.BreakerDiffDriveState
 import frc.robot.BreakerLib.position.odometry.vision.BreakerGenericVisionOdometer;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.motorgroups.BreakerDiffDriveMotorGroup;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerSwerveOdometryConfig;
+import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 
 public class BreakerDiffDrive extends BreakerGenericDrivetrain {
   /** Creates a new BreakerDiffDrive. */
@@ -68,7 +65,7 @@ public class BreakerDiffDrive extends BreakerGenericDrivetrain {
     setRawWheelSpeeds(arcadeDriveIK(xSpeed, zRotation, movementPrefrences));
   }
 
-  protected  WheelSpeeds arcadeDriveIK(double xSpeed, double zRotation, BreakerDiffDriveMovementPrefrences movementPrefrences) {
+  protected WheelSpeeds arcadeDriveIK(double xSpeed, double zRotation, BreakerDiffDriveMovementPrefrences movementPrefrences) {
     if (movementPrefrences.getSlowModeValue() == SlowModeValue.ENABLED || (movementPrefrences.getSlowModeValue() == SlowModeValue.DEFAULT && slowModeActive)) {
       xSpeed *= config.getSlowModeForwardMultiplier();
       zRotation *= config.getSlowModeForwardMultiplier();
@@ -181,8 +178,22 @@ public class BreakerDiffDrive extends BreakerGenericDrivetrain {
 
   @Override
   public void runSelfTest() {
-    
-    
+    health = DeviceHealth.NOMINAL;
+    faultStr = "";
+    leftMotorGroup.runSelfTest();
+    rightMotorGroup.runSelfTest();
+    if (leftMotorGroup.hasFault()) {
+      faultStr += leftMotorGroup.getFaults();
+      if (health != DeviceHealth.INOPERABLE) {
+        health = leftMotorGroup.getHealth();
+      }
+    }
+    if (rightMotorGroup.hasFault()) {
+      faultStr += rightMotorGroup.getFaults();
+      if (health != DeviceHealth.INOPERABLE) {
+        health = rightMotorGroup.getHealth();
+      }
+    }
   }
 
   @Override
@@ -206,33 +217,25 @@ public class BreakerDiffDrive extends BreakerGenericDrivetrain {
   }
 
   public static class BreakerDiffDriveMovementPrefrences {
-    protected final boolean squareInputsEnabled /*, headingCorrectionEnabled */;
+    protected final boolean squareInputsEnabled;
     protected final double inputDeadband;
     protected final SlowModeValue slowModeValue;
     public BreakerDiffDriveMovementPrefrences(boolean squareInputsEnabled, double inputDeadband, SlowModeValue slowModeValue) {
       this.squareInputsEnabled = squareInputsEnabled;
       this.slowModeValue = slowModeValue;
       this.inputDeadband = inputDeadband;
-      //this(false, squareInputsEnabled, inputDeadband, slowModeValue);
     }
 
-    // protected BreakerDiffDriveMovementPrefrences(boolean headingCorrectionEnabled, boolean squareInputsEnabled, double inputDeadband, SlowModeValue slowModeValue) {
-    //   this.headingCorrectionEnabled = headingCorrectionEnabled;
-    //   this.squareInputsEnabled = squareInputsEnabled;
-    //   this.slowModeValue = slowModeValue;
-    //   this.inputDeadband = inputDeadband;
-    // }
-
     public BreakerDiffDriveMovementPrefrences withSquareInputsEnabled(boolean isEnabled) {
-      return new BreakerDiffDriveMovementPrefrences(/*headingCorrectionEnabled,*/ squareInputsEnabled, inputDeadband, slowModeValue);
+      return new BreakerDiffDriveMovementPrefrences(squareInputsEnabled, inputDeadband, slowModeValue);
     }
 
     public BreakerDiffDriveMovementPrefrences withSlowModeValue(SlowModeValue slowModeValue) {
-      return new BreakerDiffDriveMovementPrefrences(/*headingCorrectionEnabled,*/ squareInputsEnabled, inputDeadband, slowModeValue);
+      return new BreakerDiffDriveMovementPrefrences(squareInputsEnabled, inputDeadband, slowModeValue);
     }
 
     public BreakerDiffDriveMovementPrefrences withInputDeadband(double deadband) {
-      return new BreakerDiffDriveMovementPrefrences(/*headingCorrectionEnabled,*/ squareInputsEnabled, deadband, slowModeValue);
+      return new BreakerDiffDriveMovementPrefrences(squareInputsEnabled, deadband, slowModeValue);
     }
 
     public SlowModeValue getSlowModeValue() {
@@ -242,10 +245,6 @@ public class BreakerDiffDrive extends BreakerGenericDrivetrain {
     public boolean getSquareInputsEnabled() {
         return squareInputsEnabled;
     }
-
-    // public boolean getHeadingCorrectionEnabled() {
-    //     return headingCorrectionEnabled;
-    // }
 
     public double getInputDeadband() {
         return inputDeadband;

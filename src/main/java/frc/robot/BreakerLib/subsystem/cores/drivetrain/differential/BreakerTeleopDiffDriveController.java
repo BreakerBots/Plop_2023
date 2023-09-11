@@ -22,8 +22,8 @@ public class BreakerTeleopDiffDriveController extends CommandBase {
   private BreakerGenericMathFunction netSpeedCurve, turnSpeedCurve;
   private SlewRateLimiter netRateLimiter, turnRateLimiter;
   private DoubleSupplier netSpeedPrecentSupplier, turnSpeedPrecentSupplier, overrideNetSup, overrideTurnSup;
-  private final double DEFAULT_DEADBAND = 0.02;
-  private final BreakerDiffDriveMovementPrefrences movementPrefrences = new BreakerDiffDriveMovementPrefrences(true, 0.1, SlowModeValue.DEFAULT);
+  private final double DEFAULT_DEADBAND = 0.05;
+  private final BreakerDiffDriveMovementPrefrences movementPrefrences = new BreakerDiffDriveMovementPrefrences(true, DEFAULT_DEADBAND, SlowModeValue.DEFAULT);
   public BreakerTeleopDiffDriveController(BreakerDiffDrive baseDrivetrain, BreakerGenericGamepad controller) {
     this.controller = controller;
     this.baseDrivetrain = baseDrivetrain;
@@ -43,6 +43,11 @@ public class BreakerTeleopDiffDriveController extends CommandBase {
     usesRateLimiters = false;
     inputOverride = false;
     addRequirements(baseDrivetrain);
+  }
+
+  public BreakerTeleopDiffDriveController setInputDeadband(double deadband) {
+    movementPrefrences.withInputDeadband(deadband);
+    return this;
   }
 
   public BreakerTeleopDiffDriveController addSpeedCurves(BreakerGenericMathFunction netSpeedCurve, BreakerGenericMathFunction turnSpeedCurve) {

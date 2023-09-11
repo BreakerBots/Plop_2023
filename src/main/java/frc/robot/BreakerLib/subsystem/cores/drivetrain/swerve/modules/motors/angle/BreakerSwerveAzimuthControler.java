@@ -34,7 +34,7 @@ public class BreakerSwerveAzimuthControler {
 
     public void setTargetAngle(Rotation2d target) {
         if (Objects.isNull(targetAngleConsumer)) {
-            motor.set(pid.calculate(encoder.getAbsolute(), target.getDegrees()));
+            motor.setVoltage(pid.calculate(encoder.getAbsolute(), target.getDegrees()));
             return;
         }
         targetAngleConsumer.accept(target);

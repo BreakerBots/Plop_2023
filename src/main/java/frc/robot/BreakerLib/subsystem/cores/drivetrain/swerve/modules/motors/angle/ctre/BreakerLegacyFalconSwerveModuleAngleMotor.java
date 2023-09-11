@@ -50,7 +50,7 @@ public class BreakerLegacyFalconSwerveModuleAngleMotor extends BreakerGenericSwe
             turnConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor0;
             turnConfig.slot0.kP = pidConfig.kP;
             turnConfig.slot0.kI = pidConfig.kI;
-            turnConfig.slot0.kD =pidConfig.kD;
+            turnConfig.slot0.kD = pidConfig.kD;
             turnConfig.slot0.closedLoopPeakOutput = 1.0;
             azimuthControler = new BreakerSwerveAzimuthControler((Rotation2d target) -> {
                 double relTgtAng = BreakerMath.absoluteAngleToContinuousRelativeAngleDegrees(getRelativeAngle(),

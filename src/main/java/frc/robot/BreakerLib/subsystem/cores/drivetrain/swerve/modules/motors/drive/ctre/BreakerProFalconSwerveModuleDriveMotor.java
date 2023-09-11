@@ -23,6 +23,7 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule.BreakerSwerveMotorPIDConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.BreakerGenericSwerveModuleDriveMotor;
 import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider;
+import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider.FeedForwardUnits;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import frc.robot.BreakerLib.util.vendorutil.BreakerPhoenix6Util;
 
@@ -47,6 +48,7 @@ public class BreakerProFalconSwerveModuleDriveMotor extends BreakerGenericSwerve
         driveConfig.Slot1.kP = pidConfig.kP;
         driveConfig.Slot1.kI = pidConfig.kI;
         driveConfig.Slot1.kD = pidConfig.kD;
+        driveConfig.Slot1.kV = pidConfig.kF;
         driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         driveConfig.CurrentLimits.SupplyCurrentLimit = supplyCurrentLimit;
         driveConfig.CurrentLimits.SupplyCurrentThreshold = supplyCurrentLimit;
@@ -74,7 +76,7 @@ public class BreakerProFalconSwerveModuleDriveMotor extends BreakerGenericSwerve
         targetVelocity = targetMetersPerSecond;
         motor.setControl(
         velocityRequest.withVelocity(targetMetersPerSecond / wheelCircumfrenceMeters)
-            .withFeedForward(arbFF.getArbitraryFeedforwardValue(targetMetersPerSecond))
+            .withFeedForward(arbFF.getArbitraryFeedforwardValue(targetMetersPerSecond, FeedForwardUnits.VOLTAGE))
             );
     }
 

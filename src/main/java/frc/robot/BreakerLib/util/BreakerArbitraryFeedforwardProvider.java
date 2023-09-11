@@ -23,6 +23,7 @@ public class BreakerArbitraryFeedforwardProvider {
     private SimpleMotorFeedforward ffClass;
 
     private FeedForwardType ffType;
+    private FeedForwardUnits calcUnits;
 
     /** Type of arbitrary feedforward provider. */
     private enum FeedForwardType {
@@ -32,15 +33,24 @@ public class BreakerArbitraryFeedforwardProvider {
         FF_CLASS
     }
 
+    public static enum FeedForwardUnits {
+        VOLTAGE,
+        DUTY_CYCLE,
+        /** Do not apply any conversion or compensation to value, regardless of requested or calculated units */
+        OTHER
+    }
+
     /**
      * Creates a map-based ArbitraryFeedForwardProvider.
      * 
      * @param speedToFeedforwardValMap
+     * @param calculationUnits Units returned by the FF calcualtion used (voltage or duty cycle)
      */
     public BreakerArbitraryFeedforwardProvider(
-            BreakerGenericInterpolatingMap<Double, Double> speedToFeedforwardValMap) {
+            BreakerGenericInterpolatingMap<Double, Double> speedToFeedforwardValMap, FeedForwardUnits calculationUnits) {
         ffMap = speedToFeedforwardValMap;
         ffType = FeedForwardType.MAP_SUP;
+        calcUnits = calculationUnits;
     }
 
     /**
@@ -48,11 +58,13 @@ public class BreakerArbitraryFeedforwardProvider {
      * 
      * @param staticFrictionCoefficient Feedforward kS coefficient.
      * @param velocityCoefficient Feedforward kV coefficient.
+     * @param calculationUnits Units returned by the FF calcualtion used (voltage or duty cycle)
      */
-    public BreakerArbitraryFeedforwardProvider(double staticFrictionCoefficient, double velocityCoefficient) {
+    public BreakerArbitraryFeedforwardProvider(double staticFrictionCoefficient, double velocityCoefficient, FeedForwardUnits calculationUnits) {
         this.velocityCoefficient = velocityCoefficient;
         this.staticFrictionCoefficient = staticFrictionCoefficient;
         ffType = FeedForwardType.COEFFICIENTS;
+        calcUnits = calculationUnits;
     }
 
     /**
@@ -60,40 +72,45 @@ public class BreakerArbitraryFeedforwardProvider {
      * 
      * @param ffFunc Function that applies feedforward calculations to given
      *               velocity (m/s).
+     * @param calculationUnits Units returned by the FF calcualtion used (voltage or duty cycle)
      */
-    public BreakerArbitraryFeedforwardProvider(Function<Double, Double> ffFunc) {
+    public BreakerArbitraryFeedforwardProvider(Function<Double, Double> ffFunc, FeedForwardUnits calculationUnits) {
         this.ffFunc = ffFunc;
         ffType = FeedForwardType.FUNCTION;
+        calcUnits = calculationUnits;
     }
 
     /**
      * Creates a function-based ArbitraryFeedForwardProvider that takes no input.
      * 
      * @param ffSupplier Supplier function that provides feedforward results.
+     * @param calculationUnits Units returned by the FF calcualtion used (voltage or duty cycle)
      */
-    public BreakerArbitraryFeedforwardProvider(DoubleSupplier ffSupplier) {
+    public BreakerArbitraryFeedforwardProvider(DoubleSupplier ffSupplier, FeedForwardUnits calculationUnits) {
         ffFunc = (Double x) -> (ffSupplier.getAsDouble());
         ffType = FeedForwardType.FUNCTION;
+        calcUnits = calculationUnits;
     }
 
     /**
      * Creates an ArbitraryFeedForwardProvider with a standard feedforward object.
      * 
      * @param ffClass Feedforward object.
+     * @param calculationUnits Units returned by the FF calcualtion used (voltage or duty cycle)
      */
-    public BreakerArbitraryFeedforwardProvider(SimpleMotorFeedforward ffClass) {
+    public BreakerArbitraryFeedforwardProvider(SimpleMotorFeedforward ffClass, FeedForwardUnits calculationUnits) {
         this.ffClass = ffClass;
         ffType = FeedForwardType.FF_CLASS;
+        calcUnits = calculationUnits;
     }
 
     /** @return Percent output to be added to the desired motors's output to achieve the desired speed. */
-    public double getArbitraryFeedforwardValue(double curSpeed) {
+    public double getArbitraryFeedforwardValue(double curSpeed, FeedForwardUnits returnUnits) {
         double feedForward = 0.0;
         if (curSpeed != 0.0) {
             switch (ffType) {
                 case COEFFICIENTS:
-                    feedForward = ((velocityCoefficient * curSpeed + (staticFrictionCoefficient * Math.signum(curSpeed)))
-                            / RobotController.getBatteryVoltage());
+                    feedForward = ((velocityCoefficient * curSpeed + (staticFrictionCoefficient * Math.signum(curSpeed))));
                     break;
                 case MAP_SUP:
                     feedForward = ffMap.getInterpolatedValue(curSpeed);
@@ -102,8 +119,13 @@ public class BreakerArbitraryFeedforwardProvider {
                     feedForward = ffFunc.apply(curSpeed);
                     break;
                 case FF_CLASS:
-                    feedForward = ffClass.calculate(curSpeed) / RobotController.getBatteryVoltage();
+                    feedForward = ffClass.calculate(curSpeed);
             }
+        }
+        if (calcUnits == FeedForwardUnits.DUTY_CYCLE && returnUnits == FeedForwardUnits.VOLTAGE) {
+            return feedForward * RobotController.getBatteryVoltage();
+        } else if (calcUnits == FeedForwardUnits.VOLTAGE && returnUnits == FeedForwardUnits.DUTY_CYCLE) {
+            return feedForward / RobotController.getBatteryVoltage();
         }
         return feedForward;
     }

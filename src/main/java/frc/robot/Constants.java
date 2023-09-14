@@ -35,7 +35,6 @@ import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule.BreakerSwerveMotorPIDConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModuleBuilder.BreakerSwerveModuleConfig;
 import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider;
-import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider.FeedForwardUnits;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -94,7 +93,7 @@ public final class Constants {
       //Module Drive Arbitrary FeedForward
       public static final double FF_STATIC_FRICTION_COEFFICIENT = 0.3;
       public static final double FF_VELOCITY_COEFFICIENT = 2.82;
-      public static final BreakerArbitraryFeedforwardProvider MODULE_VELOCITY_FF = new BreakerArbitraryFeedforwardProvider(FF_STATIC_FRICTION_COEFFICIENT, FF_VELOCITY_COEFFICIENT, FeedForwardUnits.VOLTAGE);
+      public static final BreakerArbitraryFeedforwardProvider MODULE_VELOCITY_FF = new BreakerArbitraryFeedforwardProvider(FF_STATIC_FRICTION_COEFFICIENT, FF_VELOCITY_COEFFICIENT);
 
       //Module physical constants
       public static final double MAX_ATTAINABLE_MODULE_WHEEL_SPEED = 4.2;

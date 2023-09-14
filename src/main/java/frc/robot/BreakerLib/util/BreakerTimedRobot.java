@@ -9,10 +9,10 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.hal.NotifierJNI;
 
 /**
- * LoggedRobot implements the IterativeRobotBase robot program framework.
+ * BreakerTimedRobot implements the IterativeRobotBase robot program framework.
  *
  * <p>
- * The LoggedRobot class is intended to be subclassed by a user creating a robot
+ * The BreakerTimedRobot class is intended to be subclassed by a user creating a robot
  * program, and will call all required AdvantageKit periodic methods.
  *
  * <p>

@@ -12,6 +12,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
@@ -36,11 +37,12 @@ public class BreakerFalconSwerveModuleAngleMotor extends BreakerGenericSwerveMod
     private Rotation2d targetAngle;
     private BreakerSwerveAzimuthControler azimuthControler;
     private final PositionVoltage positionRequest;
+    private final VoltageOut rawVoltageRequest;
     public BreakerFalconSwerveModuleAngleMotor(TalonFX motor, BreakerSwerveAzimuthEncoder encoder, double encoderAbsoluteAngleOffsetDegrees, double azimuthGearRatio, double supplyCurrentLimit, boolean isMotorInverted,  BreakerSwerveMotorPIDConfig pidConfig) {
         this.motor = motor;
         this.encoder = encoder;
         positionRequest = new PositionVoltage(0.0, false, 0.0, 0, false);
-
+        rawVoltageRequest = new VoltageOut(0.0, false, false);
         encoder.config(false, encoderAbsoluteAngleOffsetDegrees);
         azimuthControler = null;
         TalonFXConfiguration turnConfig = new TalonFXConfiguration();
@@ -59,7 +61,7 @@ public class BreakerFalconSwerveModuleAngleMotor extends BreakerGenericSwerveMod
             }
         }
         if (Objects.isNull(azimuthControler)) {
-            azimuthControler = new BreakerSwerveAzimuthControler(motor, encoder, pidConfig);
+            azimuthControler = new BreakerSwerveAzimuthControler((Double request) -> {motor.setControl(rawVoltageRequest.withOutput(request));}, encoder, pidConfig);
         }
         turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         turnConfig.CurrentLimits.SupplyCurrentLimit = supplyCurrentLimit;
@@ -83,13 +85,13 @@ public class BreakerFalconSwerveModuleAngleMotor extends BreakerGenericSwerveMod
     }
 
     @Override
-    public double getAbsoluteAngle() {
-        return encoder.getAbsolute();
+    public Rotation2d getAbsoluteAngle() {
+        return Rotation2d.fromRotations(encoder.getAbsolute());
     }
 
     @Override
-    public double getRelativeAngle() {
-        return encoder.getRelative();
+    public Rotation2d getRelativeAngle() {
+        return Rotation2d.fromRotations(encoder.getRelative());
     }
 
     @Override

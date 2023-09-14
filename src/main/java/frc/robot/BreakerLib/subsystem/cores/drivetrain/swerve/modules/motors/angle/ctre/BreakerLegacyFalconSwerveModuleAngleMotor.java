@@ -53,12 +53,12 @@ public class BreakerLegacyFalconSwerveModuleAngleMotor extends BreakerGenericSwe
             turnConfig.slot0.kD = pidConfig.kD;
             turnConfig.slot0.closedLoopPeakOutput = 1.0;
             azimuthControler = new BreakerSwerveAzimuthControler((Rotation2d target) -> {
-                double relTgtAng = BreakerMath.absoluteAngleToContinuousRelativeAngleDegrees(getRelativeAngle(),
-                Rotation2d.fromDegrees(getAbsoluteAngle()), target);
+                double relTgtAng = BreakerMath.absoluteAngleToContinuousRelativeAngleDegrees(getRelativeAngle().getDegrees(),
+                getAbsoluteAngle(), target);
                 motor.set(TalonFXControlMode.Position, BreakerUnits.degreesToCANCoderNativeUnits(relTgtAng));
             });
         } else {
-            azimuthControler = new BreakerSwerveAzimuthControler(motor, encoder, pidConfig);
+            azimuthControler = new BreakerSwerveAzimuthControler(motor::set, encoder, pidConfig);
         }
         turnConfig.peakOutputForward = 1.0;
         turnConfig.peakOutputReverse = -1.0;
@@ -83,13 +83,13 @@ public class BreakerLegacyFalconSwerveModuleAngleMotor extends BreakerGenericSwe
     }
 
     @Override
-    public double getAbsoluteAngle() {
-        return encoder.getAbsolute();
+    public Rotation2d getAbsoluteAngle() {
+        return Rotation2d.fromRotations(encoder.getAbsolute());
     }
 
     @Override
-    public double getRelativeAngle() {
-        return encoder.getRelative();
+    public Rotation2d getRelativeAngle() {
+        return Rotation2d.fromRotations(encoder.getRelative());
     }
     @Override
     public void setBrakeMode(boolean isEnabled) {

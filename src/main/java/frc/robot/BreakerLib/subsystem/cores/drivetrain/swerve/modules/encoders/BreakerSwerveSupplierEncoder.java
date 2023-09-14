@@ -22,7 +22,7 @@ public class BreakerSwerveSupplierEncoder implements BreakerSwerveAzimuthEncoder
 
     public BreakerSwerveSupplierEncoder(DoubleSupplier relativeSupplier) {
         this.relativeSupplier = relativeSupplier;
-        absoluteSupplier = () -> {return MathUtil.inputModulus(relativeSupplier.getAsDouble(), -180.0, 180.0);};
+        absoluteSupplier = () -> {return MathUtil.inputModulus(relativeSupplier.getAsDouble(), -0.5, 0.5);};
     }
  
     @Override

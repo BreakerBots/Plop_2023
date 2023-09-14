@@ -28,7 +28,7 @@ public class BreakerSwerveSparkDutyCycleEncoder implements BreakerSwerveAzimuthE
     public BreakerSwerveSparkDutyCycleEncoder(CANSparkMax spark, int averageSamplingBitDepth) {
         spark.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
         dutyCycleEncoder = spark.getAbsoluteEncoder(Type.kDutyCycle);
-        dutyCycleEncoder.setPositionConversionFactor(360);
+        dutyCycleEncoder.setPositionConversionFactor(1.0);
         dutyCycleEncoder.setAverageDepth(averageSamplingBitDepth);
     }
 

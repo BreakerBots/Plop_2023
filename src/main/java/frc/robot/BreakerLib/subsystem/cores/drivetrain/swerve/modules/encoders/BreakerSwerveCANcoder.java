@@ -25,12 +25,12 @@ public class BreakerSwerveCANcoder implements BreakerSwerveAzimuthEncoder {
 
     @Override
     public double getRelative() {
-        return BaseStatusSignal.getLatencyCompensatedValue(encoder.getPosition(), encoder.getVelocity()) * 360.0;
+        return BaseStatusSignal.getLatencyCompensatedValue(encoder.getPosition(), encoder.getVelocity());
     }
 
     @Override
     public double getAbsolute() {
-        return MathUtil.inputModulus(BaseStatusSignal.getLatencyCompensatedValue(encoder.getAbsolutePosition(), encoder.getVelocity()), -0.5, 0.5)  * 360.0;
+        return MathUtil.inputModulus(BaseStatusSignal.getLatencyCompensatedValue(encoder.getAbsolutePosition(), encoder.getVelocity()), -0.5, 0.5);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class BreakerSwerveCANcoder implements BreakerSwerveAzimuthEncoder {
 
     @Override
     public void config(boolean invertEncoder, double absoluteOffset) {
-        BreakerCANCoderFactory.configExistingCANCoder(encoder, AbsoluteSensorRangeValue.Signed_PlusMinusHalf, absoluteOffset / 360.0, invertEncoder ? SensorDirectionValue.Clockwise_Positive : SensorDirectionValue.CounterClockwise_Positive);
+        BreakerCANCoderFactory.configExistingCANCoder(encoder, AbsoluteSensorRangeValue.Signed_PlusMinusHalf, absoluteOffset, invertEncoder ? SensorDirectionValue.Clockwise_Positive : SensorDirectionValue.CounterClockwise_Positive);
     }
 
 }

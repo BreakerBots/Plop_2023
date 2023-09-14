@@ -13,7 +13,6 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule.BreakerSwerveMotorPIDConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.BreakerGenericSwerveModuleDriveMotor;
 import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider;
-import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider.FeedForwardUnits;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import frc.robot.BreakerLib.util.vendorutil.BreakerREVUtil;
 
@@ -56,8 +55,8 @@ public class BreakerNeoSwerveModuleDriveMotor extends BreakerGenericSwerveModule
     public void setTargetVelocity(double targetMetersPerSecond) {
         targetVelocity = targetMetersPerSecond;
         motor.getPIDController().setReference(getMetersPerSecToNativeVelUnits(targetMetersPerSecond),
-                CANSparkMax.ControlType.kVelocity, 0, arbFF.getArbitraryFeedforwardValue(targetMetersPerSecond, FeedForwardUnits.VOLTAGE),
-                SparkMaxPIDController.ArbFFUnits.kVoltage);
+                CANSparkMax.ControlType.kVelocity, 0, arbFF.getArbitraryFeedforwardValue(targetMetersPerSecond),
+                SparkMaxPIDController.ArbFFUnits.kPercentOut);
     }
 
     @Override

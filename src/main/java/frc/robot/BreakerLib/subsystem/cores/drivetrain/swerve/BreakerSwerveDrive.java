@@ -124,7 +124,7 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain implements Brea
       } else {
 
         SwerveModuleState optimizedState = SwerveModuleState.optimize(targetModuleStates[i],
-            Rotation2d.fromDegrees(swerveModules[i].getModuleRelativeAngle()));
+            swerveModules[i].getModuleAbsoluteAngle());
 
         swerveModules[i].setModuleTarget(optimizedState);
         this.targetModuleStates[i] = optimizedState;

@@ -57,7 +57,7 @@ public class BreakerNeoSwerveModuleAngleMotor extends BreakerGenericSwerveModule
         }
 
         if (Objects.isNull(azimuthControler)) {
-            azimuthControler = new BreakerSwerveAzimuthControler(motor, encoder, pidConfig);
+            azimuthControler = new BreakerSwerveAzimuthControler(motor::set, encoder, pidConfig);
         }
 
         BreakerREVUtil.checkError(motor.enableVoltageCompensation(12.0), "Failed to config " + deviceName + " voltage compensation");
@@ -74,13 +74,13 @@ public class BreakerNeoSwerveModuleAngleMotor extends BreakerGenericSwerveModule
     }
 
     @Override
-    public double getAbsoluteAngle() {
-        return encoder.getAbsolute();
+    public Rotation2d getAbsoluteAngle() {
+        return Rotation2d.fromRotations(encoder.getAbsolute());
     }
 
     @Override
-    public double getRelativeAngle() {
-        return encoder.getRelative();
+    public Rotation2d getRelativeAngle() {
+        return Rotation2d.fromRotations(encoder.getRelative());
     }
     @Override
     public void setBrakeMode(boolean isEnabled) {

@@ -13,7 +13,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.math.Pair;
-import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider.FeedForwardUnits;
 import frc.robot.BreakerLib.util.math.BreakerUnits;
 import frc.robot.BreakerLib.util.power.BreakerPowerManagementConfig;
 import frc.robot.BreakerLib.util.power.DevicePowerMode;
@@ -76,7 +75,7 @@ public class BreakerLegacyFalconFlywheel extends BreakerGenericFlywheel {
     @Override
     protected void runFlywheel() {
         double flySetSpd = BreakerUnits.RPMtoFalconRSU(flywheelTargetRPM * config.getFlywheelGearRatio());
-        double feedforward = ffProvider.getArbitraryFeedforwardValue(flywheelTargetRPM, FeedForwardUnits.DUTY_CYCLE);
+        double feedforward = ffProvider.getArbitraryFeedforwardValue(flywheelTargetRPM);
         lFlyMotor.set(ControlMode.Velocity, flySetSpd, DemandType.ArbitraryFeedForward, feedforward);
     }
 

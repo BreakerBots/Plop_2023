@@ -25,7 +25,7 @@ public class BreakerSwervePWMDutyCycleEncoder implements BreakerSwerveAzimuthEnc
     public BreakerSwervePWMDutyCycleEncoder(int channel, int connectedFrequencyThreshold, double dutyCycleMin, double dutyCycleMax) {
         dcEncoder = new DutyCycleEncoder(channel);
         dcEncoder.setDutyCycleRange(dutyCycleMin, dutyCycleMax);
-        dcEncoder.setDistancePerRotation(360.0);
+        dcEncoder.setDistancePerRotation(1.0);
         dcEncoder.setConnectedFrequencyThreshold(connectedFrequencyThreshold);
     }
 
@@ -36,12 +36,12 @@ public class BreakerSwervePWMDutyCycleEncoder implements BreakerSwerveAzimuthEnc
 
     @Override
     public double getAbsolute() {
-        return MathUtil.inputModulus(dcEncoder.getDistance() + offset, -180.0, 180.0);
+        return MathUtil.inputModulus(dcEncoder.getDistance() + offset, -0.5, 0.5);
     }
 
     @Override
     public void config(boolean invertEncoder, double offset) {
-        dcEncoder.setDistancePerRotation(invertEncoder ? -360.0 : 360.0 );
+        dcEncoder.setDistancePerRotation(invertEncoder ? -1.0 : 1.0 );
         this.offset = offset;
     }
 

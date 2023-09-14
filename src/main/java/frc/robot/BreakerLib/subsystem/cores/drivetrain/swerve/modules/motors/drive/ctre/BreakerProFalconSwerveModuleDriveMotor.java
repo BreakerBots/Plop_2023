@@ -11,9 +11,11 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
+import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -23,7 +25,6 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule.BreakerSwerveMotorPIDConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.BreakerGenericSwerveModuleDriveMotor;
 import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider;
-import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider.FeedForwardUnits;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import frc.robot.BreakerLib.util.vendorutil.BreakerPhoenix6Util;
 
@@ -31,17 +32,23 @@ import frc.robot.BreakerLib.util.vendorutil.BreakerPhoenix6Util;
 public class BreakerProFalconSwerveModuleDriveMotor extends BreakerGenericSwerveModuleDriveMotor {
     private TalonFX motor;
     private double driveGearRatio, wheelDiameter, targetVelocity;
-    private final VelocityDutyCycle velocityRequest;
+    private final VelocityDutyCycle velocityDutyCycleRequest;
+    private final VelocityVoltage velocityVoltageRequest;
+    private final VelocityTorqueCurrentFOC velocityTorqueCurrentRequest;
     private final double wheelCircumfrenceMeters;
     private BreakerArbitraryFeedforwardProvider arbFF;
-    public BreakerProFalconSwerveModuleDriveMotor(TalonFX motor, double driveGearRatio, double wheelDiameter, double supplyCurrentLimit, boolean isMotorInverted, BreakerArbitraryFeedforwardProvider arbFF, BreakerSwerveMotorPIDConfig pidConfig) {
+    private final  ProTalonFXControlOutputUnits controlOutputUnits;
+    public BreakerProFalconSwerveModuleDriveMotor(TalonFX motor, double driveGearRatio, double wheelDiameter, double supplyCurrentLimit, boolean isMotorInverted, BreakerArbitraryFeedforwardProvider arbFF, BreakerSwerveMotorPIDConfig pidConfig, ProTalonFXControlOutputUnits controlOutputUnits) {
         this.motor = motor;
         this.driveGearRatio = driveGearRatio;
         this.wheelDiameter = wheelDiameter;
         this.arbFF = arbFF;
         wheelCircumfrenceMeters = wheelDiameter*Math.PI;
         targetVelocity = 0.0;
-        velocityRequest = new VelocityDutyCycle(0.0, true, 0.0, 1, false);
+        velocityDutyCycleRequest = new VelocityDutyCycle(0.0, true, 0.0, 1, false);
+        velocityVoltageRequest = new VelocityVoltage(0.0, true, 0.0, 1, false);
+        velocityTorqueCurrentRequest = new VelocityTorqueCurrentFOC(0.0, 0.0, 1, false);
+        this.controlOutputUnits = controlOutputUnits;
         TalonFXConfiguration driveConfig = new TalonFXConfiguration();
         driveConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         driveConfig.Feedback.SensorToMechanismRatio = driveGearRatio;
@@ -58,7 +65,22 @@ public class BreakerProFalconSwerveModuleDriveMotor extends BreakerGenericSwerve
                 " Failed to config swerve module drive motor ");
     
         motor.setInverted(isMotorInverted);
-        motor.setControl(velocityRequest);
+        setMotorVel(0.0, 0.0);
+    }
+
+    private void setMotorVel(double vel, double ff) {
+        switch (controlOutputUnits) {
+            case DUTY_CYCLE:
+                motor.setControl(velocityDutyCycleRequest.withVelocity(vel).withFeedForward(ff));
+                break;
+            case TORQUE_CURRENT:
+                motor.setControl(velocityTorqueCurrentRequest.withVelocity(vel).withFeedForward(ff));
+                break;
+            case VOLTAGE:
+            default:
+                motor.setControl(velocityVoltageRequest.withVelocity(vel).withFeedForward(ff));
+                break;
+        }
     }
 
     @Override
@@ -74,10 +96,7 @@ public class BreakerProFalconSwerveModuleDriveMotor extends BreakerGenericSwerve
     @Override
     public void setTargetVelocity(double targetMetersPerSecond) {
         targetVelocity = targetMetersPerSecond;
-        motor.setControl(
-        velocityRequest.withVelocity(targetMetersPerSecond / wheelCircumfrenceMeters)
-            .withFeedForward(arbFF.getArbitraryFeedforwardValue(targetMetersPerSecond, FeedForwardUnits.VOLTAGE))
-            );
+        setMotorVel(targetMetersPerSecond / wheelCircumfrenceMeters, arbFF.getArbitraryFeedforwardValue(targetMetersPerSecond));
     }
 
     @Override
@@ -115,5 +134,11 @@ public class BreakerProFalconSwerveModuleDriveMotor extends BreakerGenericSwerve
     @Override
     public double getMotorOutput() {
         return motor.getClosedLoopOutput().getValue();
+    }
+
+    public enum ProTalonFXControlOutputUnits {
+        VOLTAGE,
+        DUTY_CYCLE,
+        TORQUE_CURRENT
     }
 }

@@ -50,14 +50,13 @@ public abstract class BreakerGenericSwerveModule extends BreakerGenericDevice im
      */
     public abstract void setModuleTarget(Rotation2d targetAngle, double targetVelocityMetersPerSecond);
 
-    /** @return the absolute (+/- 180 deg) angle of the module in degrees */
-    public abstract double getModuleAbsoluteAngle();
+    /** @return the absolute (+/- 180 deg) angle of the module as a {@link Rotation2d} */
+    public abstract Rotation2d getModuleAbsoluteAngle();
 
     /**
-     * @return the relative (with rollover, 180 -> 181) angle of the module in
-     *         degrees
+     * @return the relative (with rollover, 180 -> 181) angle of the module in as a {@link Rotation2d}
      */
-    public abstract double getModuleRelativeAngle();
+    public abstract Rotation2d getModuleRelativeAngle();
 
     /** @return The velocity of the module's drive wheel in meters per second. */
     public abstract double getModuleVelMetersPerSec();
@@ -66,7 +65,7 @@ public abstract class BreakerGenericSwerveModule extends BreakerGenericDevice im
 
     /** @return Module's {@link SwerveModuleState}. */
     public SwerveModuleState getModuleState() {
-        return new SwerveModuleState(getModuleVelMetersPerSec(), Rotation2d.fromDegrees(getModuleAbsoluteAngle()));
+        return new SwerveModuleState(getModuleVelMetersPerSec(), getModuleAbsoluteAngle());
     }
 
     /**
@@ -91,7 +90,7 @@ public abstract class BreakerGenericSwerveModule extends BreakerGenericDevice im
     public abstract void setModuleBrakeMode(boolean isEnabled);
 
     public SwerveModulePosition getModulePosition() {
-        return new SwerveModulePosition(getModuleDriveDistanceMeters(), Rotation2d.fromDegrees(getModuleAbsoluteAngle()));
+        return new SwerveModulePosition(getModuleDriveDistanceMeters(), getModuleAbsoluteAngle());
     }
 
     public abstract double getModuleDriveDistanceMeters();
@@ -118,7 +117,7 @@ public abstract class BreakerGenericSwerveModule extends BreakerGenericDevice im
         builder.addDoubleProperty("Target Velocity", () -> this.getModuleTargetState().speedMetersPerSecond, null);
         builder.addDoubleProperty("Target Angle", () -> this.getModuleTargetState().angle.getDegrees(), null); 
         builder.addDoubleProperty("Actual Velocity", () -> this.getModuleVelMetersPerSec(), null);
-        builder.addDoubleProperty("Actual Angle", () -> this.getModuleAbsoluteAngle(), null); 
+        builder.addDoubleProperty("Actual Angle", () -> this.getModuleAbsoluteAngle().getDegrees(), null); 
     }
 
     @Override

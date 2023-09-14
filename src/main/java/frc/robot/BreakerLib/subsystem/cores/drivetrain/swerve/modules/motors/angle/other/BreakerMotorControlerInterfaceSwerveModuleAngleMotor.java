@@ -19,7 +19,7 @@ public class BreakerMotorControlerInterfaceSwerveModuleAngleMotor extends Breake
     private MotorController motor;
     public BreakerMotorControlerInterfaceSwerveModuleAngleMotor(MotorController motor, BreakerSwerveAzimuthEncoder encoder, double encoderAbsoluteAngleOffsetDegrees, boolean isMotorInverted,  BreakerSwerveMotorPIDConfig pidConfig) {
         motor.setInverted(isMotorInverted);
-        controler = new BreakerSwerveAzimuthControler(motor, encoder, pidConfig);
+        controler = new BreakerSwerveAzimuthControler(motor::set, encoder, pidConfig);
         this.encoder = encoder;
         tgtAng = new Rotation2d();
         this.motor = motor;
@@ -34,13 +34,13 @@ public class BreakerMotorControlerInterfaceSwerveModuleAngleMotor extends Breake
     }
  
     @Override
-    public double getAbsoluteAngle() {
-        return encoder.getAbsolute();
+    public Rotation2d getAbsoluteAngle() {
+        return Rotation2d.fromRotations(encoder.getAbsolute());
     }
 
     @Override
-    public double getRelativeAngle() {
-        return encoder.getRelative();
+    public Rotation2d getRelativeAngle() {
+        return Rotation2d.fromRotations(encoder.getRelative());
     }
 
     @Override

@@ -25,12 +25,12 @@ public class BreakerSwerveLegacyCANcoder implements BreakerSwerveAzimuthEncoder 
 
     @Override
     public double getRelative() {
-        return encoder.getPosition();
+        return encoder.getPosition()/360.0;
     }
 
     @Override
     public double getAbsolute() {
-        return encoder.getAbsolutePosition();
+        return encoder.getAbsolutePosition()/360.0;
     }
 
     @Override

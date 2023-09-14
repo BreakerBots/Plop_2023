@@ -7,16 +7,10 @@ package frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.system.plant.LinearSystemId;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.angle.BreakerGenericSwerveModuleAngleMotor;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.BreakerGenericSwerveModuleDriveMotor;
 import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
-import frc.robot.BreakerLib.util.math.BreakerMath;
-import frc.robot.BreakerLib.util.power.BreakerPowerManagementConfig;
-import frc.robot.BreakerLib.util.power.DevicePowerMode;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
-import frc.robot.BreakerLib.util.vendorutil.BreakerPhoenix5Util;
-
 /** Add your docs here. */
 public class BreakerSwerveModule extends BreakerGenericSwerveModule {
     private BreakerGenericSwerveModuleDriveMotor driveMotor;
@@ -34,12 +28,12 @@ public class BreakerSwerveModule extends BreakerGenericSwerveModule {
     }
 
     @Override
-    public double getModuleAbsoluteAngle() {
+    public Rotation2d getModuleAbsoluteAngle() {
         return angleMotor.getAbsoluteAngle();
     }
 
     @Override
-    public double getModuleRelativeAngle() {
+    public Rotation2d getModuleRelativeAngle() {
         return angleMotor.getRelativeAngle();
     }
 

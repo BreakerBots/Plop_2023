@@ -59,7 +59,7 @@ public class BreakerProFalconSwerveModuleAngleMotor extends BreakerGenericSwerve
             }
         }
         if (Objects.isNull(azimuthControler)) {
-            azimuthControler = new BreakerSwerveAzimuthControler(motor, encoder, pidConfig);
+            azimuthControler = new BreakerSwerveAzimuthControler(motor::setVoltage, encoder, pidConfig);
         }
         turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         turnConfig.CurrentLimits.SupplyCurrentLimit = supplyCurrentLimit;
@@ -83,13 +83,13 @@ public class BreakerProFalconSwerveModuleAngleMotor extends BreakerGenericSwerve
     }
 
     @Override
-    public double getAbsoluteAngle() {
-        return encoder.getAbsolute();
+    public Rotation2d getAbsoluteAngle() {
+        return Rotation2d.fromRotations(encoder.getAbsolute());
     }
 
     @Override
-    public double getRelativeAngle() {
-        return encoder.getRelative();
+    public Rotation2d getRelativeAngle() {
+        return Rotation2d.fromRotations(encoder.getRelative());
     }
 
     @Override

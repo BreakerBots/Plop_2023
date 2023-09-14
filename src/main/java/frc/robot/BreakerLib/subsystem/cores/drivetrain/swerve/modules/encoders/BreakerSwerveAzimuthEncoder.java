@@ -14,10 +14,10 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 /** Add your docs here. */
 public interface BreakerSwerveAzimuthEncoder {
 
-    /** @return Relative anglular position in degrees, (180 -> 181) */
+    /** @return Relative anglular position in rotations, (0.5 -> 0.6) */
     public abstract double getRelative();
 
-    /** @return Absolute anglular position in degrees [-180, 180]. */
+    /** @return Absolute anglular position in rotations [-0.5, 0.5]. */
     public abstract double getAbsolute();
 
     /**

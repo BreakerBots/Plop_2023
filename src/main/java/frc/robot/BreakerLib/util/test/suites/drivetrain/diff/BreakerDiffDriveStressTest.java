@@ -10,7 +10,7 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain.SlowModeValue;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.legacy.BreakerLegacyDiffDrive;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.BreakerDiffDrive;
 import frc.robot.BreakerLib.util.BreakerTriplet;
 import frc.robot.BreakerLib.util.math.averages.BreakerAverage;
 import frc.robot.BreakerLib.util.test.suites.BreakerTestBase;
@@ -19,12 +19,12 @@ import frc.robot.BreakerLib.util.test.suites.BreakerTestSuiteDataLogType;
 /** Tests the maximum achiveable free velocites of each swerve module's drive motors */
 public class BreakerDiffDriveStressTest extends BreakerTestBase {
     private Timer timer;
-    private BreakerLegacyDiffDrive drivetrain;
+    private BreakerDiffDrive drivetrain;
     private double timeoutSeconds;
     private BreakerAverage leftVelAvg, rightVelAvg;
     private ArrayList<Pair<Double, Double>> averageDriveVels;
     private ArrayList<BreakerTriplet<Double, Double, Double>> tankDrivePrecentagesToTestAndStepTimeouts;
-    public BreakerDiffDriveStressTest(BreakerLegacyDiffDrive drivetrain, BreakerTestSuiteDataLogType logType, ArrayList<BreakerTriplet<Double, Double, Double>> tankDrivePrecentagesToTestAndStepTimeouts) {
+    public BreakerDiffDriveStressTest(BreakerDiffDrive drivetrain, BreakerTestSuiteDataLogType logType, ArrayList<BreakerTriplet<Double, Double, Double>> tankDrivePrecentagesToTestAndStepTimeouts) {
         super(logType, " Diff_Drive_Stress_Test ", " Test Steps And Timeouts: " + tankDrivePrecentagesToTestAndStepTimeouts.toString());
         this.drivetrain = drivetrain;
         tankDrivePrecentagesToTestAndStepTimeouts = new ArrayList<>(tankDrivePrecentagesToTestAndStepTimeouts); 

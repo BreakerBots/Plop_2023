@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule.BreakerSwerveMotorPIDConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.BreakerGenericSwerveModuleDriveMotor;
 import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider;
-import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider.FeedForwardUnits;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import frc.robot.BreakerLib.util.vendorutil.BreakerPhoenix6Util;
 
@@ -33,17 +32,21 @@ import frc.robot.BreakerLib.util.vendorutil.BreakerPhoenix6Util;
 public class BreakerFalconSwerveModuleDriveMotor extends BreakerGenericSwerveModuleDriveMotor {
     private TalonFX motor;
     private double driveGearRatio, wheelDiameter, targetVelocity;
-    private final VelocityVoltage velocityRequest;
+    private final VelocityDutyCycle velocityDutyCycleRequest;
+    private final VelocityVoltage velocityVoltageRequest;
     private final double wheelCircumfrenceMeters;
     private BreakerArbitraryFeedforwardProvider arbFF;
-    public BreakerFalconSwerveModuleDriveMotor(TalonFX motor, double driveGearRatio, double wheelDiameter, double supplyCurrentLimit, boolean isMotorInverted, BreakerArbitraryFeedforwardProvider arbFF, BreakerSwerveMotorPIDConfig pidConfig) {
+    private final TalonFXControlOutputUnits controlOutputUnits;
+    public BreakerFalconSwerveModuleDriveMotor(TalonFX motor, double driveGearRatio, double wheelDiameter, double supplyCurrentLimit, boolean isMotorInverted, BreakerArbitraryFeedforwardProvider arbFF, BreakerSwerveMotorPIDConfig pidConfig, TalonFXControlOutputUnits controlOutputUnits) {
         this.motor = motor;
         this.driveGearRatio = driveGearRatio;
         this.wheelDiameter = wheelDiameter;
         this.arbFF = arbFF;
         wheelCircumfrenceMeters = wheelDiameter*Math.PI;
         targetVelocity = 0.0;
-        velocityRequest = new VelocityVoltage(0.0, false, 0.0, 1, false);
+        velocityDutyCycleRequest = new VelocityDutyCycle(0.0, false, 0.0, 1, false);
+        velocityVoltageRequest = new VelocityVoltage(0.0, false, 0.0, 1, false);
+        this.controlOutputUnits = controlOutputUnits;
         TalonFXConfiguration driveConfig = new TalonFXConfiguration();
         driveConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         driveConfig.Feedback.SensorToMechanismRatio = driveGearRatio;
@@ -60,7 +63,19 @@ public class BreakerFalconSwerveModuleDriveMotor extends BreakerGenericSwerveMod
                 " Failed to config swerve module drive motor ");
     
         motor.setInverted(isMotorInverted);
-        motor.setControl(velocityRequest);
+        setMotorVel(0.0, 0.0);
+    }
+
+    private void setMotorVel(double vel, double ff) {
+        switch (controlOutputUnits) {
+            case DUTY_CYCLE:
+                motor.setControl(velocityDutyCycleRequest.withVelocity(vel).withFeedForward(ff));
+                break;
+            case VOLTAGE:
+            default:
+                motor.setControl(velocityVoltageRequest.withVelocity(vel).withFeedForward(ff));
+                break;
+        }
     }
 
     @Override
@@ -76,10 +91,7 @@ public class BreakerFalconSwerveModuleDriveMotor extends BreakerGenericSwerveMod
     @Override
     public void setTargetVelocity(double targetMetersPerSecond) {
         targetVelocity = targetMetersPerSecond;
-        motor.setControl(
-        velocityRequest.withVelocity(targetMetersPerSecond / wheelCircumfrenceMeters)
-            .withFeedForward(arbFF.getArbitraryFeedforwardValue(targetMetersPerSecond, FeedForwardUnits.VOLTAGE))
-            );
+        setMotorVel(targetMetersPerSecond / wheelCircumfrenceMeters, arbFF.getArbitraryFeedforwardValue(targetMetersPerSecond));
     }
 
     @Override
@@ -117,5 +129,10 @@ public class BreakerFalconSwerveModuleDriveMotor extends BreakerGenericSwerveMod
     @Override
     public double getMotorOutput() {
         return motor.getClosedLoopOutput().getValue();
+    }
+
+    public enum TalonFXControlOutputUnits {
+        VOLTAGE,
+        DUTY_CYCLE
     }
 }

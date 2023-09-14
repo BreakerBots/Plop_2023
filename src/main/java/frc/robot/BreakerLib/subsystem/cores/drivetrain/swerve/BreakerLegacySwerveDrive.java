@@ -129,7 +129,7 @@ public class BreakerLegacySwerveDrive extends BreakerGenericDrivetrain
       } else {
 
         SwerveModuleState optimizedState = SwerveModuleState.optimize(targetModuleStates[i],
-            Rotation2d.fromDegrees(swerveModules[i].getModuleRelativeAngle()));
+            swerveModules[i].getModuleAbsoluteAngle());
 
         swerveModules[i].setModuleTarget(optimizedState);
         this.targetModuleStates[i] = optimizedState;

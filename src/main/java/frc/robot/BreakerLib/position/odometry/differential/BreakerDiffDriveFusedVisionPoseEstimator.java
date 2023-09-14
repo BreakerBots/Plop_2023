@@ -12,7 +12,6 @@ import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerGenericVisionOdometer;
 import frc.robot.BreakerLib.position.odometry.vision.posefilter.BreakerVisionPoseFilterOdometer;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.BreakerDiffDrive;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.differential.legacy.BreakerLegacyDiffDrive;
 
 /** Estimates diff drive pose based on vision odometry. */
 public class BreakerDiffDriveFusedVisionPoseEstimator extends SubsystemBase implements BreakerGenericOdometer {

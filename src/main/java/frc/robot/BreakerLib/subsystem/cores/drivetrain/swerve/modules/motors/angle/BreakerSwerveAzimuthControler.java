@@ -18,14 +18,14 @@ import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.B
 /** Add your docs here. */
 public class BreakerSwerveAzimuthControler {
     private PIDController pid;
-    private MotorController motor;
+    private Consumer<Double> rawMotorOutputConsumer;
     private BreakerSwerveAzimuthEncoder encoder;
     private Consumer<Rotation2d> targetAngleConsumer;
-    public BreakerSwerveAzimuthControler(MotorController motor, BreakerSwerveAzimuthEncoder encoder, BreakerSwerveMotorPIDConfig pidConfig) {
+    public BreakerSwerveAzimuthControler(Consumer<Double> rawMotorOutputConsumer, BreakerSwerveAzimuthEncoder encoder, BreakerSwerveMotorPIDConfig pidConfig) {
         this.encoder = encoder;
-        this.motor = motor;
+        this.rawMotorOutputConsumer = rawMotorOutputConsumer;
         pid = new PIDController(pidConfig.kP, pidConfig.kI, pidConfig.kD);
-        pid.enableContinuousInput(-180, 180);
+        pid.enableContinuousInput(-0.5, 0.5);
     }
 
     public BreakerSwerveAzimuthControler(Consumer<Rotation2d> targetAngleConsumer) {
@@ -34,7 +34,7 @@ public class BreakerSwerveAzimuthControler {
 
     public void setTargetAngle(Rotation2d target) {
         if (Objects.isNull(targetAngleConsumer)) {
-            motor.setVoltage(pid.calculate(encoder.getAbsolute(), target.getDegrees()));
+            rawMotorOutputConsumer.accept(pid.calculate(encoder.getAbsolute(), target.getRotations()));
             return;
         }
         targetAngleConsumer.accept(target);

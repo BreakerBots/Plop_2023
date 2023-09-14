@@ -12,16 +12,16 @@ import frc.robot.BreakerLib.util.test.selftest.BreakerSelfTestableBase;
 /** Add your docs here. */
 public abstract class BreakerGenericSwerveModuleAngleMotor extends BreakerGenericSwerveModuleMotor {
     public abstract void setTargetAngle(Rotation2d targetAngle);
-    public abstract double getAbsoluteAngle();
-    public abstract double getRelativeAngle(); 
+    public abstract Rotation2d getAbsoluteAngle();
+    public abstract Rotation2d getRelativeAngle(); 
     public abstract void setBrakeMode(boolean isEnabled);
     public abstract Rotation2d getTargetAngle();
     @Override
     public void toLog(LogTable table) {
         super.toLog(table);
-        table.put("AbsoluteAngleDeg", getAbsoluteAngle());
+        table.put("AbsoluteAngleDeg", getAbsoluteAngle().getDegrees());
         table.put("AbsoluteTargetAngleDeg", getTargetAngle().getDegrees());
-        table.put("RelativeAngleDeg", getRelativeAngle());
+        table.put("RelativeAngleDeg", getRelativeAngle().getDegrees());
         
     }
 

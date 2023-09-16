@@ -4,23 +4,18 @@
 
 package frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.sensors.WPI_CANCoder;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.sim.TalonFXSimState;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.geometry.Translation2d;
+
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule.BreakerSwerveMotorPIDConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.BreakerSwerveAzimuthEncoder;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.angle.BreakerGenericSwerveModuleAngleMotor;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.angle.ctre.BreakerFalconSwerveModuleAngleMotor;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.angle.ctre.BreakerLegacyFalconSwerveModuleAngleMotor;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.angle.ctre.BreakerProFalconSwerveModuleAngleMotor;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.angle.rev.BreakerNeoSwerveModuleAngleMotor;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.BreakerGenericSwerveModuleDriveMotor;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.ctre.BreakerLegacyFalconSwerveModuleDriveMotor;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.ctre.BreakerProFalconSwerveModuleDriveMotor;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.ctre.BreakerFalconSwerveModuleDriveMotor.TalonFXControlOutputUnits;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.ctre.BreakerProFalconSwerveModuleDriveMotor.ProTalonFXControlOutputUnits;
@@ -41,56 +36,88 @@ public class BreakerSwerveModuleBuilder {
         return new BreakerSwerveModuleBuilder(config);
     }
 
-    @Deprecated
-    public BreakerSwerveModuleBuilder withLegacyFalconAngleMotor(WPI_TalonFX motor, BreakerSwerveAzimuthEncoder encoder, double encoderAbsoluteAngleOffsetDegrees, boolean isMotorInverted) {
-        angleMotor = new BreakerLegacyFalconSwerveModuleAngleMotor(motor, encoder, encoderAbsoluteAngleOffsetDegrees, config.getAngleSupplyCurrentLimit(), isMotorInverted, config.getAnglePIDConfig());
-        return this;
-    }
-
-    @Deprecated
-    public BreakerSwerveModuleBuilder withLegacyFalconDriveMotor(WPI_TalonFX motor, boolean isMotorInverted) {
-        driveMotor = new BreakerLegacyFalconSwerveModuleDriveMotor(motor, config.getDriveGearRatio(), config.getWheelDiameter(), config.getDriveSupplyCurrentLimit(), isMotorInverted, config.getDriveArbFF(), config.getDrivePIDConfig());
-        return this;
-    }
-
     /** Sets the module's angle motor to a CTRE TalonFX with STANDARD LICENCING
      * 
      * @param motor The NON PRO LICENCED TalonFX object to use
      * @param encoder The {@link BreakerSwerveAzimuthEncoder} to use for anguler positioning
-     * @param encoderAbsoluteAngleOffsetDegrees
-     * @param isMotorInverted
-     * @return
+     * @param encoderAbsoluteAngleOffsetRotations The offset of the positioning encoder's native reading such that 0rot is forward and the same for all modules 
+     * @param isMotorInverted Polarity of motor output, used to match motor output to encoder reading
+     * @return This {@link BreakerSwerveModuleBuilder} so that config calls can be chained
      */
     public BreakerSwerveModuleBuilder withFalconAngleMotor(TalonFX motor, BreakerSwerveAzimuthEncoder encoder, double encoderAbsoluteAngleOffsetRotations, boolean isMotorInverted) {
         angleMotor = new BreakerFalconSwerveModuleAngleMotor(motor, encoder, config.getAzimuthGearRatio(), encoderAbsoluteAngleOffsetRotations, config.getAngleSupplyCurrentLimit(), isMotorInverted, config.getAnglePIDConfig());
         return this;
     }
 
+    /** Sets the module's drive motor to a CTRE TalonFX with STANDARD LICENCING
+     * 
+     * @param motor The NON PRO LICENCED TalonFX object to use
+     * @param controlOutputUnits A {@link TalonFXControlOutputUnits} enum that sets the output and calculation units of the motor's velocity closed loop contro. PID and FF units MUST match slected units!
+     * @param isMotorInverted Polarity of motor output, used to match motor output to encoder reading
+     * @return This {@link BreakerSwerveModuleBuilder} so that config calls can be chained
+     */
     public BreakerSwerveModuleBuilder withFalconDriveMotor(TalonFX motor, TalonFXControlOutputUnits controlOutputUnits, boolean isMotorInverted) {
         driveMotor = new BreakerFalconSwerveModuleDriveMotor(motor, config.getDriveGearRatio(), config.getWheelDiameter(), config.getDriveSupplyCurrentLimit(), isMotorInverted, config.getDriveArbFF(), config.getDrivePIDConfig(), controlOutputUnits);
         return this;
     }
 
+    
+    /** Sets the module's angle motor to a CTRE TalonFX with PRO LICENCING
+     * 
+     * @param motor The STANDARD LICENCED TalonFX object to use
+     * @param encoder The {@link BreakerSwerveAzimuthEncoder} to use for anguler positioning
+     * @param encoderAbsoluteAngleOffsetRotations The offset of the positioning encoder's native reading such that 0rot is forward and the same for all modules 
+     * @param isMotorInverted Polarity of motor output, used to match motor output to encoder reading
+     * @return This {@link BreakerSwerveModuleBuilder} so that config calls can be chained
+     */
     public BreakerSwerveModuleBuilder withProFalconAngleMotor(TalonFX motor, BreakerSwerveAzimuthEncoder encoder, double encoderAbsoluteAngleOffsetRotations, boolean isMotorInverted) {
         angleMotor = new BreakerProFalconSwerveModuleAngleMotor(motor, encoder, config.getAzimuthGearRatio(), encoderAbsoluteAngleOffsetRotations, config.getAngleSupplyCurrentLimit(), isMotorInverted, config.getAnglePIDConfig());
         return this;
     }
 
+    /** Sets the module's drive motor to a CTRE TalonFX with PRO LICENCING
+     * 
+     * @param motor The NON PRO LICENCED TalonFX object to use
+     * @param controlOutputUnits A {@link ProTalonFXControlOutputUnits} enum that sets the output and calculation units of the motor's velocity closed loop contro. PID and FF units MUST match slected units!
+     * @param isMotorInverted Polarity of motor output, used to match motor output to encoder reading
+     * @return This {@link BreakerSwerveModuleBuilder} so that config calls can be chained
+     */
     public BreakerSwerveModuleBuilder withProFalconDriveMotor(TalonFX motor, ProTalonFXControlOutputUnits controlOutputUnits, boolean isMotorInverted) {
         driveMotor = new BreakerProFalconSwerveModuleDriveMotor(motor, config.getDriveGearRatio(), config.getWheelDiameter(), config.getDriveSupplyCurrentLimit(), isMotorInverted, config.getDriveArbFF(), config.getDrivePIDConfig(), controlOutputUnits);
         return this;
     }
 
-    public BreakerSwerveModuleBuilder withNEOAngleMotor(CANSparkMax motor, BreakerSwerveAzimuthEncoder encoder, double encoderAbsoluteAngleOffsetDegrees, boolean isMotorInverted) {
-        angleMotor = new BreakerNeoSwerveModuleAngleMotor(motor, encoder, encoderAbsoluteAngleOffsetDegrees, (int) config.getAngleSupplyCurrentLimit(), isMotorInverted, config.getAnglePIDConfig());
+    
+    /** Sets the module's angle motor to a REV Spark MAX powering a NEO BLDC motor
+     * 
+     * @param motor The CANSparkMax object to use
+     * @param encoder The {@link BreakerSwerveAzimuthEncoder} to use for anguler positioning
+     * @param encoderAbsoluteAngleOffsetRotations The offset of the positioning encoder's native reading such that 0rot is forward and the same for all modules 
+     * @param isMotorInverted Polarity of motor output, used to match motor output to encoder reading
+     * @return This {@link BreakerSwerveModuleBuilder} so that config calls can be chained
+     */
+    public BreakerSwerveModuleBuilder withNEOAngleMotor(CANSparkMax motor, BreakerSwerveAzimuthEncoder encoder, double encoderAbsoluteAngleOffsetRotations, boolean isMotorInverted) {
+        angleMotor = new BreakerNeoSwerveModuleAngleMotor(motor, encoder, encoderAbsoluteAngleOffsetRotations, (int) config.getAngleSupplyCurrentLimit(), isMotorInverted, config.getAnglePIDConfig());
         return this;
     }
 
+    
+    /** Sets the module's drive motor to a REV Spark MAX powering a NEO BLDC motor
+     * 
+     * @param motor The CANSparkMax object to use
+     * @param isMotorInverted Polarity of motor output, used to match motor output to encoder reading
+     * @return This {@link BreakerSwerveModuleBuilder} so that config calls can be chained
+     */
     public BreakerSwerveModuleBuilder withNEODriveMotor(CANSparkMax motor, boolean isMotorInverted) {
         driveMotor = new BreakerNeoSwerveModuleDriveMotor(motor, config.getDriveGearRatio(), config.getWheelDiameter(), (int) config.getDriveSupplyCurrentLimit(), isMotorInverted, config.getDriveArbFF(), config.getDrivePIDConfig());
         return this;
     }
 
+    /** Creates
+     * 
+     * @param wheelPositionRelativeToRobot
+     * @return
+     */
     public BreakerSwerveModule createSwerveModule(Translation2d wheelPositionRelativeToRobot) {
         return new BreakerSwerveModule(driveMotor, angleMotor, wheelPositionRelativeToRobot);
     }

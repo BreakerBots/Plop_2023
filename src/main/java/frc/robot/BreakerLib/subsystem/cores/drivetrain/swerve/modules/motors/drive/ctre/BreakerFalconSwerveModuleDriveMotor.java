@@ -132,7 +132,9 @@ public class BreakerFalconSwerveModuleDriveMotor extends BreakerGenericSwerveMod
     }
 
     public enum TalonFXControlOutputUnits {
+        /** More accurate, compensates for supply voltage veriance, generaly less max power avalible compaired to duty cycle control. PID/FF should return outputs in Volts */
         VOLTAGE,
+        /** Less accurate, does not compensate for supply voltage veriance, generaly more power avalible compired to voltage control. PID/FF should return outputs in percent out [-1.0, 1.0] */
         DUTY_CYCLE
     }
 }

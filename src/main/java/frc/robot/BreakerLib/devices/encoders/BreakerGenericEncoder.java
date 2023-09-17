@@ -19,7 +19,7 @@ public interface BreakerGenericEncoder extends BreakerSelfTestable, BreakerLogga
 
     public abstract double getEncoderVelocity();
 
-    public abstract double setEncoderPosition(double newPosition);
+    public abstract void setEncoderPosition(double newPosition);
 
     public default void resetEncoderPosition() {
         setEncoderPosition(0.0);

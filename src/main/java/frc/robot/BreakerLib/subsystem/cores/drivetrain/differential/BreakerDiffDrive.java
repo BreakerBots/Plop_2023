@@ -124,19 +124,19 @@ public class BreakerDiffDrive extends BreakerGenericDrivetrain {
   }
 
   public double getLeftDriveWheelSpeed() {
-    return leftMotorGroup.getRotorVelocity() / config.getEncoderRotationsPerMeter();
+    return leftMotorGroup.getEncoderVelocity() / config.getEncoderRotationsPerMeter();
   }
 
   public double getLeftDriveWheelDistance() {
-    return leftMotorGroup.getRotorPosition() / config.getEncoderRotationsPerMeter();
+    return leftMotorGroup.getEncoderVelocity() / config.getEncoderRotationsPerMeter();
   }
 
   public double getRightDriveWheelSpeed() {
-    return leftMotorGroup.getRotorVelocity() / config.getEncoderRotationsPerMeter();
+    return leftMotorGroup.getEncoderVelocity() / config.getEncoderRotationsPerMeter();
   }
 
   public double getRightDriveWheelDistance() {
-    return rightMotorGroup.getRotorPosition() / config.getEncoderRotationsPerMeter();
+    return rightMotorGroup.getEncoderVelocity() / config.getEncoderRotationsPerMeter();
   }
 
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {

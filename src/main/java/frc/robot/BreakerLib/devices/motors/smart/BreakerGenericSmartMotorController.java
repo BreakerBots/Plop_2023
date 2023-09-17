@@ -16,7 +16,7 @@ import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 public interface BreakerGenericSmartMotorController extends BreakerSelfTestable, BreakerLoggable, MotorController, Sendable, AutoCloseable {
 
     public abstract double getDrawCurrent();
-    public abstract void setBrakeMode();
+    public abstract void setBrakeMode(boolean isEnabled);
     public default BreakerGenericEncoder getRotorEncoder() {
         return getEncoder(0);
     }

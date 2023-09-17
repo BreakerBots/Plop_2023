@@ -11,7 +11,7 @@ import frc.robot.BreakerLib.util.math.BreakerMath;
 public class BreakerDiffDriveConfig {
     private DifferentialDriveKinematics kinematics;
     private double robotTrackWidthMeters;
-    private double gearRatioTo1;
+    private double encoderGearRatioTo1;
     private double wheelDiameterMeters;
     private double wheelCircumferenceMeters;
     private double encoderRotationsPerMeter;
@@ -21,16 +21,16 @@ public class BreakerDiffDriveConfig {
     /**
      * Creates a config object for BreakerDiffDrive.
      */
-    public BreakerDiffDriveConfig(double gearRatioTo1, double wheelDiameterMeters, double robotTrackWidthMeters) {
+    public BreakerDiffDriveConfig(double encoderGearRatioTo1, double wheelDiameterMeters, double robotTrackWidthMeters) {
 
         this.wheelDiameterMeters = wheelDiameterMeters;
-        this.gearRatioTo1 = gearRatioTo1;
+        this.encoderGearRatioTo1 = encoderGearRatioTo1;
         this.robotTrackWidthMeters = robotTrackWidthMeters;
 
         kinematics = new DifferentialDriveKinematics(robotTrackWidthMeters);
 
         wheelCircumferenceMeters = BreakerMath.getCircumferenceFromDiameter(wheelDiameterMeters);
-        encoderRotationsPerMeter = (1/wheelCircumferenceMeters) * gearRatioTo1;
+        encoderRotationsPerMeter = (1/wheelCircumferenceMeters) * encoderGearRatioTo1;
     }
 
     public void setSlowModeMultipliers(double forwardMult, double turnMult) {
@@ -43,7 +43,7 @@ public class BreakerDiffDriveConfig {
     }
 
     public double getGearRatioTo1() {
-        return gearRatioTo1;
+        return encoderGearRatioTo1;
     }
 
     public double getWheelCircumferenceMeters() {

@@ -9,25 +9,29 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import frc.robot.BreakerLib.devices.encoders.BreakerGenericEncoder;
+import frc.robot.BreakerLib.devices.motors.smart.BreakerGenericSmartMotorController;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.BreakerLib.util.test.selftest.BreakerSelfTestableBase;
 
 /** Add your docs here. */
 public abstract class BreakerDiffDriveMotorGroup extends BreakerSelfTestableBase {
     private MotorControllerGroup motorGroup;
-    private DoubleSupplier rotorPositionRotationsSupplier, rotorVelocityRotationsPerSecondSupplier;
-    protected BreakerDiffDriveMotorGroup(boolean invert, DoubleSupplier rotorPositionRotationsSupplier, DoubleSupplier rotorVelocityRotationsPerSecondSupplier, MotorController... motors) {
+    private DoubleSupplier encoderPositionRotationsSupplier, encoderVelocityRotationsPerSecondSupplier;
+
+    protected BreakerDiffDriveMotorGroup(boolean invert, DoubleSupplier encoderPositionRotationsSupplier, DoubleSupplier encoderVelocityRotationsPerSecondSupplier, MotorController... motors) {
         motorGroup = new MotorControllerGroup(motors);
         motorGroup.setInverted(invert);
-
+        this.encoderPositionRotationsSupplier = encoderPositionRotationsSupplier;
+        this.encoderVelocityRotationsPerSecondSupplier = encoderVelocityRotationsPerSecondSupplier;
     }
 
     public abstract void setBrakeMode(boolean isEnabled);
 
-    public abstract void setRotorPosition(double newPosition);
+    public abstract void setEncoderPosition(double newPosition);
 
-    public void resetRotorPosition() {
-        setRotorPosition(0.0);
+    public void resetEncoderPosition() {
+        setEncoderPosition(0.0);
     }
 
     public void set(double dutyCycle) {
@@ -46,12 +50,12 @@ public abstract class BreakerDiffDriveMotorGroup extends BreakerSelfTestableBase
         return motorGroup.get() * RobotController.getBatteryVoltage();
     }
   
-    public double getRotorPosition() {
-        return (isInverted() ? -1 : 1) * rotorPositionRotationsSupplier.getAsDouble();
+    public double getEncoderPosition() {
+        return (isInverted() ? -1 : 1) * encoderPositionRotationsSupplier.getAsDouble();
     }
 
-    public double getRotorVelocity() {
-        return (isInverted() ? -1 : 1) * rotorVelocityRotationsPerSecondSupplier.getAsDouble();
+    public double getEncoderVelocity() {
+        return (isInverted() ? -1 : 1) * encoderVelocityRotationsPerSecondSupplier.getAsDouble();
     }
 
     public boolean isInverted() {

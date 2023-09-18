@@ -7,6 +7,7 @@ package frc.robot.BreakerLib.position.odometry.vision.posefilter;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Quaternion;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import frc.robot.BreakerLib.devices.vision.BreakerGenericFiducialTarget;
@@ -17,7 +18,7 @@ import frc.robot.BreakerLib.util.math.averages.BreakerWeightedAverage;
 /** Weighted average for vision-based pose predictions. */
 public class BreakerVisionPoseFilter {
     private BreakerGenericFiducialTarget[] positioningTargets;
-    private BreakerAverage avgLatency;
+    private BreakerWeightedAverage avgTimestamp;
     private double trustCoef, maxUncertainty, distanceScailFactor, maxDistance;
     private boolean usesDistanceScaleing = false;
 
@@ -39,16 +40,16 @@ public class BreakerVisionPoseFilter {
         this.positioningTargets = positioningTargets;
         this.trustCoef = MathUtil.clamp(trustCoef, 1, Double.MAX_VALUE);
         this.maxUncertainty = maxUncertainty;
-        avgLatency = new BreakerAverage();
+        avgTimestamp = new BreakerWeightedAverage();
         usesDistanceScaleing = false;
     }
 
      /**
      * Fiters all predcted poses from visable Fiducial targets through a weaighted
      * average (With distance scaleing). Weaights calculated by:
-     * (trustCoef ^ ((-trustCoef) * poseUncertanty)) - ((targetDistance/maxDistance) * distanceScailFactor)
+     * (trustCoef ^ ((-trustCoef) * poseUncertanty)) - (((targetDistance/maxDistance)^2) * distanceScailFactor)
      * 
-     * https://www.desmos.com/calculator/creax7nbwa
+     * https://www.desmos.com/calculator/gjvf2porer
      * 
      * @param trustCoef           - Higher values mean more uncertain values are
      *                           trusted less.
@@ -70,7 +71,7 @@ public class BreakerVisionPoseFilter {
         this.trustCoef = MathUtil.clamp(trustCoef, 1, Double.MAX_VALUE);
         this.maxDistance = maxDistance;
         this.maxUncertainty = maxUncertainty;
-        avgLatency = new BreakerAverage();
+        avgTimestamp = new BreakerWeightedAverage();
         usesDistanceScaleing = true;
     }
 
@@ -81,27 +82,25 @@ public class BreakerVisionPoseFilter {
         BreakerWeightedAverage xAverage = new BreakerWeightedAverage();
         BreakerWeightedAverage yAverage = new BreakerWeightedAverage();
         BreakerWeightedAverage zAverage = new BreakerWeightedAverage();
+        BreakerWeightedAverage wAngAverage = new BreakerWeightedAverage();
+        BreakerWeightedAverage xAngAverage = new BreakerWeightedAverage();
         BreakerWeightedAverage yAngAverage = new BreakerWeightedAverage();
-        BreakerWeightedAverage pAngAverage = new BreakerWeightedAverage();
-        BreakerWeightedAverage rAngAverage = new BreakerWeightedAverage();
-        avgLatency.clear();
+        BreakerWeightedAverage zAngAverage = new BreakerWeightedAverage();
+        avgTimestamp.clear();
         for (int i = 0; i < positioningTargets.length; i++) {
             BreakerGenericFiducialTarget tgt = positioningTargets[i];
             if (tgt.isAssignedTargetVisible()) {
                 if (tgt.getPoseAmbiguity() <= maxUncertainty && (usesDistanceScaleing ? tgt.getDistance() <= maxDistance : true)) {
-                    double weight = Math.pow(trustCoef, (-trustCoef) * tgt.getPoseAmbiguity());
-                    if (usesDistanceScaleing) {
-                        weight -= MathUtil.clamp((tgt.getDistance()/maxDistance) * distanceScailFactor, 0.0, 1.0);
-                    }
-                    weight = MathUtil.clamp(weight, 0.0, 1.0);
+                    double weight = getWeight(tgt);
                     Pose3d pose = tgt.getRobotPose3d();
                     xAverage.addValue(pose.getX(), weight);
                     yAverage.addValue(pose.getY(), weight);
                     zAverage.addValue(pose.getZ(), weight);
-                    yAngAverage.addValue(pose.getRotation().getZ(), weight);
-                    pAngAverage.addValue(pose.getRotation().getY(), weight);
-                    rAngAverage.addValue(pose.getRotation().getX(), weight);
-                    avgLatency.addValue(tgt.getTargetDataTimestamp());
+                    wAngAverage.addValue(pose.getRotation().getQuaternion().getW(), weight);
+                    xAngAverage.addValue(pose.getRotation().getQuaternion().getX(), weight);
+                    yAngAverage.addValue(pose.getRotation().getQuaternion().getY(), weight);
+                    zAngAverage.addValue(pose.getRotation().getQuaternion().getZ(), weight);
+                    avgTimestamp.addValue(tgt.getTargetDataTimestamp(), weight);
                 }
             }
         }
@@ -110,33 +109,32 @@ public class BreakerVisionPoseFilter {
         double y = yAverage.getAverage();
         double z = zAverage.getAverage();
 
-        double yaw = yAngAverage.getAverage();
-        double pitch = pAngAverage.getAverage();
-        double roll = rAngAverage.getAverage();
+        double qW = wAngAverage.getAverage();
+        double qX = xAngAverage.getAverage();
+        double qY = yAngAverage.getAverage();
+        double qz = zAngAverage.getAverage();
 
-        return new Pose3d(x, y, z, new Rotation3d(roll, pitch, yaw));
+        return new Pose3d(x, y, z, new Rotation3d(new Quaternion(qW, qX, qY, qz)));
     }
 
     public Pose2d getFilteredRobotPose() {
         // note, does not simply convert from 3d pose to conserve CPU time
         BreakerWeightedAverage xAverage = new BreakerWeightedAverage();
         BreakerWeightedAverage yAverage = new BreakerWeightedAverage();
+        BreakerWeightedAverage xAngAverage = new BreakerWeightedAverage();
         BreakerWeightedAverage yAngAverage = new BreakerWeightedAverage();
-        avgLatency.clear();
+        avgTimestamp.clear();
         for (int i = 0; i < positioningTargets.length; i++) {
             BreakerGenericFiducialTarget tgt = positioningTargets[i];
             if (tgt.isAssignedTargetVisible()) {
                 if (tgt.getPoseAmbiguity() <= maxUncertainty && (usesDistanceScaleing ? tgt.getDistance() <= maxDistance : true)) {
-                    double weight = Math.pow(trustCoef, (-trustCoef) * tgt.getPoseAmbiguity());
-                    if (usesDistanceScaleing) {
-                        weight -= MathUtil.clamp((tgt.getDistance()/maxDistance) * distanceScailFactor, 0.0, 1.0);
-                    }
-                    weight = MathUtil.clamp(weight, 0.0, 1.0);
+                    double weight = getWeight(tgt);
                     Pose2d pose = tgt.getRobotPose();
                     xAverage.addValue(pose.getX(), weight);
                     yAverage.addValue(pose.getY(), weight);
-                    yAngAverage.addValue(pose.getRotation().getRadians(), weight);
-                    avgLatency.addValue(tgt.getTargetDataTimestamp());
+                    xAngAverage.addValue(pose.getRotation().getCos(), weight);
+                    yAngAverage.addValue(pose.getRotation().getSin(), weight);
+                    avgTimestamp.addValue(tgt.getTargetDataTimestamp(), weight);
                 }
             }
         }
@@ -146,6 +144,16 @@ public class BreakerVisionPoseFilter {
         double yaw = yAngAverage.getAverage();
       
         return new Pose2d(x, y, new Rotation2d(yaw));
+    }
+
+    private double getWeight(BreakerGenericFiducialTarget tgt) {
+        double weight = Math.pow(trustCoef, (-trustCoef) * tgt.getPoseAmbiguity());
+        if (usesDistanceScaleing) {
+            double distFractSq = (tgt.getDistance()/maxDistance) * (tgt.getDistance()/maxDistance);
+            weight -= MathUtil.clamp(distFractSq * distanceScailFactor, 0.0, 1.0);
+        }
+        weight = MathUtil.clamp(weight, 0.0, 1.0);
+        return weight;
     }
 
     public boolean isAnyTargetVisable() {
@@ -158,7 +166,7 @@ public class BreakerVisionPoseFilter {
     }
 
     public double getDataTimestamp() {
-        return avgLatency.getAverage();
+        return avgTimestamp.getAverage();
     }
 
 }

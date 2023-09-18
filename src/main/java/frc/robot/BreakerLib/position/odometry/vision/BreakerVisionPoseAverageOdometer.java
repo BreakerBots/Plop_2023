@@ -20,14 +20,15 @@ public class BreakerVisionPoseAverageOdometer extends SubsystemBase implements B
     private BreakerGenericFiducialTarget[] fiducialTargets;
     private Pose2d curPose;
     private Transform2d offset;
-    private BreakerAverage xAvg, yAvg, thetaAvg, timestampAvg;
+    private BreakerAverage xAvg, yAvg, thetaAvgX, thetaAvgY, timestampAvg;
     private double timestamp;
     public BreakerVisionPoseAverageOdometer(BreakerGenericFiducialTarget... fiducialTargets) {
         curPose = new Pose2d();
         offset = new Transform2d();
         xAvg = new BreakerAverage();
         yAvg = new BreakerAverage();
-        thetaAvg = new BreakerAverage();
+        thetaAvgX = new BreakerAverage();
+        thetaAvgY = new BreakerAverage();
     }
 
     @Override
@@ -80,16 +81,18 @@ public class BreakerVisionPoseAverageOdometer extends SubsystemBase implements B
                 Pose2d tgtPose = fiducialTarget.getRobotPose();
                 xAvg.addValue(tgtPose.getX());
                 yAvg.addValue(tgtPose.getY());
-                thetaAvg.addValue(tgtPose.getRotation().getRadians());
+                thetaAvgX.addValue(tgtPose.getRotation().getCos());
+                thetaAvgY.addValue(tgtPose.getRotation().getSin());
                 timestampAvg.addValue(fiducialTarget.getTargetDataTimestamp());
             }
         }
-        Pose2d pos = new Pose2d(xAvg.getAverage(), yAvg.getAverage(), Rotation2d.fromRadians(thetaAvg.getAverage()));
+        Pose2d pos = new Pose2d(xAvg.getAverage(), yAvg.getAverage(), new Rotation2d(thetaAvgX.getAverage(), thetaAvgY.getAverage()));
         timestamp = timestampAvg.getAverage();
         curPose = pos.transformBy(offset);
         xAvg.clear();
         yAvg.clear();
-        thetaAvg.clear();
+        thetaAvgX.clear();
+        thetaAvgY.clear();
         timestampAvg.clear();
     }
 

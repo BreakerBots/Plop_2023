@@ -81,22 +81,6 @@ public class  BreakerSwerveDriveBase extends BreakerSwerveDrive {
         setModuleStates(false, getKinematics().toSwerveModuleStates(targetVels, centerOfRotation));
     }
 
-    // @Override
-    // public void move(ChassisSpeeds targetChassisSpeeds) {
-    //     move(targetChassisSpeeds, BreakerSwerveDriveBaseMovementPreferences.FIELD_RELATIVE_WITH_OFFSET_AND_HEADING_CORRECTION);
-    // }
-
-    // @Override
-    // public void move(double percentX, double percentY, double percentOmega,
-    //         BreakerSwerveMovementPreferences movementPreferences) {
-    //     move(percentsToChassisSpeeds(percentX, percentY, percentOmega), BreakerSwerveDriveBaseMovementPreferences.FIELD_RELATIVE_WITH_OFFSET_AND_HEADING_CORRECTION);
-    // }
-    
-    // @Override
-    // public void move(double percentX, double percentY, double percentOmega) {
-    //     move(percentX, percentY, percentOmega, BreakerSwerveDriveBaseMovementPreferences.FIELD_RELATIVE_WITH_OFFSET_AND_HEADING_CORRECTION);
-    // } 
-
     public BreakerSwervePathFollower followPathCommand(PathPlannerTrajectory path) {
         return new BreakerSwervePathFollower(pathFollowerConfig, path, true);
     }
@@ -129,33 +113,6 @@ public class  BreakerSwerveDriveBase extends BreakerSwerveDrive {
             lastSetHeading = getOdometryPoseMeters().getRotation();
         }
     }
-
-    // public static class BreakerSwerveDriveBaseMovementPreferences extends BreakerSwerveMovementPreferences {
-    //     public static final BreakerSwerveDriveBaseMovementPreferences FIELD_RELATIVE_WITH_OFFSET_AND_HEADING_CORRECTION = new BreakerSwerveDriveBaseMovementPreferences(SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITH_OFFSET, SlowModeValue.DEFAULT, true);
-    //     public static final BreakerSwerveDriveBaseMovementPreferences FIELD_RELATIVE_WITHOUT_OFFSET_AND_WITH_HEADING_CORRECTION = new BreakerSwerveDriveBaseMovementPreferences(SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DEFAULT, true);
-    //     public static final BreakerSwerveDriveBaseMovementPreferences ROBOT_RELATIVE_WITH_HEADING_CORRECTION = new BreakerSwerveDriveBaseMovementPreferences(SwerveMovementRefrenceFrame.ROBOT_RELATIVE, SlowModeValue.DEFAULT, true);
-    
-    //     public BreakerSwerveDriveBaseMovementPreferences(SwerveMovementRefrenceFrame movementRefrenceFrame, SlowModeValue slowModeValue, boolean headingCorrectionEnabled) {
-    //       super(movementRefrenceFrame, slowModeValue, headingCorrectionEnabled);
-    //     }
-    
-
-    //     public BreakerSwerveDriveBaseMovementPreferences withHeadingCorrectionEnabled(boolean headingCorrectionEnabled) {
-    //         return new BreakerSwerveDriveBaseMovementPreferences(this.swerveMovementRefrenceFrame, this.slowModeValue, headingCorrectionEnabled);
-    //     }
-
-    //     @Override
-    //     public BreakerSwerveDriveBaseMovementPreferences withSlowModeValue(SlowModeValue slowModeValue) {
-    //         return new BreakerSwerveDriveBaseMovementPreferences(this.swerveMovementRefrenceFrame, slowModeValue, this.headingCorrectionEnabled);
-    //     }
-
-    //     @Override
-    //     public BreakerSwerveDriveBaseMovementPreferences withSwerveMovementRefrenceFrame(
-    //             SwerveMovementRefrenceFrame swerveMovementRefrenceFrame) {
-    //         return new BreakerSwerveDriveBaseMovementPreferences(swerveMovementRefrenceFrame, this.slowModeValue, this.headingCorrectionEnabled);
-    //     }
-
-    // }
 
     public static class BreakerSwerveDriveBaseVelocityRequest extends BreakerSwerveVelocityRequest {
 

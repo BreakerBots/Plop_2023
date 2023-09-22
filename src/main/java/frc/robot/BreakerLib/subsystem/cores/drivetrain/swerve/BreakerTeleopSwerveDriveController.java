@@ -14,6 +14,8 @@ import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerGenericGame
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
 import frc.robot.BreakerLib.physics.vector.BreakerVector2;
 import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerSwerveRequest.BreakerSwervePercentSpeedRequest.ChassisPercentSpeeds;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDriveBase.BreakerSwerveDriveBasePercentSpeedRequest;
 import frc.robot.BreakerLib.util.math.functions.BreakerGenericMathFunction;
 
 /** Controller object for the {@link BreakerLegacySwerveDrive} drivetrain. */
@@ -26,6 +28,7 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
   private SlewRateLimiter forwardRateLimiter, horizontalRateLimiter, turnRateLimiter;
   private DoubleSupplier forwardSpeedPercentSupplier, horizontalSpeedPercentSupplier, turnSpeedPercentSupplier,
       overrideForwardSupplier, overrideHorizontalSupplier, overrideTurnSupplier;
+  private BreakerSwerveDriveBasePercentSpeedRequest percentSpeedRequest;
 
   /**
    * Creates a BreakerSwerveDriveController which only utilizes HID input.
@@ -42,6 +45,7 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
     forwardOverride = false;
     horizontalOverride = false;
     turnOverride = false;
+    percentSpeedRequest = new BreakerSwerveDriveBasePercentSpeedRequest(new ChassisPercentSpeeds());
     addRequirements(baseDrivetrain);
   }
 
@@ -66,6 +70,7 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
     forwardOverride = false;
     horizontalOverride = false;
     turnOverride = false;
+    percentSpeedRequest = new BreakerSwerveDriveBasePercentSpeedRequest(new ChassisPercentSpeeds());
     addRequirements(baseDrivetrain);
   }
 
@@ -221,10 +226,7 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
       turn = overrideTurnSupplier.getAsDouble();
     }
 
-    SmartDashboard.putString("Drive input", String.format("\nF: %.2f, H: %.2f, T: %.2f", forward, horizontal, turn));
-
-      // Swerve drive's own odometry is used.
-    baseDrivetrain.move(MathUtil.clamp(forward, -1.0, 1.0), MathUtil.clamp(horizontal, -1.0, 1.0), MathUtil.clamp(turn, -1.0, 1.0));
+    baseDrivetrain.applyRequest(percentSpeedRequest.withChassisPercentSpeeds(new ChassisPercentSpeeds(forward, horizontal, turn)));
   }
 
   @Override

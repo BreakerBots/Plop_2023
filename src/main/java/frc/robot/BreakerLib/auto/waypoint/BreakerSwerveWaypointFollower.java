@@ -15,8 +15,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.BreakerLib.control.BreakerHolonomicDriveController;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain.SlowModeValue;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerSwerveMovementPreferences;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerSwerveMovementPreferences.SwerveMovementRefrenceFrame;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.SwerveMovementRefrenceFrame;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerSwerveRequest.BreakerSwerveVelocityRequest;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 
 /** Add your docs here. */
@@ -32,7 +32,7 @@ public class BreakerSwerveWaypointFollower extends CommandBase {
   private double totalDistance;
   private int curTargetWaypointIndex = 0;
   private int i = 0;
-  private final BreakerSwerveMovementPreferences driveMoveCallPrefrences;
+  private final BreakerSwerveVelocityRequest velocityRequest;
 
   /**
    * Create a BreakerSwerveWaypointFollower with no rotation supplier.
@@ -53,7 +53,7 @@ public class BreakerSwerveWaypointFollower extends CommandBase {
     this.stopAtPathEnd = stopAtPathEnd;
     rotationSupplier = () -> (config.getOdometer().getOdometryPoseMeters().getRotation());
     driveController = config.getDriveController();
-    driveMoveCallPrefrences = new BreakerSwerveMovementPreferences(SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DISABLED);
+    velocityRequest = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DISABLED, new Translation2d());
   }
 
   /**
@@ -77,7 +77,7 @@ public class BreakerSwerveWaypointFollower extends CommandBase {
     this.rotationSupplier = rotationSupplier;
     this.stopAtPathEnd = stopAtPathEnd;
     driveController = config.getDriveController();
-    driveMoveCallPrefrences = new BreakerSwerveMovementPreferences(SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DISABLED);
+    velocityRequest = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DISABLED, new Translation2d());
   }
 
   /** Sets follower to follow new waypoint path.
@@ -110,7 +110,7 @@ public class BreakerSwerveWaypointFollower extends CommandBase {
     Pose2d curPose = config.getOdometer().getOdometryPoseMeters();
     ChassisSpeeds targetSpeeds = driveController.calculate(curPose, new Pose2d(waypoints.get(curTargetWaypointIndex), rotationSupplier.get()), waypointPath.getMaxVelocity());
     // Robot is moved
-    config.getDrivetrain().move(targetSpeeds, driveMoveCallPrefrences);
+    config.getDrivetrain().applyRequest(velocityRequest.withChassisSpeeds(targetSpeeds));
     
     if (i++%50==0) {
       System.out.println("\n\n" +targetSpeeds + " | \n" + waypoints + " | \n" + curPose + " \n\n");

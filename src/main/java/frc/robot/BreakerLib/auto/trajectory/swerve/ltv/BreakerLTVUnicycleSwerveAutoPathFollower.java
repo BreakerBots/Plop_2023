@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.wpilibj.Timer;
@@ -18,7 +19,8 @@ import frc.robot.BreakerLib.auto.trajectory.BreakerGenericAutoPathFollower;
 import frc.robot.BreakerLib.auto.trajectory.management.BreakerTrajectoryPath;
 import frc.robot.BreakerLib.auto.trajectory.management.conditionalcommand.BreakerConditionalEvent;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain.SlowModeValue;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerSwerveMovementPreferences;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.SwerveMovementRefrenceFrame;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerSwerveRequest.BreakerSwerveVelocityRequest;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 
 /** Add your docs here. */
@@ -29,6 +31,7 @@ public class BreakerLTVUnicycleSwerveAutoPathFollower extends CommandBase implem
   private BreakerTrajectoryPath trajectoryPath;
   private Supplier<Rotation2d> rotationSupplier;
   private ArrayList<BreakerConditionalEvent> remainingEvents;
+  private BreakerSwerveVelocityRequest velocityRequest;
 
   /**
    * Creates a new {@link BBreakerLTVUnicycleSwerveAutoPathFollower} that follows
@@ -48,6 +51,7 @@ public class BreakerLTVUnicycleSwerveAutoPathFollower extends CommandBase implem
     this.trajectoryPath = trajectoryPath;
     rotationSupplier = () -> (trajectoryPath.getBaseTrajectory().sample(timer.get()).poseMeters.getRotation());
     remainingEvents = new ArrayList<>(trajectoryPath.getAttachedConditionalEvents());
+    velocityRequest = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.ROBOT_RELATIVE, SlowModeValue.DISABLED, new Translation2d());
   }
 
   /**
@@ -68,6 +72,7 @@ public class BreakerLTVUnicycleSwerveAutoPathFollower extends CommandBase implem
     this.trajectoryPath = trajectoryPath;
     this.rotationSupplier = rotationSupplier;
     remainingEvents = new ArrayList<>();
+    velocityRequest = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.ROBOT_RELATIVE, SlowModeValue.DISABLED, new Translation2d());
   }
 
   @Override
@@ -91,7 +96,7 @@ public class BreakerLTVUnicycleSwerveAutoPathFollower extends CommandBase implem
         desiredState.velocityMetersPerSecond,
         desiredState.velocityMetersPerSecond);
 
-    config.getDrivetrain().move(targetChassisSpeeds, BreakerSwerveMovementPreferences.DEFAULT_ROBOT_RELATIVE_PREFERENCES.withSlowModeValue(SlowModeValue.DISABLED));
+    config.getDrivetrain().applyRequest(velocityRequest.withChassisSpeeds(targetChassisSpeeds));
     
     if (remainingEvents.size() > 0) {
       Iterator<BreakerConditionalEvent> iterator = remainingEvents.iterator();

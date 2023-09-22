@@ -16,8 +16,8 @@ import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain.SlowModeValue;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDriveBase;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerSwerveMovementPreferences;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerSwerveMovementPreferences.SwerveMovementRefrenceFrame;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.SwerveMovementRefrenceFrame;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerSwerveRequest.BreakerSwerveVelocityRequest;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -29,7 +29,7 @@ public class BreakerSwervePathFollower extends CommandBase {
   private PathPlannerTrajectory transformedTrajectory;
   private final BreakerSwervePathFollowerConfig config;
   private final boolean stopAtEnd;
-  private final BreakerSwerveMovementPreferences driveMoveCallPrefrences;
+  private final BreakerSwerveVelocityRequest velocityRequest;
 
   private static Consumer<PathPlannerTrajectory> logActiveTrajectory = null;
   private static Consumer<Pose2d> logTargetPose = null;
@@ -53,7 +53,7 @@ public class BreakerSwervePathFollower extends CommandBase {
     this.trajectory = trajectory;
     this.config = config;
     this.stopAtEnd = stopAtEnd;
-    driveMoveCallPrefrences = new BreakerSwerveMovementPreferences(SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DISABLED);
+    velocityRequest = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DISABLED, new Translation2d());
     addRequirements(config.getDrivetrain());
     
     if (config.getUseAllianceColor() && trajectory.fromGUI && trajectory.getInitialPose().getX() > 8.27) {
@@ -98,7 +98,7 @@ public class BreakerSwervePathFollower extends CommandBase {
 
     ChassisSpeeds targetChassisSpeeds = this.config.driveController.calculate(currentPose, desiredState);
 
-    this.config.drivetrain.move(targetChassisSpeeds, driveMoveCallPrefrences);
+    this.config.drivetrain.applyRequest(velocityRequest.withChassisSpeeds(targetChassisSpeeds));
 
     if (logTargetPose != null) {
       logTargetPose.accept(

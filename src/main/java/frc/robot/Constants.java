@@ -29,12 +29,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.BreakerLib.control.BreakerHolonomicDriveController;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain.SlowModeValue;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerSwerveOdometryConfig;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerSwerveMovementPreferences.SwerveMovementRefrenceFrame;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerSwerveRequest.BreakerSwerveVelocityRequest;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.SwerveMovementRefrenceFrame;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDriveBase.BreakerSwerveDriveBaseConfig;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDriveBase.BreakerSwerveDriveBaseMovementPreferences;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule.BreakerSwerveMotorPIDConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModuleBuilder.BreakerSwerveModuleConfig;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwerveVelocityRequest;
 import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider;
 
 /**
@@ -166,7 +165,7 @@ public final class Constants {
       public static final double BALANCE_PITCH_POSITION_TOLERENCE = 2.0;
       public static final double BALANCE_PITCH_VELOSITY_TOLERENCE = 1.0;
 
-      public static final BreakerSwerveVelocityRequest AUTO_BALANCE_REQUEST = new 
+      public static final BreakerSwerveVelocityRequest AUTO_BALANCE_REQUEST = new BreakerSwerveDriveBaseVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DISABLED, new Translation2d(), true);
       public static final double AUTO_BALANCE_TIMEOUT_SEC = 15;
 
       //MoveToPose command constants
@@ -183,7 +182,7 @@ public final class Constants {
       public static final double BHDC_VEL_TOL_T = Math.toRadians(5.0);
       public static final ChassisSpeeds BHDC_VELOCITY_TOLERENCE = new ChassisSpeeds(BHDC_VEL_TOL_X, BHDC_VEL_TOL_Y, BHDC_VEL_TOL_T);
       public static final double MOVE_TO_POSE_TIMEOUT_SEC = 25.0;
-      public static final BreakerSwerveVelocityRequest MOVE_TO_POSE_REQUEST = new BreakerSwerveDriveBaseMovementPreferences(SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DISABLED, false);
+      public static final BreakerSwerveVelocityRequest MOVE_TO_POSE_REQUEST = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DISABLED, new Translation2d());
 
   }
 

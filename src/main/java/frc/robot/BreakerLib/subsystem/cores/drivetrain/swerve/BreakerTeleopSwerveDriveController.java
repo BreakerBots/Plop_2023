@@ -14,8 +14,8 @@ import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerGenericGame
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
 import frc.robot.BreakerLib.physics.vector.BreakerVector2;
 import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerSwerveRequest.BreakerSwervePercentSpeedRequest.ChassisPercentSpeeds;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDriveBase.BreakerSwerveDriveBasePercentSpeedRequest;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwervePercentSpeedRequest.ChassisPercentSpeeds;
 import frc.robot.BreakerLib.util.math.functions.BreakerGenericMathFunction;
 
 /** Controller object for the {@link BreakerLegacySwerveDrive} drivetrain. */

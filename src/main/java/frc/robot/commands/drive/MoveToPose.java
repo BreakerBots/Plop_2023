@@ -43,7 +43,7 @@ public class MoveToPose extends CommandBase {
   @Override
   public void execute() {
     ChassisSpeeds targetSpeeds = DriveConstants.BREAKER_HOLONOMIC_DRIVE_CONTROLLER.calculate(goal, drivetrain.getOdometryPoseMeters(), maxLinearVel);
-    drivetrain.move(targetSpeeds, DriveConstants.MOVE_TO_POSE_MOVEMENT_PREFERENCES);
+    drivetrain.applyRequest(DriveConstants.MOVE_TO_POSE_REQUEST.withChassisSpeeds(targetSpeeds));
     if (timer.hasElapsed(DriveConstants.MOVE_TO_POSE_TIMEOUT_SEC)) {
       this.cancel();
     }

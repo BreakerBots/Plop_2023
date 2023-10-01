@@ -11,21 +11,28 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Pair;
 import frc.robot.BreakerLib.devices.encoders.BreakerGenericEncoder;
 import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
+import frc.robot.BreakerLib.util.vendorutil.BreakerPhoenix6Util;
 
 /** Add your docs here. */
 public class BreakerTalonFX extends TalonFX implements BreakerGenericSmartMotorController {
     private final VoltageOut voltageOut;
     private final DutyCycleOut dutyCycleOut;
     private final BreakerGenericEncoder rotorEncoder, selectedEncoder;
+    private String faultStr, deviceName;
+    private DeviceHealth health;
     public BreakerTalonFX(PhoenixLicenceType licenceType, int deviceId, String canbus) {
         super(deviceId, canbus);
         voltageOut = new VoltageOut(0.0, licenceType.isProLicenced(), false);
         dutyCycleOut = new DutyCycleOut(0.0, licenceType.isProLicenced(), false);
         rotorEncoder = new TalonFXRotorEncoder(this);
         selectedEncoder = new TalonFXSelectedEncoder(this);
+        health = DeviceHealth.NOMINAL;
+        faultStr = "";
+        deviceName = String.format("BreakerTalonFX_(ID: %d. BUS: %s)", deviceId, canbus);
     } 
 
     public BreakerTalonFX(PhoenixLicenceType licenceType, int deviceId) {
@@ -34,60 +41,70 @@ public class BreakerTalonFX extends TalonFX implements BreakerGenericSmartMotorC
 
     @Override
     public void runSelfTest() {
-        // TODO Auto-generated method stub
-        
+        health = DeviceHealth.NOMINAL;
+        faultStr = "";
+        Pair<DeviceHealth, String> faultPair = BreakerPhoenix6Util.checkMotorFaultsAndConnection(this);
+        if (faultPair.getFirst() != DeviceHealth.NOMINAL) {
+            health = faultPair.getFirst();
+            faultStr = faultPair.getSecond();
+        }
     }
 
     @Override
     public DeviceHealth getHealth() {
-        // TODO Auto-generated method stub
-        return null;
+        return health;
     }
 
     @Override
     public String getFaults() {
-        // TODO Auto-generated method stub
-        return null;
+        return faultStr;
     }
 
     @Override
     public String getDeviceName() {
-        // TODO Auto-generated method stub
-        return null;
+        return deviceName;
     }
 
     @Override
     public boolean hasFault() {
-        // TODO Auto-generated method stub
-        return false;
+        return health != DeviceHealth.NOMINAL;
     }
 
     @Override
     public void setDeviceName(String newName) {
-        // TODO Auto-generated method stub
-        
+       deviceName = newName;
     }
 
     @Override
     public double getDrawCurrent() {
-        // TODO Auto-generated method stub
-        return 0;
+        return getSupplyCurrent().getValue();
     }
 
     @Override
-    public void setBrakeMode() {
-        
+    public void setBrakeMode(boolean isEnabled) {
+        BreakerPhoenix6Util.setBrakeMode(this, isEnabled);
     }
 
     @Override
     public BreakerGenericEncoder getSelectedEncoder() {
-        return null;
+        return new TalonFXSelectedEncoder(this);
     }
 
     @Override
+    public BreakerGenericEncoder getRotorEncoder() {
+        return new TalonFXRotorEncoder(this);
+    }
+
+
+    @Override
     public BreakerGenericEncoder getEncoder(int encoderNum) {
-        // TODO Auto-generated method stub
-        return null;
+        switch(encoderNum) {
+            case 0:
+                return getRotorEncoder();
+            case 1:
+            default:
+                return getSelectedEncoder();
+        }
     }
 
     @Override
@@ -229,8 +246,4 @@ public class BreakerTalonFX extends TalonFX implements BreakerGenericSmartMotorC
         }
 
     }
-
-
-    
-
 }

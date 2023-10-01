@@ -17,9 +17,7 @@ public interface BreakerGenericSmartMotorController extends BreakerSelfTestable,
 
     public abstract double getDrawCurrent();
     public abstract void setBrakeMode(boolean isEnabled);
-    public default BreakerGenericEncoder getRotorEncoder() {
-        return getEncoder(0);
-    }
+    public abstract BreakerGenericEncoder getRotorEncoder();
     public abstract BreakerGenericEncoder getSelectedEncoder();
     public abstract BreakerGenericEncoder getEncoder(int encoderNum);
     

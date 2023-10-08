@@ -31,6 +31,7 @@ import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain.
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerSwerveOdometryConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.SwerveMovementRefrenceFrame;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDriveBase.BreakerSwerveDriveBaseConfig;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDriveBase.BreakerSwerveDriveBaseVelocityRequest;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule.BreakerSwerveMotorPIDConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModuleBuilder.BreakerSwerveModuleConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwerveVelocityRequest;
@@ -64,11 +65,11 @@ public final class Constants {
       public static final int BL_ENCODER_ID = 22;
       public static final int BR_ENCODER_ID = 23;
 
-      //Azimuth encoder angle offets (degrees)
-      public static final double FL_ENCODER_OFFSET = 0.0;
-      public static final double FR_ENCODER_OFFSET = 0.0;
-      public static final double BL_ENCODER_OFFSET = -0.0;
-      public static final double BR_ENCODER_OFFSET = -0.0;
+      //Azimuth encoder angle offets
+      public static final double FL_ENCODER_OFFSET = -0.4189453125;
+      public static final double FR_ENCODER_OFFSET = -0.238037;
+      public static final double BL_ENCODER_OFFSET = 0.11865234375;
+      public static final double BR_ENCODER_OFFSET = 0.33837890625;
 
       //Module wheel centerpoint locations relative to robot origin (center)
       public static final Translation2d FL_TRANSLATION = new Translation2d(0.2635, 0.2635);
@@ -190,19 +191,19 @@ public final class Constants {
       //General Motor Configs
       public static final int LEFT_MOTOR_ID = 30;
       public static final int RIGHT_MOTOR_ID = 31;
-      public static final double SUPPLY_CUR_LIMIT = 60.0;
+      public static final double SUPPLY_CUR_LIMIT = 30.0;
       public static final double SUPPLY_CUR_LIMIT_TIME = 1.5;
 
       //Motion Magic Configs
-      public static final double MOTION_MAGIC_CRUISE_VEL = 0;
-      public static final double MOTION_MAGIC_ACCEL = 0;
-      public static final double MOTION_MAGIC_JERK = 0;
+      public static final double MOTION_MAGIC_CRUISE_VEL = 0.05;
+      public static final double MOTION_MAGIC_ACCEL = 0.05;
+      public static final double MOTION_MAGIC_JERK = 0.05;
 
       //PIDF Configs
-      public static final double PIDF_KP = 0;
+      public static final double PIDF_KP = 0.1;
       public static final double PIDF_KI = 0;
       public static final double PIDF_KD = 0;
-      public static final double PIDF_KS = 0;
+      public static final double PIDF_KS = 0.1;
       public static final double PIDF_KV = 0;
 
       //Gearing
@@ -212,7 +213,7 @@ public final class Constants {
       public static final double MOTOR_ROT_TO_METERS_SCALAR = DRUM_CIRCUMFERENCE_METERS / MOTOR_TO_DRUM_GEARING;
 
       //Physical Limits
-      public static final double MAX_HEIGHT = 1.0;
+      public static final double MAX_HEIGHT = Units.inchesToMeters(40.65);
       public static final double MAX_ROT = MAX_HEIGHT / MOTOR_ROT_TO_METERS_SCALAR;
       public static final double MIN_HEIGHT = 0.0;
       public static final double MIN_ROT = MIN_HEIGHT / MOTOR_ROT_TO_METERS_SCALAR;
@@ -232,6 +233,7 @@ public final class Constants {
   public static final class HandConstants {
       public static final int WRIST_ID = 40;
       public static final int ROLLER_ID = 41;
+      public static final int WRIST_ENCODER_ID = 42;
       public static final int CONE_BEAM_BRAKE_DIO_PORT = 0;
       public static final int CUBE_BEAM_BRAKE_DIO_PORT = 1;
       public static final boolean BEAM_BRAKE_BROKEN_ON_TRUE = true;

@@ -4,6 +4,7 @@
 
 package frc.robot.BreakerLib.util.factory;
 
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
@@ -38,6 +39,8 @@ public class BreakerCANCoderFactory {
         config.MagnetSensor.AbsoluteSensorRange = absoluteSensorRange;
         config.MagnetSensor.MagnetOffset = absoluteOffsetRotations;
         config.MagnetSensor.SensorDirection = encoderDirection;
-        BreakerPhoenix6Util.checkStatusCode(encoder.getConfigurator().apply(config),  " CANcoder " + encoder.getDeviceID() + " general config fail ");
+        StatusCode cod = encoder.getConfigurator().apply(config);
+        
+        //BreakerPhoenix6Util.checkStatusCode(encoder.getConfigurator().apply(config),  " CANcoder " + encoder.getDeviceID() + " general config fail ");
     }
 }

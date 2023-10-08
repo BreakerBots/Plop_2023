@@ -45,7 +45,7 @@ public class BreakerSwerveModuleBuilder {
      * @return This {@link BreakerSwerveModuleBuilder} so that config calls can be chained
      */
     public BreakerSwerveModuleBuilder withFalconAngleMotor(TalonFX motor, BreakerSwerveAzimuthEncoder encoder, double encoderAbsoluteAngleOffsetRotations, boolean isMotorInverted) {
-        angleMotor = new BreakerFalconSwerveModuleAngleMotor(motor, encoder, config.getAzimuthGearRatio(), encoderAbsoluteAngleOffsetRotations, config.getAngleSupplyCurrentLimit(), isMotorInverted, config.getAnglePIDConfig());
+        angleMotor = new BreakerFalconSwerveModuleAngleMotor(motor, encoder, encoderAbsoluteAngleOffsetRotations, config.getAzimuthGearRatio(), config.getAngleSupplyCurrentLimit(), isMotorInverted, config.getAnglePIDConfig());
         return this;
     }
 

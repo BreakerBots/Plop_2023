@@ -26,6 +26,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.BreakerLib.auto.trajectory.management.BreakerAutoPath;
 import frc.robot.BreakerLib.devices.sensors.imu.ctre.BreakerPigeon2;
 import frc.robot.BreakerLib.driverstation.dashboard.BreakerDashboard;
+import frc.robot.BreakerLib.driverstation.gamepad.components.BreakerGamepadAnalogDeadbandConfig;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController;
 import frc.robot.BreakerLib.util.robot.BreakerRobotConfig;
@@ -58,21 +59,22 @@ import static frc.robot.Constants.AutonomousConstants.*;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-    private static final BreakerXboxController driverControllerSys = new BreakerXboxController(0);
-    private static final OperatorControlPad operatorControlPadSys = new OperatorControlPad(OperatorConstants.OPERATOR_PAD_PORT);
+    public static final BreakerXboxController driverControllerSys = new BreakerXboxController(0);
+   // private static final OperatorControlPad operatorControlPadSys = new OperatorControlPad(OperatorConstants.OPERATOR_PAD_PORT);
 
-    private static final Vision visionSys = new Vision();
+    //private static final Vision visionSys = new Vision();
     private static final BreakerPigeon2 imuSys = new BreakerPigeon2(MiscConstants.IMU_ID, MiscConstants.CANIVORE_1);
 
-    private static final Drive drivetrainSys = new Drive(imuSys, visionSys);
-    private static final Elevator elevatorSys = new Elevator();
-    private static final Hand handSys = new Hand();
+    private static final Drive drivetrainSys = new Drive(imuSys/*, visionSys*/);
+    public static final Elevator elevatorSys = new Elevator();
+    //private static final Hand handSys = new Hand();
   
     private static final BreakerTeleopSwerveDriveController teleopDriveController = new BreakerTeleopSwerveDriveController(drivetrainSys, driverControllerSys);
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    driverControllerSys.configDeadbands(new BreakerGamepadAnalogDeadbandConfig(0.08, 0.08));
     drivetrainSys.setDefaultCommand(teleopDriveController);
     
     configureBindings();
@@ -104,45 +106,46 @@ public class RobotContainer {
     driverControllerSys.getDPad().getLeft().onTrue(new TeleopSnapDriveToCardinalHeading(SwerveCardinal.LEFT, drivetrainSys, teleopDriveController));
     driverControllerSys.getDPad().getRight().onTrue(new TeleopSnapDriveToCardinalHeading(SwerveCardinal.RIGHT, drivetrainSys, teleopDriveController));
     driverControllerSys.getDPad().getDown().onTrue(new TeleopSnapDriveToCardinalHeading(SwerveCardinal.BACK, drivetrainSys, teleopDriveController));
+   // driverControllerSys.getButtonA().onTrue(new SetHandRollerState(handSys, IntakeRollerStateRequest.EXTAKE))
 
     //scoreing controls
-    operatorControlPadSys.getScoringCommandRequestTrigger().onTrue(new TeleopScoreGamePiece(operatorControlPadSys, driverControllerSys ,drivetrainSys, elevatorSys, handSys));
+    //operatorControlPadSys.getScoringCommandRequestTrigger().onTrue(new TeleopScoreGamePiece(operatorControlPadSys, driverControllerSys ,drivetrainSys, elevatorSys, handSys));
 
     //stow elevator (driver controls: LB / RB = stow) (operator controls: 20 = stow)
-    driverControllerSys.getLeftBumper()
-    .or(driverControllerSys.getRightBumper())
-    .or(operatorControlPadSys.getElevatorStowButton())
-    .onTrue(new StowElevatorIntakeAssembly(elevatorSys, handSys, true));
+    // driverControllerSys.getLeftBumper()
+    // .or(driverControllerSys.getRightBumper())
+    // .or(operatorControlPadSys.getElevatorStowButton())
+    // .onTrue(new StowElevatorIntakeAssembly(elevatorSys, handSys, true));
 
     //intake from ground, (driver controls: X = cube, Y = cone) (operator controls: 14 = cube, 15 = cone)
-    driverControllerSys.getButtonY().or(operatorControlPadSys.getIntakeGroundConeButton()).onTrue(new IntakeFromGround(elevatorSys, handSys, true, GamePieceType.CONE));
-    driverControllerSys.getButtonX().or(operatorControlPadSys.getIntakeGroundCubeButton()).onTrue(new IntakeFromGround(elevatorSys, handSys, true, GamePieceType.CUBE));
+    // driverControllerSys.getButtonY().or(operatorControlPadSys.getIntakeGroundConeButton()).onTrue(new IntakeFromGround(elevatorSys, handSys, true, GamePieceType.CONE));
+    // driverControllerSys.getButtonX().or(operatorControlPadSys.getIntakeGroundCubeButton()).onTrue(new IntakeFromGround(elevatorSys, handSys, true, GamePieceType.CUBE));
 
     //intake from single sub, (operator controls: 9 = cube, 10 = cone)
-    operatorControlPadSys.getIntakeSingleSubstationConeButton().onTrue(new IntakeFromSingleSubstation(elevatorSys, handSys, true, GamePieceType.CONE));
-    operatorControlPadSys.getIntakeSingleSubstationCubeButton().onTrue(new IntakeFromSingleSubstation(elevatorSys, handSys, true, GamePieceType.CUBE));
+    // operatorControlPadSys.getIntakeSingleSubstationConeButton().onTrue(new IntakeFromSingleSubstation(elevatorSys, handSys, true, GamePieceType.CONE));
+    // operatorControlPadSys.getIntakeSingleSubstationCubeButton().onTrue(new IntakeFromSingleSubstation(elevatorSys, handSys, true, GamePieceType.CUBE));
 
     //intake from double sub, (operator controls: 4 = cube, 5 = cone)
-    operatorControlPadSys.getIntakeDoubleSubstationConeButton().onTrue(new IntakeFromDoubleSubstation(elevatorSys, handSys, true, GamePieceType.CONE));
-    operatorControlPadSys.getIntakeDoubleSubstationCubeButton().onTrue(new IntakeFromDoubleSubstation(elevatorSys, handSys, true, GamePieceType.CUBE));
+    // operatorControlPadSys.getIntakeDoubleSubstationConeButton().onTrue(new IntakeFromDoubleSubstation(elevatorSys, handSys, true, GamePieceType.CONE));
+    // operatorControlPadSys.getIntakeDoubleSubstationCubeButton().onTrue(new IntakeFromDoubleSubstation(elevatorSys, handSys, true, GamePieceType.CUBE));
 
     //intake roller controls, (driver controls: A = intake, B = stop) (operator controls: 19 = extake)
-    //driverControllerSys.getButtonA().onTrue(new SetIntakeRollerState(intakeSys, IntakeRollerStateRequest.INTAKE));
-    //driverControllerSys.getButtonB().onTrue(new SetIntakeRollerState(intakeSys, IntakeRollerStateRequest.STOP));
-    operatorControlPadSys.getRollerExtakeButton().onTrue(new SetHandRollerState(handSys, IntakeRollerStateRequest.EXTAKE));
+    //// driverControllerSys.getButtonA().onTrue(new SetIntakeRollerState(intakeSys, IntakeRollerStateRequest.INTAKE));
+    //// driverControllerSys.getButtonB().onTrue(new SetIntakeRollerState(intakeSys, IntakeRollerStateRequest.STOP));
+    // operatorControlPadSys.getRollerExtakeButton().onTrue(new SetHandRollerState(handSys, IntakeRollerStateRequest.EXTAKE));
 
     //game piece eject, (operator controls: fire button)
-    operatorControlPadSys.getEjectGamePieceButton().onTrue(new EjectGamePiece(handSys));
+    //operatorControlPadSys.getEjectGamePieceButton().onTrue(new EjectGamePiece(handSys));
 
     //teleop autobalance
     driverControllerSys.getStartButton().toggleOnTrue(new TeleopBalanceChargingStation(drivetrainSys, imuSys, teleopDriveController, driverControllerSys, false, false));
   }
 
   private void configureAutonomousActionMap() {
-    AUTONOMOUS_ACTION_MAP.put("EJECT_GAME_PIECE", new EjectGamePiece(handSys));
-    AUTONOMOUS_ACTION_MAP.put("INTAKE_CONE_FROM_GROUND", new IntakeFromGround(elevatorSys, handSys, false, GamePieceType.CONE));
-    AUTONOMOUS_ACTION_MAP.put("INTAKE_CUBE_FROM_GROUND", new IntakeFromGround(elevatorSys, handSys, false, GamePieceType.CUBE));
-    AUTONOMOUS_ACTION_MAP.put("STOW", new StowElevatorIntakeAssembly(elevatorSys, handSys, false));
+    // AUTONOMOUS_ACTION_MAP.put("EJECT_GAME_PIECE", new EjectGamePiece(handSys));
+    // AUTONOMOUS_ACTION_MAP.put("INTAKE_CONE_FROM_GROUND", new IntakeFromGround(elevatorSys, handSys, false, GamePieceType.CONE));
+    // AUTONOMOUS_ACTION_MAP.put("INTAKE_CUBE_FROM_GROUND", new IntakeFromGround(elevatorSys, handSys, false, GamePieceType.CUBE));
+    // AUTONOMOUS_ACTION_MAP.put("STOW", new StowElevatorIntakeAssembly(elevatorSys, handSys, false));
     AUTONOMOUS_ACTION_MAP.put("", teleopDriveController);
     
   }
@@ -160,7 +163,7 @@ public class RobotContainer {
         "Roman Abrahamson"
         )
       );
-    robotConfig.setAutoPaths(new BreakerAutoPath("Demo Path", new DemoPath(drivetrainSys, visionSys, imuSys)));
+   // robotConfig.setAutoPaths(new BreakerAutoPath("Demo Path", new DemoPath(drivetrainSys, visionSys, imuSys)));
     BreakerRobotManager.setup(drivetrainSys, robotConfig);
   }
 

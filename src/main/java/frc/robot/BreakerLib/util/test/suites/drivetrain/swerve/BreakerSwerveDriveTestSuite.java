@@ -63,46 +63,46 @@ public class BreakerSwerveDriveTestSuite {
      * 23. (X: -100%, Y: -100%, Angular: 0%) for 0.5 seconds<br>
      * 24. (X: -100%, Y: 100%, Angular: 0%) for 0.5 seconds<br>
      */
-    public BreakerSwerveDriveStressTest stressTest(double maxVelX, double maxVelY, double maxVelOmega) {
-        ArrayList<Pair<ChassisSpeeds, Double>> speedList = new ArrayList<>();
+    // public BreakerSwerveDriveStressTest stressTest(double maxVelX, double maxVelY, double maxVelOmega) {
+    //     ArrayList<Pair<ChassisSpeeds, Double>> speedList = new ArrayList<>();
 
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(maxVelX, 0, 0), 1.75));
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(-maxVelX, 0, 0), 1.75));
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(0, maxVelY, 0), 1.75));
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(0, -maxVelY, 0), 1.75));
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(0, 0, maxVelOmega), 1.75));
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(0, 0, -maxVelOmega), 1.75));
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(maxVelX, 0, maxVelOmega), 1.75));
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(0, maxVelY, maxVelOmega), 1.75));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(maxVelX, 0, 0), 1.75));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(-maxVelX, 0, 0), 1.75));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(0, maxVelY, 0), 1.75));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(0, -maxVelY, 0), 1.75));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(0, 0, maxVelOmega), 1.75));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(0, 0, -maxVelOmega), 1.75));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(maxVelX, 0, maxVelOmega), 1.75));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(0, maxVelY, maxVelOmega), 1.75));
 
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(maxVelX/4.0, 0, 0), 1.75));
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(-maxVelX/4.0, 0, 0), 1.75));
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(0, maxVelY/4.0, 0), 1.75));
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(0, -maxVelY/4.0, 0), 1.75));
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(0, 0, maxVelOmega/4.0), 1.75));
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(0, 0, -maxVelOmega/4.0), 1.75));
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(maxVelX/4.0, 0, maxVelOmega/4.0), 1.75));
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(0, maxVelY/4.0, maxVelOmega/4.0), 1.75));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(maxVelX/4.0, 0, 0), 1.75));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(-maxVelX/4.0, 0, 0), 1.75));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(0, maxVelY/4.0, 0), 1.75));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(0, -maxVelY/4.0, 0), 1.75));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(0, 0, maxVelOmega/4.0), 1.75));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(0, 0, -maxVelOmega/4.0), 1.75));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(maxVelX/4.0, 0, maxVelOmega/4.0), 1.75));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(0, maxVelY/4.0, maxVelOmega/4.0), 1.75));
 
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(maxVelX, maxVelY, 0), 0.5));
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(maxVelX, -maxVelY, 0), 0.5));
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(-maxVelX, -maxVelY, 0), 0.5));
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(-maxVelX, maxVelY, 0), 0.5));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(maxVelX, maxVelY, 0), 0.5));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(maxVelX, -maxVelY, 0), 0.5));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(-maxVelX, -maxVelY, 0), 0.5));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(-maxVelX, maxVelY, 0), 0.5));
 
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(maxVelX, maxVelY, 0), 0.5));
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(maxVelX, -maxVelY, 0), 0.5));
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(-maxVelX, -maxVelY, 0), 0.5));
-        speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(-maxVelX, maxVelY, 0), 0.5));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(maxVelX, maxVelY, 0), 0.5));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(maxVelX, -maxVelY, 0), 0.5));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(-maxVelX, -maxVelY, 0), 0.5));
+    //     speedList.add(new Pair<ChassisSpeeds,Double>(new ChassisSpeeds(-maxVelX, maxVelY, 0), 0.5));
        
-        BreakerSwerveDriveStressTest test = new BreakerSwerveDriveStressTest(drivetrain, modules, logType, speedList);
-        return test;
-    }
+    //     BreakerSwerveDriveStressTest test = new BreakerSwerveDriveStressTest(drivetrain, modules, logType, speedList);
+    //     return test;
+    // }
 
-    public BreakerSwerveDriveStressTest stressTest(ArrayList<Pair<ChassisSpeeds, Double>> chassisSpeedsAndCutoffTimes) {
-        ArrayList<Pair<ChassisSpeeds, Double>> speedList = new ArrayList<>(chassisSpeedsAndCutoffTimes);
-        BreakerSwerveDriveStressTest test = new BreakerSwerveDriveStressTest(drivetrain, modules, logType, speedList);
-        return test;
-    }
+    // public BreakerSwerveDriveStressTest stressTest(ArrayList<Pair<ChassisSpeeds, Double>> chassisSpeedsAndCutoffTimes) {
+    //     ArrayList<Pair<ChassisSpeeds, Double>> speedList = new ArrayList<>(chassisSpeedsAndCutoffTimes);
+    //     BreakerSwerveDriveStressTest test = new BreakerSwerveDriveStressTest(drivetrain, modules, logType, speedList);
+    //     return test;
+    // }
 
 
 

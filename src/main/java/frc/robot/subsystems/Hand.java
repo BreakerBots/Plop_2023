@@ -88,7 +88,7 @@ public class Hand extends SubsystemBase {
     rollerState = RollerState.NEUTRAL;
     wristControlState = WristControlState.SEEKING;
 
-    encoder = BreakerCANCoderFactory.createCANCoder(0, AbsoluteSensorRangeValue.Signed_PlusMinusHalf, 0.0, SensorDirectionValue.CounterClockwise_Positive);
+    encoder = BreakerCANCoderFactory.createCANCoder(HandConstants.WRIST_ENCODER_ID, AbsoluteSensorRangeValue.Signed_PlusMinusHalf, 0.0, SensorDirectionValue.CounterClockwise_Positive);
 
     diagnostics = new SystemDiagnostics("Intake");
     diagnostics.addSparkMaxs(wristMotor, rollerMotor);
@@ -301,7 +301,6 @@ public class Hand extends SubsystemBase {
         BreakerLog.getInstance().logSuperstructureEvent("INTKAE BEAM BREAKS ENTERED ERROR STATE");
       }
     }
-    
   }
 
   public static enum RollerState {

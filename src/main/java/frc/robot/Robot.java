@@ -80,7 +80,9 @@ public class Robot extends BreakerTimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+   // RobotContainer.elevatorSys.setManual(RobotContainer.driverControllerSys.getLeftTrigger().get() - RobotContainer.driverControllerSys.getRightTrigger().get());
+  }
 
   @Override
   public void testInit() {

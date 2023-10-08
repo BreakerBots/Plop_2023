@@ -67,9 +67,9 @@ public class Elevator extends SubsystemBase {
 
    
     public Elevator() {
-        leftMotor = new TalonFX(ElevatorConstants.LEFT_MOTOR_ID, MiscConstants.CANIVORE_1);
-        rightMotor = new TalonFX(ElevatorConstants.RIGHT_MOTOR_ID, MiscConstants.CANIVORE_1);
-        leftMotor.setControl(new Follower(ElevatorConstants.RIGHT_MOTOR_ID, false));
+        leftMotor = new TalonFX(ElevatorConstants.RIGHT_MOTOR_ID, MiscConstants.CANIVORE_1);
+        rightMotor = new TalonFX(ElevatorConstants.LEFT_MOTOR_ID, MiscConstants.CANIVORE_1);
+        rightMotor.setControl(new Follower(ElevatorConstants.RIGHT_MOTOR_ID, false));
         
         TalonFXConfiguration config = new TalonFXConfiguration();
 
@@ -107,7 +107,8 @@ public class Elevator extends SubsystemBase {
         leftMotor.getConfigurator().apply(config);
         rightMotor.getConfigurator().apply(config);
 
-        targetHeightMeters = ElevatorConstants.MIN_HEIGHT;
+        // targetHeightMeters = ElevatorConstants.MIN_HEIGHT;
+        targetHeightMeters = 0.25;
 
         motionMagicRequest = new MotionMagicDutyCycle(0, false, 0, 0, false);
         dutyCycleRequest = new DutyCycleOut(0, false, false);
@@ -165,7 +166,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public void setTarget(double heightMeters) {
-        targetHeightMeters = heightMeters;
+        // targetHeightMeters = heightMeters;
         currentState = ElevatorControlMode.AUTOMATIC;
     }
 
@@ -260,7 +261,6 @@ public class Elevator extends SubsystemBase {
         if (DriverStation.isDisabled() || currentState != ElevatorControlMode.MANUAL) {
             manualControlDutyCycle = 0.0;
         }
-
         if (!isForceStoped) {
             switch (currentState) { 
                 case AUTOMATIC:

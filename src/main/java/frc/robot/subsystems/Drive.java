@@ -75,8 +75,8 @@ public class Drive extends BreakerSwerveDriveBase {
     private static Field2d field = new Field2d();
     
 
-    public Drive(BreakerPigeon2 pigeon, Vision vision) {
-        super(DRIVE_BASE_CONFIG, new BreakerSwerveOdometryConfig(vision, ENCODER_ODOMETRY_STANDARD_DEVATIONS, VISION_ODOMETRY_STANDARD_DEVATIONS), pigeon, frontLeftModule, frontRightModule, backLeftModule, backRightModule);
+    public Drive(BreakerPigeon2 pigeon/*, Vision vision*/) {
+        super(DRIVE_BASE_CONFIG, /*new BreakerSwerveOdometryConfig(vision, ENCODER_ODOMETRY_STANDARD_DEVATIONS, VISION_ODOMETRY_STANDARD_DEVATIONS), */ pigeon, frontLeftModule, frontRightModule, backLeftModule, backRightModule);
 
         BreakerDashboard.getMainTab().add(field);
         

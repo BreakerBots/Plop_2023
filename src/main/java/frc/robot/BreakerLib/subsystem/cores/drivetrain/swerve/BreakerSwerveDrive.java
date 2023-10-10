@@ -301,7 +301,7 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain implements Brea
 
   @Override
   public void stop() {
-   
+    applyRequest(stopRequest);
   }
 
   @Override

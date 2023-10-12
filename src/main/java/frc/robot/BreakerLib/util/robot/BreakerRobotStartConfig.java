@@ -7,6 +7,7 @@ package frc.robot.BreakerLib.util.robot;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 
 /** Configures info in robot startup message. */
@@ -95,8 +96,10 @@ public class BreakerRobotStartConfig {
         public String getRobotName(String serialNumber) {
             if (robotControllerSerialNumbersAndRobotNames.containsKey(serialNumber)) {
                 return robotControllerSerialNumbersAndRobotNames.get(serialNumber);
-            } 
-            return defaultName; 
+            } else if (RobotBase.isSimulation()) {
+                return "SIMULATION";
+            }
+            return defaultName + " | " + serialNumber; 
         }
 
         public String getRobotName() {

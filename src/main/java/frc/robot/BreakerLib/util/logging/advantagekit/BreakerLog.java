@@ -510,28 +510,29 @@ public class BreakerLog {
     recordOutput(key, data);
   }
 
-  // /**
-  //  * Records a single output field for easy access when viewing the log. On the
-  //  * simulator, use this method to record extra data based on the original inputs.
-  //  * 
-  //  * The current position of the Mechanism2d is logged once as a set of nested
-  //  * fields. If the position is updated, this method must be called again.
-  //  * 
-  //  * @param key   The name of the field to record. It will be stored under
-  //  *              "/RealOutputs" or "/ReplayOutputs"
-  //  * @param value The value of the field.
-  //  */
-  // public void recordOutput(String key, Mechanism2d value) {
-  //   if (running) {
-  //     try {
-  //       // Use reflection because we don't explicitly depend on the shimmed classes
-  //       Mechanism2d.class.getMethod("akitLog", LogTable.class).invoke(value, outputTable.getSubtable(key));
-  //     } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
-  //         | SecurityException e) {
-  //       e.printStackTrace();
-  //     }
-  //   }
-  // }
+  /**
+   * Records a single output field for easy access when viewing the log. On the
+   * simulator, use this method to record extra data based on the original inputs.
+   * 
+   * The current position of the Mechanism2d is logged once as a set of nested
+   * fields. If the position is updated, this method must be called again.
+   * 
+   * @param key   The name of the field to record. It will be stored under
+   *              "/RealOutputs" or "/ReplayOutputs"
+   * @param value The value of the field.
+   */
+  public void recordOutput(String key, Mechanism2d value) {
+    if (running) {
+      try {
+        
+        // Use reflection because we don't explicitly depend on the shimmed classes
+        Mechanism2d.class.getMethod("akitLog", LogTable.class).invoke(value, outputTable.getSubtable(key));
+      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+          | SecurityException e) {
+        e.printStackTrace();
+      }
+    }
+  }
 
   public void recordRobotMetadata(BreakerRobotStartConfig startConfig) {
     recordMetadata("Team", Integer.toString(startConfig.getTeamNum()));

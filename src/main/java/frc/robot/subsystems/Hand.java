@@ -6,8 +6,14 @@ package frc.robot.subsystems;
 
 import java.util.Optional;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
 import com.revrobotics.CANSparkMax;
@@ -24,6 +30,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.counter.UpDownCounter;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.AllianceManager;
 import frc.robot.GamePieceType;
@@ -32,22 +39,22 @@ import frc.robot.BreakerLib.devices.sensors.rangefinder.BreakerSEN36005;
 import frc.robot.BreakerLib.driverstation.dashboard.BreakerDashboard;
 import frc.robot.BreakerLib.util.factory.BreakerCANCoderFactory;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLoggable;
+import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import frc.robot.BreakerLib.util.test.selftest.SystemDiagnostics;
+import frc.robot.BreakerLib.util.vendorutil.BreakerPhoenix6Util;
 import frc.robot.Constants.HandConstants;
 import frc.robot.subsystems.Hand.RollerState.RollerStateType;
 import frc.robot.subsystems.Hand.WristGoal.WristGoalType;
 
-public class Hand extends SubsystemBase {
+public class Hand extends SubsystemBase implements BreakerLoggable {
   /** Creates a new Intake. */
   private final CANSparkMax wristMotor;
-  private final CANSparkMax rollerMotor;
+  private final TalonFX rollerMotor;
   private final BreakerBeamBreak coneBeamBrake;
   private final BreakerBeamBreak cubeBeamBrake;
-
-  private final SparkMaxLimitSwitch extendLimitSwitch;
-  private final SparkMaxLimitSwitch retractLimitSwich;
 
   private ProfiledPIDController pid;
   private ArmFeedforward ff;
@@ -57,6 +64,8 @@ public class Hand extends SubsystemBase {
   private Rotation2d wristGoal;
   private WristGoalType wristGoalType;
 
+  private double pidOutput, ffOutput;
+
   private CANcoder encoder;
   private BreakerSEN36005 coneTOF;
 
@@ -65,7 +74,7 @@ public class Hand extends SubsystemBase {
   private final SystemDiagnostics diagnostics;
   public Hand() {
     wristMotor = new CANSparkMax(HandConstants.WRIST_ID, MotorType.kBrushless);
-    rollerMotor = new CANSparkMax(HandConstants.ROLLER_ID, MotorType.kBrushless);
+    rollerMotor = new TalonFX(HandConstants.ROLLER_ID);
     coneBeamBrake = new BreakerBeamBreak(HandConstants.CONE_BEAM_BRAKE_DIO_PORT, HandConstants.BEAM_BRAKE_BROKEN_ON_TRUE);
     cubeBeamBrake = new BreakerBeamBreak(HandConstants.CUBE_BEAM_BRAKE_DIO_PORT, HandConstants.BEAM_BRAKE_BROKEN_ON_TRUE);
     
@@ -74,14 +83,10 @@ public class Hand extends SubsystemBase {
     wristMotor.setIdleMode(IdleMode.kBrake);
     wristMotor.enableVoltageCompensation(12.0);
 
-    rollerMotor.setInverted(HandConstants.INVERT_ROLLER);
-    rollerMotor.setIdleMode(IdleMode.kBrake);
-    rollerMotor.enableVoltageCompensation(12.0);
-
-    extendLimitSwitch = wristMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
-    extendLimitSwitch.enableLimitSwitch(true);
-    retractLimitSwich = wristMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
-    retractLimitSwich.enableLimitSwitch(true);
+    MotorOutputConfigs rollerOutConfig = new MotorOutputConfigs();
+    rollerOutConfig.Inverted = HandConstants.INVERT_ROLLER ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+    rollerOutConfig.NeutralMode = NeutralModeValue.Brake;
+    rollerMotor.getConfigurator().apply(rollerOutConfig);
 
     pid = new ProfiledPIDController(HandConstants.WRIST_KP, HandConstants.WRIST_KI, HandConstants.WRIST_KD, new Constraints(HandConstants.WRIST_MAX_VELOCITY_RADS, HandConstants.WRIST_MAX_ACCELERATION_RADS_PER_SEC));
     ff = new ArmFeedforward(HandConstants.WRIST_KS, HandConstants.WRIST_KG, HandConstants.WRIST_KV, HandConstants.WRIST_KA);
@@ -91,11 +96,11 @@ public class Hand extends SubsystemBase {
     encoder = BreakerCANCoderFactory.createCANCoder(HandConstants.WRIST_ENCODER_ID, AbsoluteSensorRangeValue.Signed_PlusMinusHalf, 0.0, SensorDirectionValue.CounterClockwise_Positive);
 
     diagnostics = new SystemDiagnostics("Intake");
-    diagnostics.addSparkMaxs(wristMotor, rollerMotor);
+    diagnostics.addSparkMax(wristMotor);
+    diagnostics.addPhoenix6TalonFX(rollerMotor);
     diagnostics.addSupplier(this::healthCheck);
 
     wristMotor.burnFlash();
-    rollerMotor.burnFlash();
     BreakerDashboard.getMainTab().add("INTAKE", this);
 
     coneTOF = new BreakerSEN36005(0);
@@ -121,7 +126,12 @@ public class Hand extends SubsystemBase {
 
   private void setRollerMotor(double dutyCycle, int currentLimit) {
     rollerMotor.set(dutyCycle);
-    rollerMotor.setSmartCurrentLimit(currentLimit);
+    CurrentLimitsConfigs updatedCurLimits = new CurrentLimitsConfigs();
+    rollerMotor.getConfigurator().refresh(updatedCurLimits);
+    updatedCurLimits.SupplyCurrentLimit = currentLimit;
+    updatedCurLimits.SupplyCurrentLimitEnable = true;
+    rollerMotor.getConfigurator().apply(updatedCurLimits);
+
   }
 
   @Override
@@ -142,11 +152,6 @@ public class Hand extends SubsystemBase {
     DeviceHealth devHealth = DeviceHealth.NOMINAL;
     if (getControledGamePieceType() == ControledGamePieceType.ERROR) {
       str += " game_piece_deection_beam_break_malfunction_bolth_sensors_read_broken ";
-      devHealth = DeviceHealth.INOPERABLE;
-    }
-
-    if (extendLimitSwitch.isPressed() && retractLimitSwich.isPressed()) {
-      str += " actuator_limit_switch_malfunction_bolth_switches_read_triggered ";
       devHealth = DeviceHealth.INOPERABLE;
     }
     return new Pair<DeviceHealth,String>(devHealth, str);
@@ -251,9 +256,9 @@ public class Hand extends SubsystemBase {
   }
  
   private void calculateAndApplyPIDF() {
-    double pidOutput = pid.calculate(getWristRotation().getRadians(), wristGoal.getRotations());
+    pidOutput = pid.calculate(getWristRotation().getRadians(), wristGoal.getRotations());
     State profiledSetpoint = pid.getSetpoint();
-    double ffOutput =  ff.calculate(profiledSetpoint.position, profiledSetpoint.velocity);
+    ffOutput =  ff.calculate(profiledSetpoint.position, profiledSetpoint.velocity);
     wristMotor.setVoltage(pidOutput + ffOutput);
   }
 
@@ -405,6 +410,24 @@ public class Hand extends SubsystemBase {
         STOW,
         UNKNOWN
       }
+  }
+
+  @Override
+  public void toLog(LogTable table) {
+    table.put("DeviceHealth", diagnostics.getHealth().toString());
+    table.put("ControlledGamePieceType", getControledGamePieceType().toString());
+    LogTable rollerTable = table.getSubtable("roller");
+      rollerTable.put("State", rollerState.toString());
+      rollerTable.put("DutyCycle", rollerMotor.get());
+      rollerTable.put("CurrentAmps", rollerMotor.getSupplyCurrent().getValue());
+    LogTable wristTable = table.getSubtable("Wrist");
+      wristTable.put("ControlState", wristControlState.toString());
+      wristTable.put("GoalType", wristGoalType.toString());
+      wristTable.put("Goal", wristGoal.toString());
+      wristTable.put("FeedForwardVolts", ffOutput);
+      wristTable.put("PIDVolts", pidOutput);
+      wristTable.put("DutyCycle", wristMotor.get());
+      wristTable.put("CurrentAmps", wristMotor.getOutputCurrent());
   }
 
 

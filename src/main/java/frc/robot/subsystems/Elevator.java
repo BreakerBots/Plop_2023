@@ -18,6 +18,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
 import com.ctre.phoenix6.signals.ForwardLimitTypeValue;
 import com.ctre.phoenix6.signals.ForwardLimitValue;
+import com.ctre.phoenix6.signals.MotionMagicIsRunningValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.ReverseLimitSourceValue;
 import com.ctre.phoenix6.signals.ReverseLimitTypeValue;
@@ -32,6 +33,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.BreakerLib.driverstation.dashboard.BreakerDashboard;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLoggable;
+import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import frc.robot.BreakerLib.util.test.selftest.SystemDiagnostics;
@@ -39,7 +42,7 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.MiscConstants;
 
 /** Add your docs here. */
-public class Elevator extends SubsystemBase {
+public class Elevator extends SubsystemBase implements BreakerLoggable {
     private final TalonFX leftMotor, rightMotor;
 
     private final MotionMagicDutyCycle motionMagicRequest;
@@ -127,6 +130,7 @@ public class Elevator extends SubsystemBase {
         calibrationRoutine = new CalibrationRoutine();
        // simManager = this.new ElevatorSimManager();
        BreakerDashboard.getMainTab().add(this);
+       BreakerLog.getInstance().registerLogable("Elevator", this);
     }
 
     @Override
@@ -398,6 +402,23 @@ public class Elevator extends SubsystemBase {
             }
             return Optional.empty();
         }
+    }
+
+    @Override
+    public void toLog(LogTable table) {
+        table.put("DeviceHealth", diagnostics.getHealth().toString());
+        table.put("ControlMode", getCurrentControlMode().toString());
+        table.put("TargetState", getTargetStateString());
+        table.put("TargetHeightMeters", getTargetHeightMeters());
+        table.put("HeightMeters", getHeight());
+        table.put("VelocityMetersPerSec", getVelocity());
+        table.put("ManualControlDutyCycle", manualControlDutyCycle);
+        table.put("RawEncoderPos", leftMotor.getRotorPosition().getValue());
+        table.put("HasBeenCalibrated", hasBeenCalibrated);
+        table.put("IsForceStoped", isForceStoped());
+        table.put("MotorMotionMagicRunning", leftMotor.getMotionMagicIsRunning().getValue().toString());
+        table.put("HighLimitTriggered", getForwardLimitTriggered());
+        table.put("LowLimitTriggered", getReverseLimitTriggered());
     }
 
 

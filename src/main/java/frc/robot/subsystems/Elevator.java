@@ -56,7 +56,7 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
 
     private final SystemDiagnostics diagnostics;
 
-    private ElevatorControlMode currentState = ElevatorControlMode.CALIBRATING;
+    private ElevatorControlMode currentState = ElevatorControlMode.AUTOMATIC; //ElevatorControlMode.CALIBRATING;
     private boolean hasBeenCalibrated = false;
    
     private double targetHeightMeters;
@@ -70,45 +70,51 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
 
    
     public Elevator() {
-        leftMotor = new TalonFX(ElevatorConstants.RIGHT_MOTOR_ID, MiscConstants.CANIVORE_1);
-        rightMotor = new TalonFX(ElevatorConstants.LEFT_MOTOR_ID, MiscConstants.CANIVORE_1);
+        leftMotor = new TalonFX(ElevatorConstants.LEFT_MOTOR_ID, MiscConstants.CANIVORE_1);
+        rightMotor = new TalonFX(ElevatorConstants.RIGHT_MOTOR_ID, MiscConstants.CANIVORE_1);
         rightMotor.setControl(new Follower(ElevatorConstants.RIGHT_MOTOR_ID, false));
         
-        TalonFXConfiguration config = new TalonFXConfiguration();
+        TalonFXConfiguration leftConfig = new TalonFXConfiguration();
 
-        config.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.MOTION_MAGIC_CRUISE_VEL;
-        config.MotionMagic.MotionMagicAcceleration= ElevatorConstants.MOTION_MAGIC_ACCEL;
-        config.MotionMagic.MotionMagicJerk = ElevatorConstants.MOTION_MAGIC_JERK;
+        leftConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.MOTION_MAGIC_CRUISE_VEL;
+        leftConfig.MotionMagic.MotionMagicAcceleration= ElevatorConstants.MOTION_MAGIC_ACCEL;
+        leftConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.MOTION_MAGIC_JERK;
 
-        config.Slot0.kP = ElevatorConstants.PIDF_KP;
-        config.Slot0.kI = ElevatorConstants.PIDF_KI;
-        config.Slot0.kD = ElevatorConstants.PIDF_KD;
-        config.Slot0.kS = ElevatorConstants.PIDF_KS;
-        config.Slot0.kV = ElevatorConstants.PIDF_KV;
+        leftConfig.Slot0.kP = ElevatorConstants.PIDF_KP;
+        leftConfig.Slot0.kI = ElevatorConstants.PIDF_KI;
+        leftConfig.Slot0.kD = ElevatorConstants.PIDF_KD;
+        leftConfig.Slot0.kS = ElevatorConstants.PIDF_KS;
+        leftConfig.Slot0.kV = ElevatorConstants.PIDF_KV;
 
-        config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-        config.Feedback.SensorToMechanismRatio = ElevatorConstants.MOTOR_ROT_TO_METERS_SCALAR;
+        leftConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+        //leftConfig.Feedback.SensorToMechanismRatio = ElevatorConstants.MOTOR_ROT_TO_METERS_RATIO;
 
-        config.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue.LimitSwitchPin;
-        config.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue.NormallyOpen;
-        config.HardwareLimitSwitch.ForwardLimitEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue.LimitSwitchPin;
-        config.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue.NormallyOpen;
-        config.HardwareLimitSwitch.ReverseLimitEnable = true;
+        // leftConfig.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue.LimitSwitchPin;
+        // leftConfig.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue.NormallyOpen;
+        // leftConfig.HardwareLimitSwitch.ForwardLimitEnable = true;
+        leftConfig.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue.LimitSwitchPin;
+        leftConfig.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue.NormallyOpen;
+        leftConfig.HardwareLimitSwitch.ReverseLimitEnable = true;
 
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = ElevatorConstants.MAX_ROT;
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue =  ElevatorConstants.MIN_ROT;
-        config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
+        // leftConfig.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = ElevatorConstants.MAX_HEIGHT;
+        // leftConfig.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
+        leftConfig.HardwareLimitSwitch.ReverseLimitAutosetPositionValue =  ElevatorConstants.MIN_HEIGHT;
+        leftConfig.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
 
-        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        config.CurrentLimits.SupplyCurrentLimit = ElevatorConstants.SUPPLY_CUR_LIMIT;
-        config.CurrentLimits.SupplyTimeThreshold = ElevatorConstants.SUPPLY_CUR_LIMIT_TIME;
-        config.CurrentLimits.SupplyCurrentLimitEnable = true;
+        leftConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast; //Break
+        leftConfig.CurrentLimits.SupplyCurrentLimit = ElevatorConstants.SUPPLY_CUR_LIMIT;
+        leftConfig.CurrentLimits.SupplyTimeThreshold = ElevatorConstants.SUPPLY_CUR_LIMIT_TIME;
+        leftConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         
         
-        leftMotor.getConfigurator().apply(config);
-        rightMotor.getConfigurator().apply(config);
+        leftMotor.getConfigurator().apply(leftConfig);
+
+        TalonFXConfiguration rightConfig = new TalonFXConfiguration();
+        rightConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast; //Break
+        rightConfig.CurrentLimits.SupplyCurrentLimit = ElevatorConstants.SUPPLY_CUR_LIMIT;
+        rightConfig.CurrentLimits.SupplyTimeThreshold = ElevatorConstants.SUPPLY_CUR_LIMIT_TIME;
+        rightConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        rightMotor.getConfigurator().apply(rightConfig);
 
         // targetHeightMeters = ElevatorConstants.MIN_HEIGHT;
         targetHeightMeters = 0.25;
@@ -239,65 +245,68 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
     public void periodic() {
 
         // Elevator calibrates by hitting limit switch and resetting
-        if (RobotBase.isReal()) {
-            if (getForwardLimitTriggered() || getReverseLimitTriggered()) {
-                hasBeenCalibrated = true; 
-            }
+        // if (RobotBase.isReal()) {
+        //     if (getForwardLimitTriggered() || getReverseLimitTriggered()) {
+        //         hasBeenCalibrated = true; 
+        //     }
     
-            if (DriverStation.isEnabled()) {
-                if (!hasBeenCalibrated && currentState != ElevatorControlMode.MANUAL) {
-                    calibrate();
-                }
-            } else {
-                if (hasBeenCalibrated) {
-                    setLocked();
-                } else {
-                    setNeutral();
-                }
-            }
-        } 
+        //     if (DriverStation.isEnabled()) {
+        //         if (!hasBeenCalibrated && currentState != ElevatorControlMode.MANUAL) {
+        //             calibrate();
+        //         }
+        //     } else {
+        //         if (hasBeenCalibrated) {
+        //             setLocked();
+        //         } else {
+        //             setNeutral();
+        //         }
+        //     }
+        // } 
         
 
-        if (DriverStation.isDisabled() || currentState != ElevatorControlMode.AUTOMATIC) {
-            targetHeightMeters = getHeight();
-        }
+        // if (DriverStation.isDisabled() || currentState != ElevatorControlMode.AUTOMATIC) {
+        //     targetHeightMeters = getHeight();
+        // }
 
-        if (DriverStation.isDisabled() || currentState != ElevatorControlMode.MANUAL) {
-            manualControlDutyCycle = 0.0;
-        }
-        if (!isForceStoped) {
-            switch (currentState) { 
-                case AUTOMATIC:
-                    if (targetHeightMeters != motionMagicRequest.Position) {
-                        leftMotor.setControl(motionMagicRequest.withPosition(Math.min(Math.max(targetHeightMeters, ElevatorConstants.MIN_HEIGHT), ElevatorConstants.MAX_HEIGHT)));
-                    }
-                    break;
-                case MANUAL:
-                    leftMotor.setControl(dutyCycleRequest.withOutput(manualControlDutyCycle));
-                    break;
-                case CALIBRATING:
-                    if (RobotBase.isReal()) {
-                        if (!calibrationRoutine.isScheduled() && DriverStation.isEnabled()) {
-                            calibrationRoutine.schedule();
-                        }
-                    } else {
-                        currentState = ElevatorControlMode.AUTOMATIC;
-                            hasBeenCalibrated = true;
-                            BreakerLog.getInstance().logSuperstructureEvent("Elevator calibation not supported in sim, action fallthrough");
-                    }
-                    break;
-                case NEUTRAL:
-                    leftMotor.setControl(neutralRequest);
-                    break;
-                case LOCKED:
-                default:
-                    leftMotor.setControl(lockRequest);
-                    break;
-            }
-        } else {
-            leftMotor.setControl(lockRequest);
-            rightMotor.setControl(lockRequest);
-        }
+        // if (DriverStation.isDisabled() || currentState != ElevatorControlMode.MANUAL) {
+        //     manualControlDutyCycle = 0.0;
+        // }
+
+        leftMotor.setControl(motionMagicRequest.withPosition(Math.min(Math.max(targetHeightMeters, ElevatorConstants.MIN_HEIGHT), ElevatorConstants.MAX_HEIGHT)));
+
+        // if (!isForceStoped) {
+        //     switch (currentState) { 
+        //         case AUTOMATIC:
+        //             if (targetHeightMeters != motionMagicRequest.Position) {
+        //                 leftMotor.setControl(motionMagicRequest.withPosition(Math.min(Math.max(targetHeightMeters, ElevatorConstants.MIN_HEIGHT), ElevatorConstants.MAX_HEIGHT)));
+        //             }
+        //             break;
+        //         case MANUAL:
+        //             leftMotor.setControl(dutyCycleRequest.withOutput(manualControlDutyCycle));
+        //             break;
+        //         case CALIBRATING:
+        //             if (RobotBase.isReal()) {
+        //                 if (!calibrationRoutine.isScheduled() && DriverStation.isEnabled()) {
+        //                     calibrationRoutine.schedule();
+        //                 }
+        //             } else {
+        //                 currentState = ElevatorControlMode.AUTOMATIC;
+        //                     hasBeenCalibrated = true;
+        //                     BreakerLog.getInstance().logSuperstructureEvent("Elevator calibation not supported in sim, action fallthrough");
+        //             }
+        //             break;
+        //         case NEUTRAL:
+        //             leftMotor.setControl(neutralRequest);
+        //             break;
+        //         case LOCKED:
+        //         default:
+        //             leftMotor.setControl(lockRequest);
+        //             break;
+        //     }
+        // } else {
+        //     leftMotor.setControl(lockRequest);
+        //     rightMotor.setControl(lockRequest);
+        // }
     }
 
     private class CalibrationRoutine extends CommandBase {
@@ -417,6 +426,7 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
         table.put("HasBeenCalibrated", hasBeenCalibrated);
         table.put("IsForceStoped", isForceStoped());
         table.put("MotorMotionMagicRunning", leftMotor.getMotionMagicIsRunning().getValue().toString());
+        table.put("ClosedLoopOut", leftMotor.getClosedLoopOutput().getValue());
         table.put("HighLimitTriggered", getForwardLimitTriggered());
         table.put("LowLimitTriggered", getReverseLimitTriggered());
     }

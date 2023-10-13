@@ -67,7 +67,7 @@ public class RobotContainer {
 
     private static final Drive drivetrainSys = new Drive(imuSys/*, visionSys*/);
     public static final Elevator elevatorSys = new Elevator();
-    private static final Hand handSys = new Hand();
+    //private static final Hand handSys = new Hand();
   
     private static final BreakerTeleopSwerveDriveController teleopDriveController = new BreakerTeleopSwerveDriveController(drivetrainSys, driverControllerSys);
 

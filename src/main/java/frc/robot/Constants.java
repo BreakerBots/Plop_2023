@@ -209,14 +209,11 @@ public final class Constants {
       //Gearing
       public static final double MOTOR_TO_DRUM_GEARING = 5.0; //to one
       public static final double DRUM_RADIUS_METERS = 0.02;
-      public static final double DRUM_CIRCUMFERENCE_METERS = 2*Math.PI*DRUM_RADIUS_METERS;
-      public static final double MOTOR_ROT_TO_METERS_SCALAR = DRUM_CIRCUMFERENCE_METERS / MOTOR_TO_DRUM_GEARING;
-
-      //Physical Limits
       public static final double MAX_HEIGHT = Units.inchesToMeters(40.65);
-      public static final double MAX_ROT = MAX_HEIGHT / MOTOR_ROT_TO_METERS_SCALAR;
       public static final double MIN_HEIGHT = 0.0;
-      public static final double MIN_ROT = MIN_HEIGHT / MOTOR_ROT_TO_METERS_SCALAR;
+      public static final double MAX_ROT = 0;
+      public static final double MIN_ROT = 0;
+      public static final double MOTOR_ROT_TO_METERS_RATIO =  MAX_ROT / MAX_HEIGHT;
 
       //Misc
       public static final double BOTTOM_CALIBRATION_DUTY_CYCLE = -0.2;

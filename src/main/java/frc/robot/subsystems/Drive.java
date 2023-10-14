@@ -20,7 +20,7 @@ import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwe
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModuleBuilder;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.BreakerSwerveAzimuthEncoder;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.BreakerSwerveCANcoder;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.ctre.BreakerFalconSwerveModuleDriveMotor.TalonFXControlOutputUnits;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.ctre.BreakerTalonFXSwerveModuleDriveMotor.TalonFXControlOutputUnits;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.BreakerLib.util.math.BreakerMath.MirrorSymetryAxis2d;
@@ -53,23 +53,23 @@ public class Drive extends BreakerSwerveDriveBase {
     private static BreakerSwerveAzimuthEncoder encoderBR =  new BreakerSwerveCANcoder(new CANcoder(BR_ENCODER_ID, CANIVORE_1));
 
     private static BreakerSwerveModule frontLeftModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
-        .withFalconAngleMotor(turnFL, encoderFL, FL_ENCODER_OFFSET, true)
-        .withFalconDriveMotor(driveFL, TalonFXControlOutputUnits.VOLTAGE, true)
+        .withTalonFXAngleMotor(turnFL, encoderFL, FL_ENCODER_OFFSET, true)
+        .withTalonFXDriveMotor(driveFL, TalonFXControlOutputUnits.VOLTAGE, true)
         .createSwerveModule(FL_TRANSLATION);
 
     private static BreakerSwerveModule frontRightModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
-        .withFalconAngleMotor(turnFR, encoderFR, FR_ENCODER_OFFSET, true)
-        .withFalconDriveMotor(driveFR, TalonFXControlOutputUnits.VOLTAGE, false)
+        .withTalonFXAngleMotor(turnFR, encoderFR, FR_ENCODER_OFFSET, true)
+        .withTalonFXDriveMotor(driveFR, TalonFXControlOutputUnits.VOLTAGE, false)
         .createSwerveModule(FR_TRANSLATION);
 
     private static BreakerSwerveModule backLeftModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
-        .withFalconAngleMotor(turnBL, encoderBL, BL_ENCODER_OFFSET, true)
-        .withFalconDriveMotor(driveBL, TalonFXControlOutputUnits.VOLTAGE, true)
+        .withTalonFXAngleMotor(turnBL, encoderBL, BL_ENCODER_OFFSET, true)
+        .withTalonFXDriveMotor(driveBL, TalonFXControlOutputUnits.VOLTAGE, true)
         .createSwerveModule(BL_TRANSLATION);
 
     private static BreakerSwerveModule backRightModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
-        .withFalconAngleMotor(turnBR, encoderBR, BR_ENCODER_OFFSET, true)
-        .withFalconDriveMotor(driveBR, TalonFXControlOutputUnits.VOLTAGE, false)
+        .withTalonFXAngleMotor(turnBR, encoderBR, BR_ENCODER_OFFSET, true)
+        .withTalonFXDriveMotor(driveBR, TalonFXControlOutputUnits.VOLTAGE, false)
         .createSwerveModule(BR_TRANSLATION);
 
     private static Field2d field = new Field2d();

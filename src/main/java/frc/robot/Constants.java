@@ -196,24 +196,26 @@ public final class Constants {
 
       //Motion Magic Configs
       public static final double MOTION_MAGIC_CRUISE_VEL = 0.05;
-      public static final double MOTION_MAGIC_ACCEL = 0.05;
+      public static final double MOTION_MAGIC_ACCEL = 0.08;
       public static final double MOTION_MAGIC_JERK = 0.05;
 
       //PIDF Configs
-      public static final double PIDF_KP = 0.1;
+      public static final double PIDF_KP = 0.25;
       public static final double PIDF_KI = 0;
       public static final double PIDF_KD = 0;
       public static final double PIDF_KS = 0.1;
-      public static final double PIDF_KV = 0;
+      public static final double PIDF_KV = 0.15;
 
       //Gearing
       public static final double MOTOR_TO_DRUM_GEARING = 5.0; //to one
-      public static final double DRUM_RADIUS_METERS = 0.02;
-      public static final double MAX_HEIGHT = Units.inchesToMeters(40.65);
-      public static final double MIN_HEIGHT = 0.0;
-      public static final double MAX_ROT = 0;
+      public static final double MIN_HEIGHT_GND_REL = 0.2667;
+      public static final double MAX_HEIGHT_GND_REL = 1.0557;
+      public static final double MAX_HEIGHT_ROBOT_REL = MAX_HEIGHT_GND_REL - MIN_HEIGHT_GND_REL;
+      public static final double MIN_HEIGHT_ROBOT_REL = 0;
+     
+      public static final double MAX_ROT = 17.739;
       public static final double MIN_ROT = 0;
-      public static final double MOTOR_ROT_TO_METERS_RATIO =  MAX_ROT / MAX_HEIGHT;
+      public static final double MOTOR_ROT_TO_METERS_RATIO =  MAX_ROT / MAX_HEIGHT_ROBOT_REL;
 
       //Misc
       public static final double BOTTOM_CALIBRATION_DUTY_CYCLE = -0.2;

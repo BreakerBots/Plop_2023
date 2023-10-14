@@ -30,12 +30,12 @@ import frc.robot.BreakerLib.util.vendorutil.BreakerPhoenix5Util;
 import frc.robot.BreakerLib.util.vendorutil.BreakerREVUtil;
 
 /** Add your docs here. */
-public class BreakerNeoSwerveModuleAngleMotor extends BreakerGenericSwerveModuleAngleMotor {
+public class BreakerBrushlessSparkMaxSwerveModuleAngleMotor extends BreakerGenericSwerveModuleAngleMotor {
     private CANSparkMax motor;
     private BreakerSwerveAzimuthEncoder encoder;
     private Rotation2d targetAngle;
     private BreakerSwerveAzimuthControler azimuthControler;
-    public BreakerNeoSwerveModuleAngleMotor(CANSparkMax motor, BreakerSwerveAzimuthEncoder encoder, double encoderAbsoluteAngleOffsetDegrees, int supplyCurrentLimit, boolean isMotorInverted,  BreakerSwerveMotorPIDConfig pidConfig) {
+    public BreakerBrushlessSparkMaxSwerveModuleAngleMotor(CANSparkMax motor, BreakerSwerveAzimuthEncoder encoder, double encoderAbsoluteAngleOffsetDegrees, int supplyCurrentLimit, boolean isMotorInverted,  BreakerSwerveMotorPIDConfig pidConfig) {
         this.motor = motor;
         this.encoder = encoder;
         motor.restoreFactoryDefaults();

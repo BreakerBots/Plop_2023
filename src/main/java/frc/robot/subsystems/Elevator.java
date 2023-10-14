@@ -49,10 +49,11 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
     private final DutyCycleOut dutyCycleRequest;
     private final NeutralOut lockRequest;
     private final CoastOut neutralRequest;
+    private final Follower followRequest;
 
     private final Supplier<ForwardLimitValue> forwardLimit;
     private final Supplier<ReverseLimitValue> reverseLimit;
-    private final Supplier<Double> elevatorPosition, elevatorVelocity;
+    private final Supplier<Double> elevatorPositionMetersRaw, elevatorVelocity;
 
     private final SystemDiagnostics diagnostics;
 
@@ -87,21 +88,21 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
         leftConfig.Slot0.kV = ElevatorConstants.PIDF_KV;
 
         leftConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-        //leftConfig.Feedback.SensorToMechanismRatio = ElevatorConstants.MOTOR_ROT_TO_METERS_RATIO;
+        leftConfig.Feedback.SensorToMechanismRatio = ElevatorConstants.MOTOR_ROT_TO_METERS_RATIO;
 
-        // leftConfig.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue.LimitSwitchPin;
-        // leftConfig.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue.NormallyOpen;
-        // leftConfig.HardwareLimitSwitch.ForwardLimitEnable = true;
+        leftConfig.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue.LimitSwitchPin;
+        leftConfig.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue.NormallyOpen;
+        leftConfig.HardwareLimitSwitch.ForwardLimitEnable = true;
         leftConfig.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue.LimitSwitchPin;
         leftConfig.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue.NormallyOpen;
         leftConfig.HardwareLimitSwitch.ReverseLimitEnable = true;
 
-        // leftConfig.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = ElevatorConstants.MAX_HEIGHT;
-        // leftConfig.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-        leftConfig.HardwareLimitSwitch.ReverseLimitAutosetPositionValue =  ElevatorConstants.MIN_HEIGHT;
-        leftConfig.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
+       // leftConfig.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = ElevatorConstants.MAX_HEIGHT_ROBOT_REL;
+        //leftConfig.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
+       // leftConfig.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = ElevatorConstants.MIN_HEIGHT_ROBOT_REL;
+       // leftConfig.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
 
-        leftConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast; //Break
+        leftConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         leftConfig.CurrentLimits.SupplyCurrentLimit = ElevatorConstants.SUPPLY_CUR_LIMIT;
         leftConfig.CurrentLimits.SupplyTimeThreshold = ElevatorConstants.SUPPLY_CUR_LIMIT_TIME;
         leftConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -110,14 +111,14 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
         leftMotor.getConfigurator().apply(leftConfig);
 
         TalonFXConfiguration rightConfig = new TalonFXConfiguration();
-        rightConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast; //Break
+        rightConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         rightConfig.CurrentLimits.SupplyCurrentLimit = ElevatorConstants.SUPPLY_CUR_LIMIT;
         rightConfig.CurrentLimits.SupplyTimeThreshold = ElevatorConstants.SUPPLY_CUR_LIMIT_TIME;
         rightConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         rightMotor.getConfigurator().apply(rightConfig);
 
         // targetHeightMeters = ElevatorConstants.MIN_HEIGHT;
-        targetHeightMeters = 0.25;
+        targetHeightMeters = 0.6;
 
         motionMagicRequest = new MotionMagicDutyCycle(0, false, 0, 0, false);
         dutyCycleRequest = new DutyCycleOut(0, false, false);
@@ -126,7 +127,7 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
 
         forwardLimit = leftMotor.getForwardLimit().asSupplier();
         reverseLimit = leftMotor.getReverseLimit().asSupplier();
-        elevatorPosition = leftMotor.getPosition().asSupplier();
+        elevatorPositionMetersRaw = leftMotor.getPosition().asSupplier();
         elevatorVelocity = leftMotor.getVelocity().asSupplier();
 
         diagnostics = new SystemDiagnostics("Elevator");
@@ -135,6 +136,7 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
 
         calibrationRoutine = new CalibrationRoutine();
        // simManager = this.new ElevatorSimManager();
+       followRequest = new Follower(ElevatorConstants.LEFT_MOTOR_ID, false);
        BreakerDashboard.getMainTab().add(this);
        BreakerLog.getInstance().registerLogable("Elevator", this);
     }
@@ -166,7 +168,7 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
     private String getTargetStateString() {
        Optional<ElevatorTargetState> tgtOpt = ElevatorTargetState.getTargetFromHeight(getTargetHeightMeters());
        if (tgtOpt.isPresent()) {
-        return tgtOpt.get().toString();
+            return tgtOpt.get().toString();
        }
        return "UNKNOWN";
     }
@@ -190,7 +192,7 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
     }
 
     public double getHeight() {
-        return elevatorPosition.get();
+        return elevatorPositionMetersRaw.get() + ElevatorConstants.MIN_HEIGHT_GND_REL;
     }
 
     public double getVelocity() {
@@ -241,6 +243,15 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
         //simManager.updateSim();
     }
 
+    private void setControlMotionMagic(double newTgt) {
+        leftMotor.setControl(motionMagicRequest.withPosition(Math.min(Math.max(targetHeightMeters - ElevatorConstants.MIN_HEIGHT_GND_REL, ElevatorConstants.MIN_HEIGHT_ROBOT_REL), ElevatorConstants.MAX_HEIGHT_ROBOT_REL)));
+        rightMotor.setControl(followRequest);
+    }
+
+    private double getMotionMagicReqTgt() {
+        return motionMagicRequest.Position + ElevatorConstants.MIN_HEIGHT_GND_REL;
+    }
+
     @Override
     public void periodic() {
 
@@ -271,13 +282,15 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
         // if (DriverStation.isDisabled() || currentState != ElevatorControlMode.MANUAL) {
         //     manualControlDutyCycle = 0.0;
         // }
-
-        leftMotor.setControl(motionMagicRequest.withPosition(Math.min(Math.max(targetHeightMeters, ElevatorConstants.MIN_HEIGHT), ElevatorConstants.MAX_HEIGHT)));
+        //if (targetHeightMeters != getMotionMagicReqTgt()) {
+            setControlMotionMagic(targetHeightMeters);
+        //}
+        
 
         // if (!isForceStoped) {
         //     switch (currentState) { 
         //         case AUTOMATIC:
-        //             if (targetHeightMeters != motionMagicRequest.Position) {
+        //             if (targetHeightMeters != getMotionMagicReqTgt()) {
         //                 leftMotor.setControl(motionMagicRequest.withPosition(Math.min(Math.max(targetHeightMeters, ElevatorConstants.MIN_HEIGHT), ElevatorConstants.MAX_HEIGHT)));
         //             }
         //             break;

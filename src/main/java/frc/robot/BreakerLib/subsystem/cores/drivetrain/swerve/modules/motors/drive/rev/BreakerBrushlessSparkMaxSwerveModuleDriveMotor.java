@@ -17,11 +17,11 @@ import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import frc.robot.BreakerLib.util.vendorutil.BreakerREVUtil;
 
 /** Add your docs here. */
-public class BreakerNeoSwerveModuleDriveMotor extends BreakerGenericSwerveModuleDriveMotor {
+public class BreakerBrushlessSparkMaxSwerveModuleDriveMotor extends BreakerGenericSwerveModuleDriveMotor {
     private CANSparkMax motor;
     private double driveGearRatio, wheelDiameter, targetVelocity;
     private BreakerArbitraryFeedforwardProvider arbFF;
-    public BreakerNeoSwerveModuleDriveMotor(CANSparkMax motor, double driveGearRatio, double wheelDiameter, int supplyCurrentLimit, boolean isMotorInverted, BreakerArbitraryFeedforwardProvider arbFF, BreakerSwerveMotorPIDConfig pidConfig) {
+    public BreakerBrushlessSparkMaxSwerveModuleDriveMotor(CANSparkMax motor, double driveGearRatio, double wheelDiameter, int supplyCurrentLimit, boolean isMotorInverted, BreakerArbitraryFeedforwardProvider arbFF, BreakerSwerveMotorPIDConfig pidConfig) {
         this.motor = motor;
         this.driveGearRatio = driveGearRatio;
         this.wheelDiameter = wheelDiameter;

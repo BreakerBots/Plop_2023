@@ -31,14 +31,14 @@ import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import frc.robot.BreakerLib.util.vendorutil.BreakerPhoenix6Util;
 
 /** Add your docs here. */
-public class BreakerFalconSwerveModuleAngleMotor extends BreakerGenericSwerveModuleAngleMotor {
+public class BreakerTalonFXSwerveModuleAngleMotor extends BreakerGenericSwerveModuleAngleMotor {
     private TalonFX motor;
     private BreakerSwerveAzimuthEncoder encoder;
     private Rotation2d targetAngle;
     private BreakerSwerveAzimuthControler azimuthControler;
     private final PositionVoltage positionRequest;
     private final VoltageOut rawVoltageRequest;
-    public BreakerFalconSwerveModuleAngleMotor(TalonFX motor, BreakerSwerveAzimuthEncoder encoder, double encoderAbsoluteAngleOffsetDegrees, double azimuthGearRatio, double supplyCurrentLimit, boolean isMotorInverted,  BreakerSwerveMotorPIDConfig pidConfig) {
+    public BreakerTalonFXSwerveModuleAngleMotor(TalonFX motor, BreakerSwerveAzimuthEncoder encoder, double encoderAbsoluteAngleOffsetDegrees, double azimuthGearRatio, double supplyCurrentLimit, boolean isMotorInverted,  BreakerSwerveMotorPIDConfig pidConfig) {
         this.motor = motor;
         this.encoder = encoder;
         positionRequest = new PositionVoltage(0.0, false, 0.0, 0, false);

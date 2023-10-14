@@ -11,7 +11,7 @@ import frc.robot.BreakerLib.util.test.selftest.BreakerSelfTestableBase;
 
 /** Add your docs here. */
 public abstract class BreakerGenericSwerveModuleDriveMotor extends BreakerGenericSwerveModuleMotor {
-    public abstract void setTargetVelocity(double targetMetersPerSecond);
+    public abstract void setTargetVelocity(double targetMetersPerSeconde);
     public abstract double getVelocity();
     public abstract double getDistance();
     public abstract void resetDistance();

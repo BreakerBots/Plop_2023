@@ -11,7 +11,6 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
-import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
@@ -22,6 +21,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule.BreakerSwerveMotorPIDConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.BreakerGenericSwerveModuleDriveMotor;
 import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider;
@@ -29,25 +29,23 @@ import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import frc.robot.BreakerLib.util.vendorutil.BreakerPhoenix6Util;
 
 /** Add your docs here. */
-public class BreakerProFalconSwerveModuleDriveMotor extends BreakerGenericSwerveModuleDriveMotor {
+public class BreakerTalonFXSwerveModuleDriveMotor extends BreakerGenericSwerveModuleDriveMotor {
     private TalonFX motor;
     private double driveGearRatio, wheelDiameter, targetVelocity;
     private final VelocityDutyCycle velocityDutyCycleRequest;
     private final VelocityVoltage velocityVoltageRequest;
-    private final VelocityTorqueCurrentFOC velocityTorqueCurrentRequest;
     private final double wheelCircumfrenceMeters;
     private BreakerArbitraryFeedforwardProvider arbFF;
-    private final  ProTalonFXControlOutputUnits controlOutputUnits;
-    public BreakerProFalconSwerveModuleDriveMotor(TalonFX motor, double driveGearRatio, double wheelDiameter, double supplyCurrentLimit, boolean isMotorInverted, BreakerArbitraryFeedforwardProvider arbFF, BreakerSwerveMotorPIDConfig pidConfig, ProTalonFXControlOutputUnits controlOutputUnits) {
+    private final TalonFXControlOutputUnits controlOutputUnits;
+    public BreakerTalonFXSwerveModuleDriveMotor(TalonFX motor, double driveGearRatio, double wheelDiameter, double supplyCurrentLimit, boolean isMotorInverted, BreakerArbitraryFeedforwardProvider arbFF, BreakerSwerveMotorPIDConfig pidConfig, TalonFXControlOutputUnits controlOutputUnits) {
         this.motor = motor;
         this.driveGearRatio = driveGearRatio;
         this.wheelDiameter = wheelDiameter;
         this.arbFF = arbFF;
         wheelCircumfrenceMeters = wheelDiameter*Math.PI;
         targetVelocity = 0.0;
-        velocityDutyCycleRequest = new VelocityDutyCycle(0.0, true, 0.0, 1, false);
-        velocityVoltageRequest = new VelocityVoltage(0.0, true, 0.0, 1, false);
-        velocityTorqueCurrentRequest = new VelocityTorqueCurrentFOC(0.0, 0.0, 1, false);
+        velocityDutyCycleRequest = new VelocityDutyCycle(0.0, false, 0.0, 1, false);
+        velocityVoltageRequest = new VelocityVoltage(0.0, false, 0.0, 1, false);
         this.controlOutputUnits = controlOutputUnits;
         TalonFXConfiguration driveConfig = new TalonFXConfiguration();
         driveConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
@@ -72,9 +70,6 @@ public class BreakerProFalconSwerveModuleDriveMotor extends BreakerGenericSwerve
         switch (controlOutputUnits) {
             case DUTY_CYCLE:
                 motor.setControl(velocityDutyCycleRequest.withVelocity(vel).withFeedForward(ff));
-                break;
-            case TORQUE_CURRENT:
-                motor.setControl(velocityTorqueCurrentRequest.withVelocity(vel).withFeedForward(ff));
                 break;
             case VOLTAGE:
             default:
@@ -136,12 +131,10 @@ public class BreakerProFalconSwerveModuleDriveMotor extends BreakerGenericSwerve
         return motor.getClosedLoopOutput().getValue();
     }
 
-    public enum ProTalonFXControlOutputUnits {
+    public enum TalonFXControlOutputUnits {
         /** More accurate, compensates for supply voltage veriance, generaly less max power avalible compaired to duty cycle control. PID/FF should return outputs in Volts */
         VOLTAGE,
         /** Less accurate, does not compensate for supply voltage veriance, generaly more power avalible compired to voltage control. PID/FF should return outputs in percent out [-1.0, 1.0] */
-        DUTY_CYCLE,
-        /** Balenced, most powerful, very accurate. PID/FF should return outputs in Ampiers */
-        TORQUE_CURRENT
+        DUTY_CYCLE
     }
 }

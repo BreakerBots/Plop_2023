@@ -26,7 +26,6 @@ public final class BreakerBitField implements java.lang.Iterable<Boolean>, java.
 
     public BreakerBitField(Boolean... bools) {
         this.bools = Arrays.copyOf(bools, bools.length);
-        
     }
 
     public BreakerBitField(Collection<Boolean> bools) {

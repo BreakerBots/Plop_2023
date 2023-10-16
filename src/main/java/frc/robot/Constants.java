@@ -195,16 +195,16 @@ public final class Constants {
       public static final double SUPPLY_CUR_LIMIT_TIME = 1.5;
 
       //Motion Magic Configs
-      public static final double MOTION_MAGIC_CRUISE_VEL = 0.05;
-      public static final double MOTION_MAGIC_ACCEL = 0.08;
-      public static final double MOTION_MAGIC_JERK = 0.05;
+      public static final double MOTION_MAGIC_CRUISE_VEL = 2.0;
+      public static final double MOTION_MAGIC_ACCEL = 1.0;
+      public static final double MOTION_MAGIC_JERK = 2.0;
 
       //PIDF Configs
-      public static final double PIDF_KP = 0.25;
-      public static final double PIDF_KI = 0;
-      public static final double PIDF_KD = 0;
-      public static final double PIDF_KS = 0.1;
-      public static final double PIDF_KV = 0.15;
+      public static final double PIDF_KP = 5.00;//25
+      public static final double PIDF_KI = 0.0;//05
+      public static final double PIDF_KD = 0.0;//0
+      public static final double PIDF_KS = 0.0;//10
+      public static final double PIDF_KV = 0.75;//20
 
       //Gearing
       public static final double MOTOR_TO_DRUM_GEARING = 5.0; //to one

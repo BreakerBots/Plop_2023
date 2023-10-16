@@ -73,7 +73,6 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
     public Elevator() {
         leftMotor = new TalonFX(ElevatorConstants.LEFT_MOTOR_ID, MiscConstants.CANIVORE_1);
         rightMotor = new TalonFX(ElevatorConstants.RIGHT_MOTOR_ID, MiscConstants.CANIVORE_1);
-        rightMotor.setControl(new Follower(ElevatorConstants.RIGHT_MOTOR_ID, false));
         
         TalonFXConfiguration leftConfig = new TalonFXConfiguration();
 
@@ -118,7 +117,7 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
         rightMotor.getConfigurator().apply(rightConfig);
 
         // targetHeightMeters = ElevatorConstants.MIN_HEIGHT;
-        targetHeightMeters = 0.6;
+        targetHeightMeters = 0.8;
 
         motionMagicRequest = new MotionMagicDutyCycle(0, false, 0, 0, false);
         dutyCycleRequest = new DutyCycleOut(0, false, false);
@@ -137,6 +136,7 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
         calibrationRoutine = new CalibrationRoutine();
        // simManager = this.new ElevatorSimManager();
        followRequest = new Follower(ElevatorConstants.LEFT_MOTOR_ID, false);
+       rightMotor.setControl(followRequest);
        BreakerDashboard.getMainTab().add(this);
        BreakerLog.getInstance().registerLogable("Elevator", this);
     }
@@ -282,9 +282,9 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
         // if (DriverStation.isDisabled() || currentState != ElevatorControlMode.MANUAL) {
         //     manualControlDutyCycle = 0.0;
         // }
-        //if (targetHeightMeters != getMotionMagicReqTgt()) {
+        if (targetHeightMeters != getMotionMagicReqTgt()) {
             setControlMotionMagic(targetHeightMeters);
-        //}
+        }
         
 
         // if (!isForceStoped) {

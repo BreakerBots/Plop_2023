@@ -242,9 +242,6 @@ public final class Constants {
 
       public static final int WRIST_CURRENT_LIMIT = 25;
 
-      public static final double WRIST_EXTEND_DUTY_CYCLE = 0.45;
-      public static final double WRIST_RETRACT_DUTY_CYCLE = -0.45;
-
       public static final double WRIST_KP = 5.0;
       public static final double WRIST_KI = 0.00;
       public static final double WRIST_KD = 0.00;
@@ -355,7 +352,7 @@ public final class Constants {
 
       public static final double INTER_NODE_GOUP_Y_OFFSET = Units.inchesToMeters(66.0);
       public static final double INTER_NODE_Y_OFFSET = Units.inchesToMeters(22.0);
-      public static final Pose2d C0_BASE_ALLIGNMENT_POSE = new Pose2d();
+      public static final Pose2d C0_BASE_ALLIGNMENT_POSE = new Pose2d(1.71, 0.49, Rotation2d.fromDegrees(180));
       public static final Pose2d C1_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET), new Rotation2d()));
       public static final Pose2d C2_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 2.0), new Rotation2d()));
       public static final Pose2d C3_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 3.0), new Rotation2d()));

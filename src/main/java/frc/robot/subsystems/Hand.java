@@ -21,6 +21,7 @@ import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -29,6 +30,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.counter.UpDownCounter;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -93,7 +95,7 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
     rollerState = RollerState.NEUTRAL;
     wristControlState = WristControlState.SEEKING;
 
-    encoder = BreakerCANCoderFactory.createCANCoder(HandConstants.WRIST_ENCODER_ID, AbsoluteSensorRangeValue.Signed_PlusMinusHalf, 0.0, SensorDirectionValue.CounterClockwise_Positive);
+    encoder = BreakerCANCoderFactory.createCANCoder(HandConstants.WRIST_ENCODER_ID, AbsoluteSensorRangeValue.Signed_PlusMinusHalf, -0.414551, SensorDirectionValue.Clockwise_Positive);
 
     diagnostics = new SystemDiagnostics("Intake");
     diagnostics.addSparkMax(wristMotor);
@@ -107,8 +109,10 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
     coneTOF.setRangingMode(RangingMode.Short, 999);
     coneTOF.setRangeOfInterest(9,9,11,11);
 
-    wristGoal = getWristRotation();
+    wristGoal = Rotation2d.fromDegrees(0.0); //getWristRotation();
+    wristGoalType = WristGoalType.UNKNOWN;
     prevControledGamePieceType = ControledGamePieceType.NONE;
+    BreakerLog.getInstance().registerLogable("Hand", this);
   }
 
   public Optional<Double> getConeOffset() {
@@ -256,10 +260,11 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
   }
  
   private void calculateAndApplyPIDF() {
-    pidOutput = pid.calculate(getWristRotation().getRadians(), wristGoal.getRotations());
+    pidOutput = pid.calculate(getWristRotation().getRadians(), wristGoal.getRadians());
     State profiledSetpoint = pid.getSetpoint();
     ffOutput =  ff.calculate(profiledSetpoint.position, profiledSetpoint.velocity);
-    wristMotor.setVoltage(pidOutput + ffOutput);
+    System.out.println(pidOutput + ffOutput);
+    wristMotor.set((pidOutput + ffOutput)/RobotController.getBatteryVoltage());
   }
 
   public boolean atWristGoal() {
@@ -278,34 +283,36 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
   @Override
   public void periodic() {
 
-    if (DriverStation.isEnabled() && wristControlState == WristControlState.SEEKING) {
-      if (hasGamePiece() && rollerState.getRollerStateType() != RollerStateType.EXTAKEING) {
-        if (hasCone()) {
-          rollerGrippCone();
-        } else {
-          rollerGrippCube();
-        }
-      } else if (!hasGamePiece() && (wristGoalType == WristGoalType.STOW || wristGoalType == WristGoalType.UNKNOWN)) {
-        stopRoller();
-      }
-      calculateAndApplyPIDF();
-    } else {
-      privateSetWristGoal(WristGoalType.UNKNOWN, getWristRotation());
-      stopRoller();
-    }
+    calculateAndApplyPIDF();
 
-    ControledGamePieceType curControledGamePieceType = getControledGamePieceType();
-    if (curControledGamePieceType != prevControledGamePieceType) {
-      if (curControledGamePieceType == ControledGamePieceType.CONE || curControledGamePieceType == ControledGamePieceType.CUBE) {
-        BreakerLog.getInstance().logSuperstructureEvent("ROBOT AQUIRED NEW GAME PIECE: " + curControledGamePieceType.toString());
-      } else if (curControledGamePieceType == ControledGamePieceType.NONE && prevControledGamePieceType != ControledGamePieceType.ERROR) {
-        BreakerLog.getInstance().logSuperstructureEvent("ROBOT EJECTED GAME PIECE: " + prevControledGamePieceType.toString());
-      } else if (prevControledGamePieceType == ControledGamePieceType.ERROR) {
-        BreakerLog.getInstance().logSuperstructureEvent("INTAKE BEAM BREAKS EXITED ERROR STATE, CURRENT GAME PIECE: " + curControledGamePieceType.toString());
-      } else {
-        BreakerLog.getInstance().logSuperstructureEvent("INTKAE BEAM BREAKS ENTERED ERROR STATE");
-      }
-    }
+    // if (DriverStation.isEnabled() && wristControlState == WristControlState.SEEKING) {
+    //   if (hasGamePiece() && rollerState.getRollerStateType() != RollerStateType.EXTAKEING) {
+    //     if (hasCone()) {
+    //       rollerGrippCone();
+    //     } else {
+    //       rollerGrippCube();
+    //     }
+    //   } else if (!hasGamePiece() && (wristGoalType == WristGoalType.STOW || wristGoalType == WristGoalType.UNKNOWN)) {
+    //     stopRoller();
+    //   }
+    //   calculateAndApplyPIDF();
+    // } else {
+    //   privateSetWristGoal(WristGoalType.UNKNOWN, getWristRotation());
+    //   stopRoller();
+    // }
+
+    // ControledGamePieceType curControledGamePieceType = getControledGamePieceType();
+    // if (curControledGamePieceType != prevControledGamePieceType) {
+    //   if (curControledGamePieceType == ControledGamePieceType.CONE || curControledGamePieceType == ControledGamePieceType.CUBE) {
+    //     BreakerLog.getInstance().logSuperstructureEvent("ROBOT AQUIRED NEW GAME PIECE: " + curControledGamePieceType.toString());
+    //   } else if (curControledGamePieceType == ControledGamePieceType.NONE && prevControledGamePieceType != ControledGamePieceType.ERROR) {
+    //     BreakerLog.getInstance().logSuperstructureEvent("ROBOT EJECTED GAME PIECE: " + prevControledGamePieceType.toString());
+    //   } else if (prevControledGamePieceType == ControledGamePieceType.ERROR) {
+    //     BreakerLog.getInstance().logSuperstructureEvent("INTAKE BEAM BREAKS EXITED ERROR STATE, CURRENT GAME PIECE: " + curControledGamePieceType.toString());
+    //   } else {
+    //     BreakerLog.getInstance().logSuperstructureEvent("INTKAE BEAM BREAKS ENTERED ERROR STATE");
+    //   }
+    // }
   }
 
   public static enum RollerState {
@@ -423,10 +430,11 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
     LogTable wristTable = table.getSubtable("Wrist");
       wristTable.put("ControlState", wristControlState.toString());
       wristTable.put("GoalType", wristGoalType.toString());
-      wristTable.put("Goal", wristGoal.toString());
+      wristTable.put("GoalDeg", wristGoal.getDegrees());
+      wristTable.put("PositionDeg", getWristRotation().getDegrees());
       wristTable.put("FeedForwardVolts", ffOutput);
       wristTable.put("PIDVolts", pidOutput);
-      wristTable.put("DutyCycle", wristMotor.get());
+      wristTable.put("MotorOutVolts", wristMotor.getAppliedOutput());
       wristTable.put("CurrentAmps", wristMotor.getOutputCurrent());
   }
 

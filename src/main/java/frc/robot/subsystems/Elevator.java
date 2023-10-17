@@ -66,6 +66,7 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
     //private ElevatorSimManager simManager;
 
     private boolean isForceStoped = false;
+    private boolean bypassCalibration = false;
 
     private CalibrationRoutine calibrationRoutine;
 
@@ -116,8 +117,7 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
         rightConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         rightMotor.getConfigurator().apply(rightConfig);
 
-        // targetHeightMeters = ElevatorConstants.MIN_HEIGHT;
-        targetHeightMeters = 0.8;
+        targetHeightMeters = ElevatorTargetState.STOW.getTargetHeight();
 
         motionMagicRequest = new MotionMagicDutyCycle(0, false, 0, 0, false);
         dutyCycleRequest = new DutyCycleOut(0, false, false);
@@ -139,6 +139,8 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
        rightMotor.setControl(followRequest);
        BreakerDashboard.getMainTab().add(this);
        BreakerLog.getInstance().registerLogable("Elevator", this);
+
+       bypassCalibration = true;//false
     }
 
     @Override
@@ -178,7 +180,7 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
     }
 
     public void setTarget(double heightMeters) {
-        // targetHeightMeters = heightMeters;
+        targetHeightMeters = heightMeters;
         currentState = ElevatorControlMode.AUTOMATIC;
     }
 
@@ -255,24 +257,26 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
     @Override
     public void periodic() {
 
-        // Elevator calibrates by hitting limit switch and resetting
-        // if (RobotBase.isReal()) {
-        //     if (getForwardLimitTriggered() || getReverseLimitTriggered()) {
-        //         hasBeenCalibrated = true; 
-        //     }
+        //Elevator calibrates by hitting limit switch and resetting
+        if (RobotBase.isReal()) {
+            if (getForwardLimitTriggered() || getReverseLimitTriggered() || bypassCalibration) {
+                hasBeenCalibrated = true; 
+            }
     
-        //     if (DriverStation.isEnabled()) {
-        //         if (!hasBeenCalibrated && currentState != ElevatorControlMode.MANUAL) {
-        //             calibrate();
-        //         }
-        //     } else {
-        //         if (hasBeenCalibrated) {
-        //             setLocked();
-        //         } else {
-        //             setNeutral();
-        //         }
-        //     }
-        // } 
+            if (DriverStation.isEnabled() && !bypassCalibration) {
+                if (!hasBeenCalibrated && currentState != ElevatorControlMode.MANUAL) {
+                    calibrate();
+                }
+            } else {
+                if (!bypassCalibration) {
+                    if (hasBeenCalibrated) {
+                        setLocked();
+                    } else {
+                        setNeutral();
+                    }
+                }
+            }
+        } 
         
 
         // if (DriverStation.isDisabled() || currentState != ElevatorControlMode.AUTOMATIC) {
@@ -282,44 +286,41 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
         // if (DriverStation.isDisabled() || currentState != ElevatorControlMode.MANUAL) {
         //     manualControlDutyCycle = 0.0;
         // }
-        if (targetHeightMeters != getMotionMagicReqTgt()) {
-            setControlMotionMagic(targetHeightMeters);
-        }
         
 
-        // if (!isForceStoped) {
-        //     switch (currentState) { 
-        //         case AUTOMATIC:
-        //             if (targetHeightMeters != getMotionMagicReqTgt()) {
-        //                 leftMotor.setControl(motionMagicRequest.withPosition(Math.min(Math.max(targetHeightMeters, ElevatorConstants.MIN_HEIGHT), ElevatorConstants.MAX_HEIGHT)));
-        //             }
-        //             break;
-        //         case MANUAL:
-        //             leftMotor.setControl(dutyCycleRequest.withOutput(manualControlDutyCycle));
-        //             break;
-        //         case CALIBRATING:
-        //             if (RobotBase.isReal()) {
-        //                 if (!calibrationRoutine.isScheduled() && DriverStation.isEnabled()) {
-        //                     calibrationRoutine.schedule();
-        //                 }
-        //             } else {
-        //                 currentState = ElevatorControlMode.AUTOMATIC;
-        //                     hasBeenCalibrated = true;
-        //                     BreakerLog.getInstance().logSuperstructureEvent("Elevator calibation not supported in sim, action fallthrough");
-        //             }
-        //             break;
-        //         case NEUTRAL:
-        //             leftMotor.setControl(neutralRequest);
-        //             break;
-        //         case LOCKED:
-        //         default:
-        //             leftMotor.setControl(lockRequest);
-        //             break;
-        //     }
-        // } else {
-        //     leftMotor.setControl(lockRequest);
-        //     rightMotor.setControl(lockRequest);
-        // }
+        if (!isForceStoped) {
+            switch (currentState) { 
+                case AUTOMATIC:
+                    if (targetHeightMeters != getMotionMagicReqTgt()) {
+                        setControlMotionMagic(targetHeightMeters);
+                    }
+                    break;
+                case MANUAL:
+                    leftMotor.setControl(dutyCycleRequest.withOutput(manualControlDutyCycle));
+                    break;
+                case CALIBRATING:
+                    if (RobotBase.isReal() || !bypassCalibration) {
+                        if (!calibrationRoutine.isScheduled() && DriverStation.isEnabled()) {
+                            calibrationRoutine.schedule();
+                        }
+                    } else {
+                        currentState = ElevatorControlMode.AUTOMATIC;
+                            hasBeenCalibrated = true;
+                            BreakerLog.getInstance().logSuperstructureEvent("Elevator calibation not supported in sim, action fallthrough");
+                    }
+                    break;
+                case NEUTRAL:
+                    leftMotor.setControl(neutralRequest);
+                    break;
+                case LOCKED:
+                default:
+                    leftMotor.setControl(lockRequest);
+                    break;
+            }
+        } else {
+            leftMotor.setControl(lockRequest);
+            rightMotor.setControl(lockRequest);
+        }
     }
 
     private class CalibrationRoutine extends CommandBase {
@@ -405,7 +406,8 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
         PICKUP_SINGLE_SUBSTATION_CUBE(0.0),
         PICKUP_DOUBLE_SUBSTATION_CONE(0.0),
         PICKUP_DOUBLE_SUBSTATION_CUBE(0.0),
-        STOW(0.0);
+        ARB_TEST_HEIGHT(0.6),
+        STOW(ElevatorConstants.MIN_HEIGHT_GND_REL);
 
         private final double targetHeight;
         private ElevatorTargetState(double targetHeight) {

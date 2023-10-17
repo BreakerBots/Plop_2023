@@ -42,6 +42,7 @@ import frc.robot.commands.superstructure.IntakeFromDoubleSubstation;
 import frc.robot.commands.superstructure.IntakeFromGround;
 import frc.robot.commands.superstructure.IntakeFromSingleSubstation;
 import frc.robot.commands.superstructure.StowElevatorIntakeAssembly;
+import frc.robot.commands.superstructure.elevator.ElevatorMoveToHight;
 import frc.robot.commands.superstructure.elevator.ManuallyControlElevator;
 import frc.robot.commands.superstructure.intake.EjectGamePiece;
 import frc.robot.commands.superstructure.intake.SetHandRollerState;
@@ -50,6 +51,8 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Hand;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.Elevator.ElevatorTargetState;
+
 import static frc.robot.Constants.AutonomousConstants.*;
 
 /**
@@ -66,7 +69,7 @@ public class RobotContainer {
     private static final BreakerPigeon2 imuSys = new BreakerPigeon2(MiscConstants.IMU_ID, MiscConstants.CANIVORE_1);
 
     private static final Drive drivetrainSys = new Drive(imuSys/*, visionSys*/);
-    public static final Elevator elevatorSys = new Elevator();
+    private static final Elevator elevatorSys = new Elevator();
     //private static final Hand handSys = new Hand();
   
     private static final BreakerTeleopSwerveDriveController teleopDriveController = new BreakerTeleopSwerveDriveController(drivetrainSys, driverControllerSys);
@@ -101,12 +104,18 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+
+    driverControllerSys.getButtonA().onTrue(new ElevatorMoveToHight(elevatorSys, ElevatorTargetState.ARB_TEST_HEIGHT));
+    driverControllerSys.getButtonB().onTrue(new ElevatorMoveToHight(elevatorSys, ElevatorTargetState.STOW));
+
+
+
     //drive controls
     driverControllerSys.getDPad().getUp().onTrue(new TeleopSnapDriveToCardinalHeading(SwerveCardinal.FRONT, drivetrainSys, teleopDriveController));
     driverControllerSys.getDPad().getLeft().onTrue(new TeleopSnapDriveToCardinalHeading(SwerveCardinal.LEFT, drivetrainSys, teleopDriveController));
     driverControllerSys.getDPad().getRight().onTrue(new TeleopSnapDriveToCardinalHeading(SwerveCardinal.RIGHT, drivetrainSys, teleopDriveController));
     driverControllerSys.getDPad().getDown().onTrue(new TeleopSnapDriveToCardinalHeading(SwerveCardinal.BACK, drivetrainSys, teleopDriveController));
-   // driverControllerSys.getButtonA().onTrue(new SetHandRollerState(handSys, IntakeRollerStateRequest.EXTAKE))
+   //driverControllerSys.getButtonA().onTrue(new SetHandRollerState(handSys, IntakeRollerStateRequest.EXTAKE))
 
     //scoreing controls
     //operatorControlPadSys.getScoringCommandRequestTrigger().onTrue(new TeleopScoreGamePiece(operatorControlPadSys, driverControllerSys ,drivetrainSys, elevatorSys, handSys));

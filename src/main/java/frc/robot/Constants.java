@@ -196,11 +196,11 @@ public final class Constants {
 
       //Motion Magic Configs
       public static final double MOTION_MAGIC_CRUISE_VEL = 2.0;
-      public static final double MOTION_MAGIC_ACCEL = 1.0;
-      public static final double MOTION_MAGIC_JERK = 2.0;
+      public static final double MOTION_MAGIC_ACCEL = 2.0;
+      public static final double MOTION_MAGIC_JERK = 15.0;
 
       //PIDF Configs
-      public static final double PIDF_KP = 5.00;//25
+      public static final double PIDF_KP = 15.00;//25
       public static final double PIDF_KI = 0.0;//05
       public static final double PIDF_KD = 0.0;//0
       public static final double PIDF_KS = 0.0;//10
@@ -245,13 +245,13 @@ public final class Constants {
       public static final double WRIST_EXTEND_DUTY_CYCLE = 0.45;
       public static final double WRIST_RETRACT_DUTY_CYCLE = -0.45;
 
-      public static final double WRIST_KP = 20.0;
+      public static final double WRIST_KP = 5.0;
       public static final double WRIST_KI = 0.00;
       public static final double WRIST_KD = 0.00;
 
       //Feedfoward Constants
       public static final double WRIST_KS = 0.00;
-      public static final double WRIST_KG = -0.4;
+      public static final double WRIST_KG = 10.0;
       public static final double WRIST_KV = 1.84;
       public static final double WRIST_KA = 0.00;
 

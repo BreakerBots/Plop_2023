@@ -31,6 +31,8 @@ import frc.robot.commands.drive.MoveToPose;
 import frc.robot.commands.rumble.DoublePulseRumble;
 import frc.robot.commands.rumble.SinglePulseRumble;
 import frc.robot.commands.rumble.TriplePulseRumble;
+import frc.robot.commands.superstructure.SetSuperstructurePositionState;
+import frc.robot.commands.superstructure.SuperstructurePositionState;
 import frc.robot.commands.superstructure.elevator.ElevatorMoveToHight;
 import frc.robot.commands.superstructure.intake.EjectGamePiece;
 import frc.robot.subsystems.Elevator;
@@ -69,18 +71,18 @@ public class TeleopScoreGamePiece extends CommandBase {
       if (controledGamePiece.isPresent()) {
         if (selectedNode.getType().isGamePieceSupported(controledGamePiece.get())) {
 
-          ElevatorTargetState elevatorTgt = getElevatorTarget();
+          SuperstructurePositionState superTgt = getSuperstructureTarget();
           Pose2d allignmentPose = selectedNode.getAllignmentPose();
-          BreakerLog.getInstance().logEvent(String.format("TeleopScoreGamePiece instance selected node indentified, scoreing sequince starting (node: %s) (elevator tgt: %s) (allignment pose: %s)", selectedNode.toString(), elevatorTgt.toString(), allignmentPose.toString()));
+          BreakerLog.getInstance().logEvent(String.format("TeleopScoreGamePiece instance selected node indentified, scoreing sequince starting (node: %s) (superstructure tgt: %s) (allignment pose: %s)", selectedNode.toString(), superTgt.toString(), allignmentPose.toString()));
           new SinglePulseRumble(driverController).schedule();
           Optional<Double> scoringConeOffsetY =  hand.getConeOffset();
           scoreingSequince = 
-          new SequentialCommandGroup(
+          new SequentialCommandGroup( 
             new ParallelCommandGroup(
               new MoveToPose(selectedNode.getAllignmentPose().plus(new Transform2d(new Translation2d(0.0, (scoringConeOffsetY.isPresent() ? hand.getConeOffset().get() : 0.0)), new Rotation2d())), ScoreingConstants.TELEOP_SCOREING_MOVE_TO_POSE_MAX_LINEAR_VEL, drivetrain), 
-              new ElevatorMoveToHight(elevator, getElevatorTarget())
+              new SetSuperstructurePositionState(elevator, hand, superTgt, true)
             ),
-            new ConditionalCommand(new EjectGamePiece(hand), new InstantCommand(this::cancel), () -> preEjectCheck(elevatorTgt)),
+            new ConditionalCommand(new EjectGamePiece(hand), new InstantCommand(this::cancel), () -> preEjectCheck(superTgt)),
             new InstantCommand(this::postEjectCheck)
             );
         } else {
@@ -107,8 +109,8 @@ public class TeleopScoreGamePiece extends CommandBase {
       }
   }
 
-  private boolean preEjectCheck(ElevatorTargetState elevatorTarget) {
-    boolean check = (elevator.atTargetHeight() && (elevator.getTargetHeightMeters() == elevatorTarget.getTargetHeight())) && BreakerMath.epsilonEqualsPose2d(selectedNode.getAllignmentPose(), drivetrain.getOdometryPoseMeters(), DriveConstants.BHDC_POSE_TOLERENCE);
+  private boolean preEjectCheck(SuperstructurePositionState superTarget) {
+    boolean check = (elevator.atTargetHeight() && (elevator.getTargetHeightMeters() == superTarget.getElevatorTargetState().getTargetHeight())) && (hand.atWristGoal() && hand.getWristGoalAngle() == superTarget.getWristGoal().getGoalAngle()) && BreakerMath.epsilonEqualsPose2d(selectedNode.getAllignmentPose(), drivetrain.getOdometryPoseMeters(), DriveConstants.BHDC_POSE_TOLERENCE);
     if (!check) {
       BreakerLog.getInstance().logEvent("TeleopScoreGamePiece instance FAILED, game piece eject procedure pre init check failed, elevator or drive not at desired states");
     } else {
@@ -127,21 +129,21 @@ public class TeleopScoreGamePiece extends CommandBase {
     }
   }
  
-  private ElevatorTargetState getElevatorTarget() {
+  private SuperstructurePositionState getSuperstructureTarget() {
     switch (selectedNode.getHeight()) {
       case HIGH:
         if (selectedNode.getType() == NodeType.CONE) {
-          return ElevatorTargetState.PLACE_CONE_HIGH;
+          return SuperstructurePositionState.PLACE_CONE_HIGH;
         }
-        return ElevatorTargetState.PLACE_CUBE_HIGH;
+        return SuperstructurePositionState.PLACE_CUBE_HIGH;
       case MID:
         if (selectedNode.getType() == NodeType.CONE) {
-          return ElevatorTargetState.PLACE_CONE_MID;
+          return SuperstructurePositionState.PLACE_CONE_MID;
         }
-        return ElevatorTargetState.PLACE_CUBE_MID;
+        return SuperstructurePositionState.PLACE_CUBE_MID;
       case LOW:
       default:
-        return ElevatorTargetState.PLACE_HYBRID;
+        return SuperstructurePositionState.PLACE_HYBRID;
     }
   }
   // Called once the command ends or is interrupted.

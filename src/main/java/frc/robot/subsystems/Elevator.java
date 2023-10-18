@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import com.ctre.phoenix6.configs.AudioConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -66,7 +67,9 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
     //private ElevatorSimManager simManager;
 
     private boolean isForceStoped = false;
-    private boolean bypassCalibration = false;
+    private boolean bypassCalibrationRoutine = false;
+    private boolean revLimitTriggeredPrevCycle = false;
+    private boolean fwdLimitTriggeredPrevCycle = false;
 
     private CalibrationRoutine calibrationRoutine;
 
@@ -102,7 +105,7 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
        // leftConfig.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = ElevatorConstants.MIN_HEIGHT_ROBOT_REL;
        // leftConfig.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
 
-        leftConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        leftConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;//Break
         leftConfig.CurrentLimits.SupplyCurrentLimit = ElevatorConstants.SUPPLY_CUR_LIMIT;
         leftConfig.CurrentLimits.SupplyTimeThreshold = ElevatorConstants.SUPPLY_CUR_LIMIT_TIME;
         leftConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -111,7 +114,7 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
         leftMotor.getConfigurator().apply(leftConfig);
 
         TalonFXConfiguration rightConfig = new TalonFXConfiguration();
-        rightConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        rightConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;//Break
         rightConfig.CurrentLimits.SupplyCurrentLimit = ElevatorConstants.SUPPLY_CUR_LIMIT;
         rightConfig.CurrentLimits.SupplyTimeThreshold = ElevatorConstants.SUPPLY_CUR_LIMIT_TIME;
         rightConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -140,7 +143,9 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
        BreakerDashboard.getMainTab().add(this);
        BreakerLog.getInstance().registerLogable("Elevator", this);
 
-       bypassCalibration = true;//false
+       bypassCalibrationRoutine = false;
+       revLimitTriggeredPrevCycle = false;
+       fwdLimitTriggeredPrevCycle = false;
     }
 
     @Override
@@ -254,38 +259,64 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
         return motionMagicRequest.Position + ElevatorConstants.MIN_HEIGHT_GND_REL;
     }
 
+
+    private void limitSwichCheck() {
+        boolean fwd = getForwardLimitTriggered();
+        boolean rev = getReverseLimitTriggered();
+        if (rev && !revLimitTriggeredPrevCycle) {
+            leftMotor.setRotorPosition(ElevatorConstants.MIN_ROT);
+        } else if (fwd && !fwdLimitTriggeredPrevCycle) {
+            leftMotor.setRotorPosition(ElevatorConstants.MAX_ROT);
+        }
+
+        if (fwd || rev) {
+            hasBeenCalibrated = true;
+        }
+
+        revLimitTriggeredPrevCycle = rev;
+        fwdLimitTriggeredPrevCycle = fwd;
+    }
+
+    private void calibrationRoutineCheck() {
+        if (DriverStation.isEnabled() && !bypassCalibrationRoutine) {
+            if (!hasBeenCalibrated && currentState != ElevatorControlMode.MANUAL) {
+                calibrate();
+            }
+        } else {
+            if (!bypassCalibrationRoutine && currentState != ElevatorControlMode.CALIBRATING) {
+                if (hasBeenCalibrated) {
+                    setLocked();
+                } else {
+                    setNeutral();
+                }
+            }
+        } 
+    }
+
+    private void performSaftyControlResets() {
+        if (DriverStation.isDisabled() || currentState != ElevatorControlMode.AUTOMATIC) {
+            targetHeightMeters = getHeight();
+        }
+
+        if (DriverStation.isDisabled() || currentState != ElevatorControlMode.MANUAL) {
+            manualControlDutyCycle = 0.0;
+        }
+    }
+
+    private void performLimitAndCalibrationCheck() {
+        if (RobotBase.isReal()) {
+            limitSwichCheck();
+            calibrationRoutineCheck();
+        } 
+    }
+
     @Override
     public void periodic() {
 
         //Elevator calibrates by hitting limit switch and resetting
-        if (RobotBase.isReal()) {
-            if (getForwardLimitTriggered() || getReverseLimitTriggered() || bypassCalibration) {
-                hasBeenCalibrated = true; 
-            }
-    
-            if (DriverStation.isEnabled() && !bypassCalibration) {
-                if (!hasBeenCalibrated && currentState != ElevatorControlMode.MANUAL) {
-                    calibrate();
-                }
-            } else {
-                if (!bypassCalibration) {
-                    if (hasBeenCalibrated) {
-                        setLocked();
-                    } else {
-                        setNeutral();
-                    }
-                }
-            }
-        } 
+        performLimitAndCalibrationCheck();
         
-
-        // if (DriverStation.isDisabled() || currentState != ElevatorControlMode.AUTOMATIC) {
-        //     targetHeightMeters = getHeight();
-        // }
-
-        // if (DriverStation.isDisabled() || currentState != ElevatorControlMode.MANUAL) {
-        //     manualControlDutyCycle = 0.0;
-        // }
+        performSaftyControlResets();
         
 
         if (!isForceStoped) {
@@ -299,7 +330,7 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
                     leftMotor.setControl(dutyCycleRequest.withOutput(manualControlDutyCycle));
                     break;
                 case CALIBRATING:
-                    if (RobotBase.isReal() || !bypassCalibration) {
+                    if (RobotBase.isReal() || !bypassCalibrationRoutine) {
                         if (!calibrationRoutine.isScheduled() && DriverStation.isEnabled()) {
                             calibrationRoutine.schedule();
                         }

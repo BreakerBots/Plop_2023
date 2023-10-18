@@ -196,13 +196,13 @@ public final class Constants {
 
       //Motion Magic Configs
       public static final double MOTION_MAGIC_CRUISE_VEL = 2.0;
-      public static final double MOTION_MAGIC_ACCEL = 2.0;
+      public static final double MOTION_MAGIC_ACCEL = 5.0;
       public static final double MOTION_MAGIC_JERK = 15.0;
 
       //PIDF Configs
       public static final double PIDF_KP = 15.00;//25
       public static final double PIDF_KI = 0.0;//05
-      public static final double PIDF_KD = 0.0;//0
+      public static final double PIDF_KD = 0.05;//0
       public static final double PIDF_KS = 0.0;//10
       public static final double PIDF_KV = 0.75;//20
 
@@ -218,8 +218,8 @@ public final class Constants {
       public static final double MOTOR_ROT_TO_METERS_RATIO =  MAX_ROT / MAX_HEIGHT_ROBOT_REL;
 
       //Misc
-      public static final double BOTTOM_CALIBRATION_DUTY_CYCLE = -0.2;
-      public static final double TOP_CALIBRATION_DUTY_CYCLE = 0.2;
+      public static final double BOTTOM_CALIBRATION_DUTY_CYCLE = -0.05;
+      public static final double TOP_CALIBRATION_DUTY_CYCLE = 0.1;
       public static final double CALIBRATION_PAHSE_TIMEOUT = 7.5;
       public static final double HIGHT_TOLARENCE = 0.01;
       public static final double MAX_SAFE_VEL = 0.0;
@@ -240,7 +240,9 @@ public final class Constants {
       public static final boolean INVERT_WRIST = false;
       public static final boolean INVERT_ROLLER= false;
 
-      public static final int WRIST_CURRENT_LIMIT = 25;
+      public static final double WRIST_CURRENT_LIMIT = 15.0;
+      public static final double WRIST_CURRENT_LIMIT_TIME = 0.5;
+
 
       public static final double WRIST_KP = 5.0;
       public static final double WRIST_KI = 0.00;
@@ -275,7 +277,7 @@ public final class Constants {
       public static final double EXTAKE_CUBE_DUTY_CYCLE = -0.75;
       public static final int EXTAKE_CUBE_CURENT_LIMIT = 25;
 
-      public static final double CONE_TOF_MAX_DIST = 0.0;
+      public static final double CONE_TOF_MAX_DIST = 340.0;
       public static final double CENTERED_CONE_TOF_DISTANCE = 0.0;
 
       // command constants
@@ -326,7 +328,7 @@ public final class Constants {
       public static final double IMU_MOUNT_POSE_ROLL = 0.0;
       public static final String CANIVORE_1 = "CANivore_1";
       public static final boolean ALLOW_MANUAL_SCOREING_REALIGNMENT = true;
-      public static final String ROBORIO_SN = "A";
+      public static final String ROBORIO_SN = "03243120";
       // public static final double AUTO_BALANCE_MIN
   }
 

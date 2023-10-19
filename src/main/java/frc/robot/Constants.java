@@ -218,11 +218,10 @@ public final class Constants {
       public static final double MOTOR_ROT_TO_METERS_RATIO =  MAX_ROT / MAX_HEIGHT_ROBOT_REL;
 
       //Misc
-      public static final double BOTTOM_CALIBRATION_DUTY_CYCLE = -0.05;
+      public static final double BOTTOM_CALIBRATION_DUTY_CYCLE = 0.0;
       public static final double TOP_CALIBRATION_DUTY_CYCLE = 0.1;
       public static final double CALIBRATION_PAHSE_TIMEOUT = 7.5;
       public static final double HIGHT_TOLARENCE = 0.01;
-      public static final double MAX_SAFE_VEL = 0.0;
 
       //Command configs
       public static final double MOVE_TO_HEIGHT_COMMAND_TIMEOUT = 5.0;

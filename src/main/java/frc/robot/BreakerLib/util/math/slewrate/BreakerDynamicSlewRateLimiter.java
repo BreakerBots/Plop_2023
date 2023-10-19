@@ -49,7 +49,6 @@ public class BreakerDynamicSlewRateLimiter extends SlewRateLimiter {
 
     @Override
     public void reset(double value) {
-        // TODO Auto-generated method stub
         super.reset(value);
     }
 

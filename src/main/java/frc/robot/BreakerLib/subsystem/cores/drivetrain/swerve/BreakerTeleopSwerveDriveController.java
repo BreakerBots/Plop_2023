@@ -4,10 +4,14 @@
 
 package frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve;
 
+import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.networktables.PubSub;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerGenericGamepad;
@@ -15,20 +19,30 @@ import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxControl
 import frc.robot.BreakerLib.physics.vector.BreakerVector2;
 import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDriveBase.BreakerSwerveDriveBasePercentSpeedRequest;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDriveBase.BreakerSwerveDriveBaseVelocityRequest;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwerveVelocityRequest;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwervePercentSpeedRequest.ChassisPercentSpeeds;
 import frc.robot.BreakerLib.util.math.functions.BreakerGenericMathFunction;
+import frc.robot.BreakerLib.util.math.slewrate.BreakerHolonomicSlewRateLimiter;
+import frc.robot.BreakerLib.util.math.slewrate.BreakerHolonomicSlewRateLimiter.UnitlessChassisSpeeds;
 
 /** Controller object for the {@link BreakerLegacySwerveDrive} drivetrain. */
 public class BreakerTeleopSwerveDriveController extends CommandBase {
 
   private BreakerGenericGamepad controller;
   private BreakerSwerveDrive baseDrivetrain;
-  private boolean usesSuppliers, usesCurves, usesRateLimiters, turnOverride, forwardOverride, horizontalOverride;
+  private boolean usesSuppliers, usesCurves, usesRateLimiter, turnOverride, forwardOverride, horizontalOverride;
+
   private BreakerGenericMathFunction linearSpeedCurve, turnSpeedCurve;
-  private SlewRateLimiter forwardRateLimiter, horizontalRateLimiter, turnRateLimiter;
+  private AppliedModifierUnits speedCurveUnits;
+
+  private BreakerHolonomicSlewRateLimiter slewRateLimiter;
+  private AppliedModifierUnits slewRateUnits;
+
   private DoubleSupplier forwardSpeedPercentSupplier, horizontalSpeedPercentSupplier, turnSpeedPercentSupplier,
       overrideForwardSupplier, overrideHorizontalSupplier, overrideTurnSupplier;
-  private BreakerSwerveDriveBasePercentSpeedRequest percentSpeedRequest;
+  private AppliedModifierUnits overrideFwdUnits, overrideHorizUnits, overrideTurnUnits;
+  private BreakerSwerveVelocityRequest velocityRequest;
 
   /**
    * Creates a BreakerSwerveDriveController which only utilizes HID input.
@@ -41,11 +55,11 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
     this.baseDrivetrain = baseDrivetrain;
     usesSuppliers = false;
     usesCurves = false;
-    usesRateLimiters = false;
+    usesRateLimiter = false;
     forwardOverride = false;
     horizontalOverride = false;
     turnOverride = false;
-    percentSpeedRequest = new BreakerSwerveDriveBasePercentSpeedRequest(new ChassisPercentSpeeds());
+    velocityRequest = new BreakerSwerveVelocityRequest(new ChassisSpeeds());
     addRequirements(baseDrivetrain);
   }
 
@@ -66,26 +80,26 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
     this.baseDrivetrain = baseDrivetrain;
     usesSuppliers = true;
     usesCurves = false;
-    usesRateLimiters = false;
+    usesRateLimiter = false;
     forwardOverride = false;
     horizontalOverride = false;
     turnOverride = false;
-    percentSpeedRequest = new BreakerSwerveDriveBasePercentSpeedRequest(new ChassisPercentSpeeds());
+    velocityRequest = new BreakerSwerveVelocityRequest(new ChassisSpeeds());
     addRequirements(baseDrivetrain);
   }
 
-  public BreakerTeleopSwerveDriveController addSlewRateLimiters(SlewRateLimiter forwardRateLimiter, SlewRateLimiter  horizontalRateLimiter, SlewRateLimiter turnRateLimiter) {
-    this.forwardRateLimiter = forwardRateLimiter;
-    this.horizontalRateLimiter = horizontalRateLimiter;
-    this.turnRateLimiter = turnRateLimiter;
-    usesRateLimiters = true;
+  public BreakerTeleopSwerveDriveController addSlewRateLimiter(BreakerHolonomicSlewRateLimiter slewRateLimiter, AppliedModifierUnits appliedModifierUnits) {
+    this.slewRateLimiter = slewRateLimiter;
+    usesRateLimiter = true;
+    slewRateUnits = appliedModifierUnits;
     return this;
   }
 
-  public BreakerTeleopSwerveDriveController addSpeedCurves(BreakerGenericMathFunction linearSpeedCurve, BreakerGenericMathFunction turnSpeedCurve) {
+  public BreakerTeleopSwerveDriveController addSpeedCurves(BreakerGenericMathFunction linearSpeedCurve, BreakerGenericMathFunction turnSpeedCurve, AppliedModifierUnits appliedModifierUnits) {
     this.linearSpeedCurve = linearSpeedCurve;
     this.turnSpeedCurve = turnSpeedCurve;
     usesCurves = true;
+    speedCurveUnits = appliedModifierUnits;
     return this;
   }
 
@@ -94,9 +108,10 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
    * 
    * @param turnSupplier Turn speed percent supplier.
    */
-  public void overrideTurnInput(DoubleSupplier turnSupplier) {
+  public void overrideTurnInput(DoubleSupplier turnSupplier, AppliedModifierUnits appliedModifierUnits) {
     turnOverride = true;
     overrideTurnSupplier = turnSupplier;
+    overrideTurnUnits = appliedModifierUnits;
   }
 
   /**
@@ -105,21 +120,25 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
    * @param forwardSupplier    Forward speed percent supplier.
    * @param horizontalSupplier Horizontal speed percent supplier.
    */
-  public void overrideLinearInput(DoubleSupplier forwardSupplier, DoubleSupplier horizontalSupplier) {
+  public void overrideLinearInput(DoubleSupplier forwardSupplier, DoubleSupplier horizontalSupplier, AppliedModifierUnits appliedModifierUnits) {
     forwardOverride = true;
     horizontalOverride = true;
     overrideHorizontalSupplier = horizontalSupplier;
     overrideForwardSupplier = forwardSupplier;
+    overrideFwdUnits = appliedModifierUnits;
+    overrideHorizUnits = appliedModifierUnits;
   }
 
-  public void overrideForwardInput(DoubleSupplier forwardSupplier) {
+  public void overrideForwardInput(DoubleSupplier forwardSupplier, AppliedModifierUnits appliedModifierUnits) {
     forwardOverride = true;
     overrideForwardSupplier = forwardSupplier;
+    overrideFwdUnits = appliedModifierUnits;
   }
 
-  public void overrideHorizontalInput(DoubleSupplier horizontalSupplier) {
+  public void overrideHorizontalInput(DoubleSupplier horizontalSupplier, AppliedModifierUnits appliedModifierUnits) {
     horizontalOverride = true;
     overrideHorizontalSupplier = horizontalSupplier;
+    overrideHorizUnits = appliedModifierUnits;
   }
 
   /**
@@ -130,9 +149,9 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
    * @param turnSupplier       Turn speed percent supplier.
    */
   public void overrideAllInputs(DoubleSupplier forwardSupplier, DoubleSupplier horizontalSupplier,
-      DoubleSupplier turnSupplier) {
-    overrideTurnInput(turnSupplier);
-    overrideLinearInput(horizontalSupplier, forwardSupplier);
+      DoubleSupplier turnSupplier, AppliedModifierUnits appliedModifierUnits) {
+    overrideTurnInput(turnSupplier, appliedModifierUnits);
+    overrideLinearInput(horizontalSupplier, forwardSupplier, appliedModifierUnits);
   }
 
   public void endForwardOverride() {
@@ -176,6 +195,13 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
     return turnOverride;
   }
 
+  public Optional<Pair<BreakerHolonomicSlewRateLimiter,AppliedModifierUnits>> getSlewRateLimiterAndUnits() {
+    if (usesRateLimiter) {
+      return Optional.of(new Pair<BreakerHolonomicSlewRateLimiter,AppliedModifierUnits>(slewRateLimiter, slewRateUnits));
+    }
+    return Optional.empty();
+  }
+
   @Override
   public void initialize() {
   }
@@ -183,50 +209,72 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
   @Override
   public void execute() {
 
-    double forward = 0.0;
-    double horizontal = 0.0;
-    double turn = 0.0;
+    ChassisPercentSpeeds percentSpeeds = new ChassisPercentSpeeds(0.0, 0.0, 0.0);
 
     if (usesSuppliers) { // If double suppliers are used.
       // Default suppliers are used unless overwritten.
-      forward = forwardSpeedPercentSupplier.getAsDouble();
-      horizontal = horizontalSpeedPercentSupplier.getAsDouble();
-      turn = turnSpeedPercentSupplier.getAsDouble();
+      percentSpeeds.vxPercentOfMax = forwardSpeedPercentSupplier.getAsDouble();
+      percentSpeeds.vyPercentOfMax = horizontalSpeedPercentSupplier.getAsDouble();
+      percentSpeeds.omegaPercentOfMax = turnSpeedPercentSupplier.getAsDouble();
     } else { // Use controller inputs.
       // Controller inputs are used unless overwritten.
-      forward = controller.getLeftThumbstick().getY();
-      horizontal = controller.getLeftThumbstick().getX();
-      turn = controller.getRightThumbstick().getX();
+      percentSpeeds.vxPercentOfMax = controller.getLeftThumbstick().getY();
+      percentSpeeds.vyPercentOfMax = controller.getLeftThumbstick().getX();
+      percentSpeeds.omegaPercentOfMax = controller.getRightThumbstick().getX();
     }
 
     // Speed curves are applied if overrides are not active.
-    if (usesCurves) {
-      BreakerVector2 vec = new BreakerVector2(horizontal, forward);
+    if (usesCurves && speedCurveUnits == AppliedModifierUnits.PERCENT_OF_MAX) {
+      BreakerVector2 vec = new BreakerVector2(percentSpeeds.vyPercentOfMax, percentSpeeds.vxPercentOfMax);
       BreakerVector2 corVec = new BreakerVector2(vec.getVectorRotation(),  linearSpeedCurve.getSignRelativeValueAtX(vec.getMagnitude()));
-      forward = corVec.getY();
-      horizontal = corVec.getX();
-      turn = turnSpeedCurve.getSignRelativeValueAtX(turn);
+      percentSpeeds.vxPercentOfMax = corVec.getY();
+      percentSpeeds.vyPercentOfMax = corVec.getX();
+      percentSpeeds.omegaPercentOfMax = turnSpeedCurve.getSignRelativeValueAtX(percentSpeeds.omegaPercentOfMax);
     }
 
-    if (usesRateLimiters) {
-      forward = forwardRateLimiter.calculate(forward);
-      horizontal = horizontalRateLimiter.calculate(horizontal);
-      turn = turnRateLimiter.calculate(turn);
+    if (usesRateLimiter && slewRateUnits == AppliedModifierUnits.PERCENT_OF_MAX) {
+      percentSpeeds = slewRateLimiter.calculate(new UnitlessChassisSpeeds(percentSpeeds)).getChassisPercentSpeeds();
     }
 
-    if (forwardOverride) {
-      forward = overrideForwardSupplier.getAsDouble();
+    if (forwardOverride && overrideFwdUnits == AppliedModifierUnits.PERCENT_OF_MAX) {
+      percentSpeeds.vxPercentOfMax = overrideForwardSupplier.getAsDouble();
     }
 
-    if (horizontalOverride) {
-      horizontal = overrideHorizontalSupplier.getAsDouble();
+    if (horizontalOverride && overrideHorizUnits == AppliedModifierUnits.PERCENT_OF_MAX) {
+      percentSpeeds.vyPercentOfMax = overrideHorizontalSupplier.getAsDouble();
     }
 
-    if (turnOverride) {
-      turn = overrideTurnSupplier.getAsDouble();
+    if (turnOverride && overrideTurnUnits == AppliedModifierUnits.PERCENT_OF_MAX) {
+      percentSpeeds.omegaPercentOfMax = overrideTurnSupplier.getAsDouble();
     }
 
-    baseDrivetrain.applyRequest(percentSpeedRequest.withChassisPercentSpeeds(new ChassisPercentSpeeds(forward, horizontal, turn)));
+    ChassisSpeeds chassisSpeeds = percentSpeeds.toChassisSpeeds(baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
+
+    if (usesCurves && speedCurveUnits == AppliedModifierUnits.METERS_PER_SEC) {
+      BreakerVector2 vec = new BreakerVector2(percentSpeeds.vyPercentOfMax, percentSpeeds.vxPercentOfMax);
+      BreakerVector2 corVec = new BreakerVector2(vec.getVectorRotation(),  linearSpeedCurve.getSignRelativeValueAtX(vec.getMagnitude()));
+      chassisSpeeds.vxMetersPerSecond = corVec.getY();
+      chassisSpeeds.vyMetersPerSecond = corVec.getX();
+      chassisSpeeds.omegaRadiansPerSecond = turnSpeedCurve.getSignRelativeValueAtX(percentSpeeds.omegaPercentOfMax);
+    }
+
+    if (usesRateLimiter && slewRateUnits == AppliedModifierUnits.METERS_PER_SEC) {
+      chassisSpeeds = slewRateLimiter.calculate(new UnitlessChassisSpeeds(chassisSpeeds)).getChassisSpeeds();
+    }
+
+    if (forwardOverride && overrideFwdUnits == AppliedModifierUnits.METERS_PER_SEC) {
+      chassisSpeeds.vxMetersPerSecond = overrideForwardSupplier.getAsDouble();
+    }
+
+    if (horizontalOverride && overrideHorizUnits == AppliedModifierUnits.METERS_PER_SEC) {
+      chassisSpeeds.vyMetersPerSecond = overrideHorizontalSupplier.getAsDouble();
+    }
+
+    if (turnOverride && overrideTurnUnits == AppliedModifierUnits.METERS_PER_SEC) {
+      chassisSpeeds.omegaRadiansPerSecond = overrideTurnSupplier.getAsDouble();
+    }
+
+    baseDrivetrain.applyRequest(velocityRequest.withChassisSpeeds(chassisSpeeds));
   }
 
   @Override
@@ -236,5 +284,10 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
   @Override
   public boolean isFinished() {
     return false;
+  }
+
+  public static enum AppliedModifierUnits {
+    PERCENT_OF_MAX,
+    METERS_PER_SEC
   }
 }

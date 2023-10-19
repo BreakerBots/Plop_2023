@@ -20,6 +20,7 @@ import frc.robot.BreakerLib.physics.vector.BreakerVector2;
 import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDriveBase.BreakerSwerveDriveBasePercentSpeedRequest;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDriveBase.BreakerSwerveDriveBaseVelocityRequest;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwervePercentSpeedRequest;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwerveVelocityRequest;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwervePercentSpeedRequest.ChassisPercentSpeeds;
 import frc.robot.BreakerLib.util.math.functions.BreakerGenericMathFunction;
@@ -42,7 +43,7 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
   private DoubleSupplier forwardSpeedPercentSupplier, horizontalSpeedPercentSupplier, turnSpeedPercentSupplier,
       overrideForwardSupplier, overrideHorizontalSupplier, overrideTurnSupplier;
   private AppliedModifierUnits overrideFwdUnits, overrideHorizUnits, overrideTurnUnits;
-  private BreakerSwerveVelocityRequest velocityRequest;
+  private BreakerSwervePercentSpeedRequest percentSpeedRequest;
 
   /**
    * Creates a BreakerSwerveDriveController which only utilizes HID input.
@@ -59,7 +60,7 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
     forwardOverride = false;
     horizontalOverride = false;
     turnOverride = false;
-    velocityRequest = new BreakerSwerveVelocityRequest(new ChassisSpeeds());
+    percentSpeedRequest = new BreakerSwervePercentSpeedRequest(new ChassisPercentSpeeds());
     addRequirements(baseDrivetrain);
   }
 
@@ -84,7 +85,7 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
     forwardOverride = false;
     horizontalOverride = false;
     turnOverride = false;
-    velocityRequest = new BreakerSwerveVelocityRequest(new ChassisSpeeds());
+    percentSpeedRequest = new BreakerSwervePercentSpeedRequest(new ChassisPercentSpeeds());
     addRequirements(baseDrivetrain);
   }
 
@@ -224,57 +225,66 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
     }
 
     // Speed curves are applied if overrides are not active.
-    if (usesCurves && speedCurveUnits == AppliedModifierUnits.PERCENT_OF_MAX) {
-      BreakerVector2 vec = new BreakerVector2(percentSpeeds.vyPercentOfMax, percentSpeeds.vxPercentOfMax);
-      BreakerVector2 corVec = new BreakerVector2(vec.getVectorRotation(),  linearSpeedCurve.getSignRelativeValueAtX(vec.getMagnitude()));
-      percentSpeeds.vxPercentOfMax = corVec.getY();
-      percentSpeeds.vyPercentOfMax = corVec.getX();
-      percentSpeeds.omegaPercentOfMax = turnSpeedCurve.getSignRelativeValueAtX(percentSpeeds.omegaPercentOfMax);
+    if (usesCurves) {
+      if (speedCurveUnits == AppliedModifierUnits.PERCENT_OF_MAX) {
+        BreakerVector2 vec = new BreakerVector2(percentSpeeds.vyPercentOfMax, percentSpeeds.vxPercentOfMax);
+        BreakerVector2 corVec = new BreakerVector2(vec.getVectorRotation(),  linearSpeedCurve.getSignRelativeValueAtX(vec.getMagnitude()));
+        percentSpeeds.vxPercentOfMax = corVec.getY();
+        percentSpeeds.vyPercentOfMax = corVec.getX();
+        percentSpeeds.omegaPercentOfMax = turnSpeedCurve.getSignRelativeValueAtX(percentSpeeds.omegaPercentOfMax);
+      } else {
+        ChassisSpeeds chassisSpeeds = percentSpeeds.toChassisSpeeds(baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
+        BreakerVector2 vec = new BreakerVector2(chassisSpeeds.vyMetersPerSecond, chassisSpeeds.vxMetersPerSecond);
+        BreakerVector2 corVec = new BreakerVector2(vec.getVectorRotation(),  linearSpeedCurve.getSignRelativeValueAtX(vec.getMagnitude()));
+        chassisSpeeds.vxMetersPerSecond = corVec.getY();
+        chassisSpeeds.vyMetersPerSecond = corVec.getX();
+        chassisSpeeds.omegaRadiansPerSecond = turnSpeedCurve.getSignRelativeValueAtX(percentSpeeds.omegaPercentOfMax);
+        percentSpeeds = new ChassisPercentSpeeds(chassisSpeeds, baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
+      }
+     
     }
 
-    if (usesRateLimiter && slewRateUnits == AppliedModifierUnits.PERCENT_OF_MAX) {
-      percentSpeeds = slewRateLimiter.calculate(new UnitlessChassisSpeeds(percentSpeeds)).getChassisPercentSpeeds();
+    if (usesRateLimiter) {
+      if (slewRateUnits == AppliedModifierUnits.PERCENT_OF_MAX) {
+        percentSpeeds = slewRateLimiter.calculate(new UnitlessChassisSpeeds(percentSpeeds)).getChassisPercentSpeeds();
+      } else {
+        ChassisSpeeds chassisSpeeds = percentSpeeds.toChassisSpeeds(baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
+        chassisSpeeds = slewRateLimiter.calculate(new UnitlessChassisSpeeds(chassisSpeeds)).getChassisSpeeds();
+        percentSpeeds = new ChassisPercentSpeeds(chassisSpeeds, baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
+      }
     }
 
-    if (forwardOverride && overrideFwdUnits == AppliedModifierUnits.PERCENT_OF_MAX) {
-      percentSpeeds.vxPercentOfMax = overrideForwardSupplier.getAsDouble();
+    if (forwardOverride) {
+      if (overrideFwdUnits == AppliedModifierUnits.PERCENT_OF_MAX) {
+        percentSpeeds.vxPercentOfMax = overrideForwardSupplier.getAsDouble();
+      } else {
+        ChassisSpeeds chassisSpeeds = percentSpeeds.toChassisSpeeds(baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
+        chassisSpeeds.vxMetersPerSecond = overrideForwardSupplier.getAsDouble();
+        percentSpeeds = new ChassisPercentSpeeds(chassisSpeeds, baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
+      }
     }
 
-    if (horizontalOverride && overrideHorizUnits == AppliedModifierUnits.PERCENT_OF_MAX) {
-      percentSpeeds.vyPercentOfMax = overrideHorizontalSupplier.getAsDouble();
+    if (horizontalOverride) {
+      if (overrideHorizUnits == AppliedModifierUnits.PERCENT_OF_MAX) {
+        percentSpeeds.vyPercentOfMax = overrideHorizontalSupplier.getAsDouble();
+      } else {
+        ChassisSpeeds chassisSpeeds = percentSpeeds.toChassisSpeeds(baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
+        chassisSpeeds.vyMetersPerSecond = overrideHorizontalSupplier.getAsDouble();
+        percentSpeeds = new ChassisPercentSpeeds(chassisSpeeds, baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
+      }
     }
 
-    if (turnOverride && overrideTurnUnits == AppliedModifierUnits.PERCENT_OF_MAX) {
-      percentSpeeds.omegaPercentOfMax = overrideTurnSupplier.getAsDouble();
+    if (turnOverride) {
+      if (overrideTurnUnits == AppliedModifierUnits.PERCENT_OF_MAX) {
+        percentSpeeds.omegaPercentOfMax = overrideTurnSupplier.getAsDouble();
+      } else {
+        ChassisSpeeds chassisSpeeds = percentSpeeds.toChassisSpeeds(baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
+        chassisSpeeds.omegaRadiansPerSecond = overrideHorizontalSupplier.getAsDouble();
+        percentSpeeds = new ChassisPercentSpeeds(chassisSpeeds, baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
+      }
     }
 
-    ChassisSpeeds chassisSpeeds = percentSpeeds.toChassisSpeeds(baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
-
-    if (usesCurves && speedCurveUnits == AppliedModifierUnits.UNIT_PER_SEC) {
-      BreakerVector2 vec = new BreakerVector2(percentSpeeds.vyPercentOfMax, percentSpeeds.vxPercentOfMax);
-      BreakerVector2 corVec = new BreakerVector2(vec.getVectorRotation(),  linearSpeedCurve.getSignRelativeValueAtX(vec.getMagnitude()));
-      chassisSpeeds.vxMetersPerSecond = corVec.getY();
-      chassisSpeeds.vyMetersPerSecond = corVec.getX();
-      chassisSpeeds.omegaRadiansPerSecond = turnSpeedCurve.getSignRelativeValueAtX(percentSpeeds.omegaPercentOfMax);
-    }
-
-    if (usesRateLimiter && slewRateUnits == AppliedModifierUnits.UNIT_PER_SEC) {
-      chassisSpeeds = slewRateLimiter.calculate(new UnitlessChassisSpeeds(chassisSpeeds)).getChassisSpeeds();
-    }
-
-    if (forwardOverride && overrideFwdUnits == AppliedModifierUnits.UNIT_PER_SEC) {
-      chassisSpeeds.vxMetersPerSecond = overrideForwardSupplier.getAsDouble();
-    }
-
-    if (horizontalOverride && overrideHorizUnits == AppliedModifierUnits.UNIT_PER_SEC) {
-      chassisSpeeds.vyMetersPerSecond = overrideHorizontalSupplier.getAsDouble();
-    }
-
-    if (turnOverride && overrideTurnUnits == AppliedModifierUnits.UNIT_PER_SEC) {
-      chassisSpeeds.omegaRadiansPerSecond = overrideTurnSupplier.getAsDouble();
-    }
-
-    baseDrivetrain.applyRequest(velocityRequest.withChassisSpeeds(chassisSpeeds));
+    baseDrivetrain.applyRequest(percentSpeedRequest.withChassisPercentSpeeds(percentSpeeds));
   }
 
   @Override

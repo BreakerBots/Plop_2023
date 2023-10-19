@@ -112,6 +112,14 @@ public class BreakerSwervePercentSpeedRequest extends BreakerGenericSwerveMoveme
         this.vyPercentOfMax = MathUtil.clamp(vyPercentOfMax, -1.0, 1.0);
         this.omegaPercentOfMax = MathUtil.clamp(omegaPercentOfMax, -1.0, 1.0);
       }
+
+      public ChassisPercentSpeeds(ChassisSpeeds chassisSpeeds, double maxLinearVel, double maxAngVel) {
+        BreakerVector2 linearVelVec = new BreakerVector2(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond).div(maxLinearVel).getUnitVector();
+        vxPercentOfMax = linearVelVec.getX();
+        vyPercentOfMax = linearVelVec.getY();
+        omegaPercentOfMax =  MathUtil.clamp(chassisSpeeds.omegaRadiansPerSecond, -maxAngVel, maxAngVel) / maxAngVel;
+      }
+
     
       /**
        * Converts a user provided field-relative set of speeds into a robot-relative ChassisSpeeds
@@ -170,8 +178,10 @@ public class BreakerSwervePercentSpeedRequest extends BreakerGenericSwerveMoveme
         double clampedX = MathUtil.clamp(vxPercentOfMax, -1.0, 1.0);
         double clampedY = MathUtil.clamp(vyPercentOfMax, -1.0, 1.0);
         double clampedOmega = MathUtil.clamp(omegaPercentOfMax, -1.0, 1.0);
-        BreakerVector2 linearVelVec = new BreakerVector2(clampedX, clampedY).times(maxLinearVel);
+        BreakerVector2 linearVelVec = new BreakerVector2(clampedX, clampedY).getUnitVector().times(maxLinearVel);
         return new ChassisSpeeds(linearVelVec.getX(), linearVelVec.getY(), clampedOmega * maxAngVel);
       }
+
+      
     }
   }

@@ -14,6 +14,7 @@ import frc.robot.BreakerLib.devices.sensors.imu.ctre.BreakerPigeon2;
 import frc.robot.BreakerLib.driverstation.gamepad.BreakerGamepadTimedRumbleCommand;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController.AppliedModifierUnits;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.commands.rumble.DoublePulseRumble;
@@ -42,7 +43,7 @@ public class TeleopBalanceChargingStation extends CommandBase {
   public void initialize() {
     timer.restart();
     new BreakerGamepadTimedRumbleCommand(driverController, 1.0, 0.5, 0.5).schedule();
-    driveController.overrideForwardInput(this::getCalculatedTargetVelX);
+    driveController.overrideForwardInput(this::getCalculatedTargetVelX, AppliedModifierUnits.UNIT_PER_SEC);
     BreakerLog.getInstance().logEvent("TeleopBalanceChargingStation command instance started");
   }
 

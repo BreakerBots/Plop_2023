@@ -250,7 +250,7 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
 
     ChassisSpeeds chassisSpeeds = percentSpeeds.toChassisSpeeds(baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
 
-    if (usesCurves && speedCurveUnits == AppliedModifierUnits.METERS_PER_SEC) {
+    if (usesCurves && speedCurveUnits == AppliedModifierUnits.UNIT_PER_SEC) {
       BreakerVector2 vec = new BreakerVector2(percentSpeeds.vyPercentOfMax, percentSpeeds.vxPercentOfMax);
       BreakerVector2 corVec = new BreakerVector2(vec.getVectorRotation(),  linearSpeedCurve.getSignRelativeValueAtX(vec.getMagnitude()));
       chassisSpeeds.vxMetersPerSecond = corVec.getY();
@@ -258,19 +258,19 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
       chassisSpeeds.omegaRadiansPerSecond = turnSpeedCurve.getSignRelativeValueAtX(percentSpeeds.omegaPercentOfMax);
     }
 
-    if (usesRateLimiter && slewRateUnits == AppliedModifierUnits.METERS_PER_SEC) {
+    if (usesRateLimiter && slewRateUnits == AppliedModifierUnits.UNIT_PER_SEC) {
       chassisSpeeds = slewRateLimiter.calculate(new UnitlessChassisSpeeds(chassisSpeeds)).getChassisSpeeds();
     }
 
-    if (forwardOverride && overrideFwdUnits == AppliedModifierUnits.METERS_PER_SEC) {
+    if (forwardOverride && overrideFwdUnits == AppliedModifierUnits.UNIT_PER_SEC) {
       chassisSpeeds.vxMetersPerSecond = overrideForwardSupplier.getAsDouble();
     }
 
-    if (horizontalOverride && overrideHorizUnits == AppliedModifierUnits.METERS_PER_SEC) {
+    if (horizontalOverride && overrideHorizUnits == AppliedModifierUnits.UNIT_PER_SEC) {
       chassisSpeeds.vyMetersPerSecond = overrideHorizontalSupplier.getAsDouble();
     }
 
-    if (turnOverride && overrideTurnUnits == AppliedModifierUnits.METERS_PER_SEC) {
+    if (turnOverride && overrideTurnUnits == AppliedModifierUnits.UNIT_PER_SEC) {
       chassisSpeeds.omegaRadiansPerSecond = overrideTurnSupplier.getAsDouble();
     }
 
@@ -288,6 +288,6 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
 
   public static enum AppliedModifierUnits {
     PERCENT_OF_MAX,
-    METERS_PER_SEC
+    UNIT_PER_SEC
   }
 }

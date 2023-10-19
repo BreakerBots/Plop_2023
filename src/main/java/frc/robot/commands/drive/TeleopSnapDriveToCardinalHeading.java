@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController.AppliedModifierUnits;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.subsystems.Drive;
@@ -41,7 +42,7 @@ public class TeleopSnapDriveToCardinalHeading extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    teleopDriveController.overrideTurnInput(() -> {return pid.calculate(drive.getOdometryPoseMeters().getRotation().getRadians(), cardinal.getRotation().getRadians()) / maxAngVel;});
+    teleopDriveController.overrideTurnInput(() -> {return pid.calculate(drive.getOdometryPoseMeters().getRotation().getRadians(), cardinal.getRotation().getRadians());}, AppliedModifierUnits.UNIT_PER_SEC);
     if (timer.hasElapsed(DriveConstants.HEADING_SNAP_TIMEOUT_SEC)) {
       this.cancel();
     }

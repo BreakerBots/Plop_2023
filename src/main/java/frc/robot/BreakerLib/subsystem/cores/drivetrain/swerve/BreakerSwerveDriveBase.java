@@ -48,7 +48,7 @@ public class  BreakerSwerveDriveBase extends BreakerSwerveDrive {
     }
 
     @Override
-    protected void move(ChassisSpeeds targetChassisSpeeds, SwerveMovementRefrenceFrame swerveMovementRefrenceFrame, SlowModeValue slowModeValue, Translation2d centerOfRotation, boolean headingCorrectionEnabled) {
+    protected void move(ChassisSpeeds targetChassisSpeeds, SwerveMovementRefrenceFrame swerveMovementRefrenceFrame, SlowModeValue slowModeValue, Translation2d centerOfRotation, boolean headingCorrectionEnabled, boolean isOpenLoop) {
         ChassisSpeeds targetVels = new ChassisSpeeds(targetChassisSpeeds.vxMetersPerSecond, targetChassisSpeeds.vyMetersPerSecond, targetChassisSpeeds.omegaRadiansPerSecond);
         Rotation2d curAng = getOdometryPoseMeters().getRotation();
         switch(swerveMovementRefrenceFrame) {
@@ -78,7 +78,7 @@ public class  BreakerSwerveDriveBase extends BreakerSwerveDrive {
             targetVels.omegaRadiansPerSecond *= config.getSlowModeTurnMultiplier();
         }
 
-        setModuleStates(false, getKinematics().toSwerveModuleStates(targetVels, centerOfRotation));
+        setModuleStates(false, isOpenLoop, getKinematics().toSwerveModuleStates(targetVels, centerOfRotation));
     }
 
     public BreakerSwervePathFollower followPathCommand(PathPlannerTrajectory path) {
@@ -117,13 +117,13 @@ public class  BreakerSwerveDriveBase extends BreakerSwerveDrive {
     public static class BreakerSwerveDriveBaseVelocityRequest extends BreakerSwerveVelocityRequest {
 
         public BreakerSwerveDriveBaseVelocityRequest(ChassisSpeeds speeds) {
-            super(speeds, SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITH_OFFSET, SlowModeValue.DEFAULT,  new Translation2d(), true);
+            super(speeds, SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITH_OFFSET, SlowModeValue.DEFAULT,  new Translation2d(), false, true);
         }
 
         public BreakerSwerveDriveBaseVelocityRequest(ChassisSpeeds speeds,
                 SwerveMovementRefrenceFrame movementRefrenceFrame, SlowModeValue slowModeValue,
-                Translation2d centerOfRotation, boolean headingCorrectionEnabled) {
-            super(speeds, movementRefrenceFrame, slowModeValue, centerOfRotation, headingCorrectionEnabled);
+                Translation2d centerOfRotation, boolean isOpenLoop, boolean headingCorrectionEnabled) {
+            super(speeds, movementRefrenceFrame, slowModeValue, centerOfRotation, isOpenLoop, headingCorrectionEnabled);
         }
 
     }
@@ -131,13 +131,13 @@ public class  BreakerSwerveDriveBase extends BreakerSwerveDrive {
     public static class BreakerSwerveDriveBasePercentSpeedRequest extends BreakerSwervePercentSpeedRequest {
 
         public BreakerSwerveDriveBasePercentSpeedRequest(ChassisPercentSpeeds percentSpeeds) {
-            super(percentSpeeds, SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITH_OFFSET, SlowModeValue.DEFAULT,  new Translation2d(), true);
+            super(percentSpeeds, SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITH_OFFSET, SlowModeValue.DEFAULT,  new Translation2d(), false, true);
         }
 
         public BreakerSwerveDriveBasePercentSpeedRequest(ChassisPercentSpeeds percentSpeeds,
                 SwerveMovementRefrenceFrame movementRefrenceFrame, SlowModeValue slowModeValue,
-                Translation2d centerOfRotation, boolean headingCorrectionEnabled) {
-            super(percentSpeeds, movementRefrenceFrame, slowModeValue, centerOfRotation, headingCorrectionEnabled);
+                Translation2d centerOfRotation, boolean isOpenLoop, boolean headingCorrectionEnabled) {
+            super(percentSpeeds, movementRefrenceFrame, slowModeValue, centerOfRotation, isOpenLoop, headingCorrectionEnabled);
         }
 
     }
@@ -147,9 +147,9 @@ public class  BreakerSwerveDriveBase extends BreakerSwerveDrive {
         private PPHolonomicDriveController driveController;
         private double headingCompensationAngularVelDeadband, headingCompensationMinActiveLinearSpeed;
         public BreakerSwerveDriveBaseConfig(double maxLinearVel, double maxAngVel, 
-                double headingCompensationAngularVelDeadband, double headingCompensationMinActiveLinearSpeed, double moduleWheelSpeedDeadband, double maxAttainableModuleWheelSpeed,
+                double headingCompensationAngularVelDeadband, double headingCompensationMinActiveLinearSpeed, double moduleWheelSpeedDeadband,
                 PIDController xController, PIDController yController, PIDController thetaController) {
-            super(maxLinearVel, maxAngVel, moduleWheelSpeedDeadband, maxAttainableModuleWheelSpeed);
+            super(maxLinearVel, maxAngVel, moduleWheelSpeedDeadband);
             this.xController = xController;
             this.yController = yController;
             this.thetaController = thetaController;

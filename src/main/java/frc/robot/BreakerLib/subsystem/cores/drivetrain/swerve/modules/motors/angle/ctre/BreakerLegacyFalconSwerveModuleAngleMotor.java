@@ -38,9 +38,11 @@ public class BreakerLegacyFalconSwerveModuleAngleMotor extends BreakerGenericSwe
     private BreakerSwerveAzimuthEncoder encoder;
     private Rotation2d targetAngle;
     private BreakerSwerveAzimuthControler azimuthControler;
-    public BreakerLegacyFalconSwerveModuleAngleMotor(WPI_TalonFX motor, BreakerSwerveAzimuthEncoder encoder, double encoderAbsoluteAngleOffsetDegrees, double supplyCurrentLimit, boolean isMotorInverted,  BreakerSwerveMotorPIDConfig pidConfig) {
+    private BreakerSwerveModuleAngleMotorConfig config;
+    public BreakerLegacyFalconSwerveModuleAngleMotor(WPI_TalonFX motor, BreakerSwerveAzimuthEncoder encoder, double encoderAbsoluteAngleOffsetDegrees, boolean isMotorInverted, BreakerSwerveModuleAngleMotorConfig config) {
         this.motor = motor;
         this.encoder = encoder;
+        this.config = config;
         encoder.config(false, encoderAbsoluteAngleOffsetDegrees);
         TalonFXConfiguration turnConfig = new TalonFXConfiguration();
         if (encoder.getBaseEncoderType() == WPI_CANCoder.class) {
@@ -48,9 +50,9 @@ public class BreakerLegacyFalconSwerveModuleAngleMotor extends BreakerGenericSwe
             turnConfig.remoteFilter0.remoteSensorDeviceID = cancoder.getDeviceID();
             turnConfig.remoteFilter0.remoteSensorSource = RemoteSensorSource.CANCoder;
             turnConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor0;
-            turnConfig.slot0.kP = pidConfig.kP;
-            turnConfig.slot0.kI = pidConfig.kI;
-            turnConfig.slot0.kD = pidConfig.kD;
+            turnConfig.slot0.kP = config.getPIDConfig().kP;
+            turnConfig.slot0.kI = config.getPIDConfig().kI;
+            turnConfig.slot0.kD = config.getPIDConfig().kD;
             turnConfig.slot0.closedLoopPeakOutput = 1.0;
             azimuthControler = new BreakerSwerveAzimuthControler((Rotation2d target) -> {
                 double relTgtAng = BreakerMath.absoluteAngleToContinuousRelativeAngleDegrees(getRelativeAngle().getDegrees(),
@@ -58,12 +60,12 @@ public class BreakerLegacyFalconSwerveModuleAngleMotor extends BreakerGenericSwe
                 motor.set(TalonFXControlMode.Position, BreakerUnits.degreesToCANCoderNativeUnits(relTgtAng));
             });
         } else {
-            azimuthControler = new BreakerSwerveAzimuthControler(motor::set, encoder, pidConfig);
+            azimuthControler = new BreakerSwerveAzimuthControler(motor::set, encoder, config.getPIDConfig());
         }
         turnConfig.peakOutputForward = 1.0;
         turnConfig.peakOutputReverse = -1.0;
         turnConfig.voltageCompSaturation = 12.0;
-        turnConfig.supplyCurrLimit = new SupplyCurrentLimitConfiguration(true, supplyCurrentLimit, encoderAbsoluteAngleOffsetDegrees, supplyCurrentLimit);
+        turnConfig.supplyCurrLimit = new SupplyCurrentLimitConfiguration(true, config.getSupplyCurrentLimit(), encoderAbsoluteAngleOffsetDegrees, config.getSupplyCurrentLimit());
         BreakerPhoenix5Util.checkError(motor.configAllSettings(turnConfig),
                 " Failed to config swerve module turn motor ");
         motor.selectProfileSlot(0, 0);
@@ -126,6 +128,11 @@ public class BreakerLegacyFalconSwerveModuleAngleMotor extends BreakerGenericSwe
     @Override
     public double getMotorOutput() {
         return motor.getMotorOutputPercent();
+    }
+
+    @Override
+    public BreakerSwerveModuleAngleMotorConfig getConfig() {
+        return config;
     }
 
 }

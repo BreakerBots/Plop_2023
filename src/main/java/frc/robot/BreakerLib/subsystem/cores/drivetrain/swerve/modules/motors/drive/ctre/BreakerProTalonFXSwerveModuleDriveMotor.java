@@ -12,6 +12,7 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
 import com.ctre.phoenix6.controls.ControlRequest;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
@@ -22,6 +23,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DutyCycle;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule.BreakerSwerveMotorPIDConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.BreakerGenericSwerveModuleDriveMotor;
 import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider;
@@ -31,40 +33,45 @@ import frc.robot.BreakerLib.util.vendorutil.BreakerPhoenix6Util;
 /** Add your docs here. */
 public class BreakerProTalonFXSwerveModuleDriveMotor extends BreakerGenericSwerveModuleDriveMotor {
     private TalonFX motor;
-    private double driveGearRatio, wheelDiameter, targetVelocity;
+    private BreakerSwerveModuleDriveMotorConfig config;
+    private double driveGearRatio, wheelDiameter, targetVelocity, maxAttainableWheelSpeed;
+    private final DutyCycleOut openLoopDutyCycleRequest;
     private final VelocityDutyCycle velocityDutyCycleRequest;
     private final VelocityVoltage velocityVoltageRequest;
     private final VelocityTorqueCurrentFOC velocityTorqueCurrentRequest;
     private final double wheelCircumfrenceMeters;
     private BreakerArbitraryFeedforwardProvider arbFF;
     private final  ProTalonFXControlOutputUnits controlOutputUnits;
-    public BreakerProTalonFXSwerveModuleDriveMotor(TalonFX motor, double driveGearRatio, double wheelDiameter, double supplyCurrentLimit, boolean isMotorInverted, BreakerArbitraryFeedforwardProvider arbFF, BreakerSwerveMotorPIDConfig pidConfig, ProTalonFXControlOutputUnits controlOutputUnits) {
+    public BreakerProTalonFXSwerveModuleDriveMotor(TalonFX motor, boolean isMotorInverted, ProTalonFXControlOutputUnits controlOutputUnits, BreakerSwerveModuleDriveMotorConfig config) {
         this.motor = motor;
-        this.driveGearRatio = driveGearRatio;
-        this.wheelDiameter = wheelDiameter;
-        this.arbFF = arbFF;
+        this.config = config;
+        this.driveGearRatio = config.getDriveGearRatio();
+        this.wheelDiameter = config.getWheelDiameter();
+        this.arbFF = config.getArbFF();
+        this.maxAttainableWheelSpeed = config.getMaxAttainableWheelSpeed();
         wheelCircumfrenceMeters = wheelDiameter*Math.PI;
         targetVelocity = 0.0;
         velocityDutyCycleRequest = new VelocityDutyCycle(0.0, true, 0.0, 1, false);
         velocityVoltageRequest = new VelocityVoltage(0.0, true, 0.0, 1, false);
         velocityTorqueCurrentRequest = new VelocityTorqueCurrentFOC(0.0, 0.0, 1, false);
+        openLoopDutyCycleRequest = new DutyCycleOut(0.0, true, false);
         this.controlOutputUnits = controlOutputUnits;
         TalonFXConfiguration driveConfig = new TalonFXConfiguration();
         driveConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         driveConfig.Feedback.SensorToMechanismRatio = driveGearRatio;
-        driveConfig.Slot1.kP = pidConfig.kP;
-        driveConfig.Slot1.kI = pidConfig.kI;
-        driveConfig.Slot1.kD = pidConfig.kD;
-        driveConfig.Slot1.kV = pidConfig.kF;
+        driveConfig.Slot1.kP = config.getPIDConfig().kP;
+        driveConfig.Slot1.kI = config.getPIDConfig().kI;
+        driveConfig.Slot1.kD = config.getPIDConfig().kD;
+        driveConfig.Slot1.kV = config.getPIDConfig().kF;
         driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         if (controlOutputUnits != ProTalonFXControlOutputUnits.TORQUE_CURRENT) {
-            driveConfig.CurrentLimits.SupplyCurrentLimit = supplyCurrentLimit;
-            driveConfig.CurrentLimits.SupplyCurrentThreshold = supplyCurrentLimit;
+            driveConfig.CurrentLimits.SupplyCurrentLimit = config.getSupplyCurrentLimit();
+            driveConfig.CurrentLimits.SupplyCurrentThreshold = config.getSupplyCurrentLimit();
             driveConfig.CurrentLimits.SupplyTimeThreshold = 1.5;
             driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         } else {
-            driveConfig.TorqueCurrent.PeakForwardTorqueCurrent = supplyCurrentLimit;
-            driveConfig.TorqueCurrent.PeakReverseTorqueCurrent = -supplyCurrentLimit;
+            driveConfig.TorqueCurrent.PeakForwardTorqueCurrent = config.getSupplyCurrentLimit();
+            driveConfig.TorqueCurrent.PeakReverseTorqueCurrent = -config.getSupplyCurrentLimit();
         }
         BreakerPhoenix6Util.checkStatusCode(motor.getConfigurator().apply(driveConfig),
                 " Failed to config swerve module drive motor ");
@@ -88,6 +95,10 @@ public class BreakerProTalonFXSwerveModuleDriveMotor extends BreakerGenericSwerv
         }
     }
 
+    private void setControlOpenLoop(double vel) {
+        motor.setControl(openLoopDutyCycleRequest.withOutput(vel/maxAttainableWheelSpeed));
+    }
+
     @Override
     public void runSelfTest() {
         faultStr = "";
@@ -99,9 +110,13 @@ public class BreakerProTalonFXSwerveModuleDriveMotor extends BreakerGenericSwerv
     }
 
     @Override
-    public void setTargetVelocity(double targetMetersPerSecond) {
+    public void setTargetVelocity(double targetMetersPerSecond, boolean isOpenLoop) {
         targetVelocity = targetMetersPerSecond;
-        setMotorVel(targetMetersPerSecond / wheelCircumfrenceMeters, arbFF.getArbitraryFeedforwardValue(targetMetersPerSecond));
+        if (isOpenLoop) {
+            setControlOpenLoop(targetMetersPerSecond);
+        } else {
+            setMotorVel(targetMetersPerSecond / wheelCircumfrenceMeters, arbFF.getArbitraryFeedforwardValue(targetMetersPerSecond));
+        }
     }
 
     @Override
@@ -148,5 +163,10 @@ public class BreakerProTalonFXSwerveModuleDriveMotor extends BreakerGenericSwerv
         DUTY_CYCLE,
         /** Balenced, most powerful, very accurate. PID/FF should return outputs in Ampiers */
         TORQUE_CURRENT
+    }
+
+    @Override
+    public BreakerSwerveModuleDriveMotorConfig getConfig() {
+        return config;
     }
 }

@@ -22,9 +22,9 @@ public class BreakerSwerveModule extends BreakerGenericSwerveModule {
     }
 
     @Override
-    public void setModuleTarget(Rotation2d targetAngle, double targetVelocityMetersPerSecond) {
+    public void setModuleTarget(Rotation2d targetAngle, double targetVelocityMetersPerSecond, boolean isOpenLoop) {
         angleMotor.setTargetAngle(targetAngle);
-        driveMotor.setTargetVelocity(targetVelocityMetersPerSecond);
+        driveMotor.setTargetVelocity(targetVelocityMetersPerSecond, isOpenLoop);
     }
 
     @Override
@@ -72,6 +72,11 @@ public class BreakerSwerveModule extends BreakerGenericSwerveModule {
     @Override
     public void resetModuleDriveEncoderPosition() {
         driveMotor.resetDistance();
+    }
+
+    @Override
+    public double getMaxAttainableWheelSpeed() {
+        return driveMotor.getConfig().getMaxAttainableWheelSpeed();
     }
 
     @Override

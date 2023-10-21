@@ -9,15 +9,15 @@ import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive
 public class BreakerSwerveVelocityRequest extends BreakerGenericSwerveMovementRequest {
     protected ChassisSpeeds speeds;
     public BreakerSwerveVelocityRequest(ChassisSpeeds speeds) {
-      this(speeds, SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITH_OFFSET, SlowModeValue.DEFAULT, new Translation2d(), false);
+      this(speeds, SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITH_OFFSET, SlowModeValue.DEFAULT, new Translation2d(), false, false);
     }
 
     public BreakerSwerveVelocityRequest(ChassisSpeeds speeds, SwerveMovementRefrenceFrame movementRefrenceFrame, SlowModeValue slowModeValue, Translation2d centerOfRotation) {
-      this(speeds, movementRefrenceFrame, slowModeValue, centerOfRotation, false);
+      this(speeds, movementRefrenceFrame, slowModeValue, centerOfRotation, false, false);
     }
 
-    protected BreakerSwerveVelocityRequest(ChassisSpeeds speeds, SwerveMovementRefrenceFrame movementRefrenceFrame, SlowModeValue slowModeValue, Translation2d centerOfRotation, boolean headingCorrectionEnabled) {
-      super(movementRefrenceFrame, slowModeValue, centerOfRotation, headingCorrectionEnabled);
+    protected BreakerSwerveVelocityRequest(ChassisSpeeds speeds, SwerveMovementRefrenceFrame movementRefrenceFrame, SlowModeValue slowModeValue, Translation2d centerOfRotation, boolean isOpenLoop, boolean headingCorrectionEnabled) {
+      super(movementRefrenceFrame, slowModeValue, centerOfRotation, isOpenLoop, headingCorrectionEnabled);
       this.speeds = speeds;
     }
 
@@ -56,6 +56,12 @@ public class BreakerSwerveVelocityRequest extends BreakerGenericSwerveMovementRe
 
     public BreakerSwerveVelocityRequest withVelocityOmega(double velocityOmega) {
       speeds.omegaRadiansPerSecond = velocityOmega;
+      return this;
+    }
+
+    @Override
+    public BreakerGenericSwerveMovementRequest withIsOpenLoop(boolean isOpenLoop) {
+      this.isOpenLoop = isOpenLoop;
       return this;
     }
 

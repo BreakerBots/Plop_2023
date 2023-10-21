@@ -17,6 +17,6 @@ public class BreakerSwerveStopRequest implements BreakerSwerveRequest {
 
     @Override
     public void apply(BreakerSwerveDrive drivetrain) {
-      applyChassisSpeeds(drivetrain, new ChassisSpeeds(), SwerveMovementRefrenceFrame.ROBOT_RELATIVE, SlowModeValue.DEFAULT, new Translation2d(), false);
+      applyChassisSpeeds(drivetrain, new ChassisSpeeds(), SwerveMovementRefrenceFrame.ROBOT_RELATIVE, SlowModeValue.DEFAULT, new Translation2d(), false, false);
     }
   }

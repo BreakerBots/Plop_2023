@@ -10,11 +10,13 @@ import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive
 
 public class BreakerSwerveModuleStateRequest implements BreakerSwerveRequest {
     protected boolean applyRawStates;
+    protected boolean isOpenLoop;
     protected SwerveModuleState[] moduleStates;
 
-    public BreakerSwerveModuleStateRequest(boolean applyRawStates, SwerveModuleState... moduleStates) {
+    public BreakerSwerveModuleStateRequest(boolean applyRawStates, boolean isOpenLoop, SwerveModuleState... moduleStates) {
       this.applyRawStates = applyRawStates;
       this.moduleStates = moduleStates;
+      this.isOpenLoop = isOpenLoop;
     }
 
     public boolean getApplyRawStates() {
@@ -35,9 +37,14 @@ public class BreakerSwerveModuleStateRequest implements BreakerSwerveRequest {
       return this;
     }
 
+    public BreakerSwerveModuleStateRequest withIsOpenLoop(boolean isOpenLoop) {
+      this.isOpenLoop = isOpenLoop;
+      return this;
+    }
+
     @Override
     public void apply(BreakerSwerveDrive drivetrain) {
-      applyModuleStates(drivetrain, applyRawStates, moduleStates);
+      applyModuleStates(drivetrain, applyRawStates, isOpenLoop, moduleStates);
     }
   }
 

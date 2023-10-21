@@ -12,11 +12,13 @@ public abstract class BreakerGenericSwerveMovementRequest implements BreakerSwer
     protected SlowModeValue slowModeValue;
     protected boolean headingCorrectionEnabled;
     protected Translation2d centerOfRotation;
-    protected BreakerGenericSwerveMovementRequest(SwerveMovementRefrenceFrame movementRefrenceFrame, SlowModeValue slowModeValue, Translation2d centerOfRotation, boolean headingCorrectionEnabled) {
+    protected boolean isOpenLoop;
+    protected BreakerGenericSwerveMovementRequest(SwerveMovementRefrenceFrame movementRefrenceFrame, SlowModeValue slowModeValue, Translation2d centerOfRotation, boolean isOpenLoop, boolean headingCorrectionEnabled) {
       this.slowModeValue = slowModeValue;
       this.swerveMovementRefrenceFrame = movementRefrenceFrame;
       this.centerOfRotation = centerOfRotation;
       this.headingCorrectionEnabled = headingCorrectionEnabled;
+      this.isOpenLoop = isOpenLoop;
     } 
 
     public abstract BreakerGenericSwerveMovementRequest withSwerveMovementRefrenceFrame(SwerveMovementRefrenceFrame swerveMovementRefrenceFrame);
@@ -28,6 +30,8 @@ public abstract class BreakerGenericSwerveMovementRequest implements BreakerSwer
     public abstract BreakerGenericSwerveMovementRequest withSlowModeValue(SlowModeValue slowModeValue);
 
     public abstract BreakerGenericSwerveMovementRequest withCenerOfRotation(Translation2d centerOfRotation);
+
+    public abstract BreakerGenericSwerveMovementRequest withIsOpenLoop(boolean isOpenLoop);
 
     public SlowModeValue getSlowModeValue() {
         return slowModeValue;
@@ -49,6 +53,6 @@ public abstract class BreakerGenericSwerveMovementRequest implements BreakerSwer
 
     @Override
     public void apply(BreakerSwerveDrive drivetrain) {
-     applyChassisSpeeds(drivetrain, getRequestedChassisSpeeds(drivetrain), swerveMovementRefrenceFrame, slowModeValue, centerOfRotation, headingCorrectionEnabled); 
+     applyChassisSpeeds(drivetrain, getRequestedChassisSpeeds(drivetrain), swerveMovementRefrenceFrame, slowModeValue, centerOfRotation, isOpenLoop, headingCorrectionEnabled); 
     }
   }

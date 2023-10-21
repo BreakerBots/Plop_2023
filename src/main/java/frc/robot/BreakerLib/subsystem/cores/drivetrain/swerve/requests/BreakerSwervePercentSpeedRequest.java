@@ -19,15 +19,15 @@ public class BreakerSwervePercentSpeedRequest extends BreakerGenericSwerveMoveme
     protected ChassisPercentSpeeds percentSpeeds;
 
     public BreakerSwervePercentSpeedRequest(ChassisPercentSpeeds percentSpeeds) {
-      this(percentSpeeds, SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITH_OFFSET, SlowModeValue.DEFAULT, new Translation2d(), false);
+      this(percentSpeeds, SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITH_OFFSET, SlowModeValue.DEFAULT, new Translation2d(), false, false);
     }
 
-    public BreakerSwervePercentSpeedRequest(ChassisPercentSpeeds percentSpeeds, SwerveMovementRefrenceFrame movementRefrenceFrame, SlowModeValue slowModeValue, Translation2d centerOfRotation) {
-      this(percentSpeeds, movementRefrenceFrame, slowModeValue, centerOfRotation, false);
+    public BreakerSwervePercentSpeedRequest(ChassisPercentSpeeds percentSpeeds, SwerveMovementRefrenceFrame movementRefrenceFrame, SlowModeValue slowModeValue, Translation2d centerOfRotation, boolean isOpenLoop) {
+      this(percentSpeeds, movementRefrenceFrame, slowModeValue, centerOfRotation, isOpenLoop, false);
     }
 
-    protected BreakerSwervePercentSpeedRequest(ChassisPercentSpeeds percentSpeeds, SwerveMovementRefrenceFrame movementRefrenceFrame, SlowModeValue slowModeValue, Translation2d centerOfRotation, boolean headingCorrectionEnabled) {
-      super(movementRefrenceFrame, slowModeValue, centerOfRotation, headingCorrectionEnabled);
+    protected BreakerSwervePercentSpeedRequest(ChassisPercentSpeeds percentSpeeds, SwerveMovementRefrenceFrame movementRefrenceFrame, SlowModeValue slowModeValue, Translation2d centerOfRotation, boolean isOpenLoop, boolean headingCorrectionEnabled) {
+      super(movementRefrenceFrame, slowModeValue, centerOfRotation,  isOpenLoop, headingCorrectionEnabled);
       this.percentSpeeds = percentSpeeds;
     }
 
@@ -66,6 +66,12 @@ public class BreakerSwervePercentSpeedRequest extends BreakerGenericSwerveMoveme
 
     public BreakerSwervePercentSpeedRequest withChassisPercentSpeeds(ChassisPercentSpeeds percentSpeeds) {
       this.percentSpeeds = percentSpeeds;
+      return this;
+    }
+    
+    @Override
+    public BreakerGenericSwerveMovementRequest withIsOpenLoop(boolean isOpenLoop) {
+      this.isOpenLoop = isOpenLoop;
       return this;
     }
 
@@ -184,4 +190,5 @@ public class BreakerSwervePercentSpeedRequest extends BreakerGenericSwerveMoveme
 
       
     }
+
   }

@@ -6,6 +6,7 @@ package frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.dr
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.Pair;
@@ -21,21 +22,23 @@ public class BreakerBrushlessSparkMaxSwerveModuleDriveMotor extends BreakerGener
     private CANSparkMax motor;
     private double driveGearRatio, wheelDiameter, targetVelocity;
     private BreakerArbitraryFeedforwardProvider arbFF;
-    public BreakerBrushlessSparkMaxSwerveModuleDriveMotor(CANSparkMax motor, double driveGearRatio, double wheelDiameter, int supplyCurrentLimit, boolean isMotorInverted, BreakerArbitraryFeedforwardProvider arbFF, BreakerSwerveMotorPIDConfig pidConfig) {
+    private BreakerSwerveModuleDriveMotorConfig config;
+    public BreakerBrushlessSparkMaxSwerveModuleDriveMotor(CANSparkMax motor, boolean isMotorInverted, BreakerSwerveModuleDriveMotorConfig config) {
         this.motor = motor;
-        this.driveGearRatio = driveGearRatio;
-        this.wheelDiameter = wheelDiameter;
-        this.arbFF = arbFF;
+        this.config = config;
+        this.driveGearRatio = config.getDriveGearRatio();
+        this.wheelDiameter = config.getWheelDiameter();
+        this.arbFF = config.getArbFF();
         motor.restoreFactoryDefaults();
         targetVelocity = 0.0;
         SparkMaxPIDController drivePID = motor.getPIDController();
-        drivePID.setP(pidConfig.kP);
-        drivePID.setI(pidConfig.kI);
-        drivePID.setD(pidConfig.kD);
-        drivePID.setFF(pidConfig.kF);
+        drivePID.setP(config.getPIDConfig().kP);
+        drivePID.setI(config.getPIDConfig().kI);
+        drivePID.setD(config.getPIDConfig().kD);
+        drivePID.setFF(config.getPIDConfig().kF);
 
         BreakerREVUtil.checkError(motor.enableVoltageCompensation(12.0), "Failed to config " + deviceName + " voltage compensation");
-        BreakerREVUtil.checkError(motor.setSmartCurrentLimit(supplyCurrentLimit),  "Failed to config " + deviceName + " smart current limit");
+        BreakerREVUtil.checkError(motor.setSmartCurrentLimit((int) config.getSupplyCurrentLimit()),  "Failed to config " + deviceName + " smart current limit");
         motor.setInverted(isMotorInverted);
         motor.setIdleMode(IdleMode.kBrake);
         motor.burnFlash();
@@ -52,11 +55,16 @@ public class BreakerBrushlessSparkMaxSwerveModuleDriveMotor extends BreakerGener
     }
 
     @Override
-    public void setTargetVelocity(double targetMetersPerSecond) {
+    public void setTargetVelocity(double targetMetersPerSecond, boolean isOpenLoop) {
         targetVelocity = targetMetersPerSecond;
-        motor.getPIDController().setReference(getMetersPerSecToNativeVelUnits(targetMetersPerSecond),
+        if (isOpenLoop) {
+            motor.getPIDController().setReference(targetMetersPerSecond / config.getMaxAttainableWheelSpeed(), ControlType.kDutyCycle);
+        } else {
+            motor.getPIDController().setReference(getMetersPerSecToNativeVelUnits(targetMetersPerSecond),
                 CANSparkMax.ControlType.kVelocity, 0, arbFF.getArbitraryFeedforwardValue(targetMetersPerSecond),
                 SparkMaxPIDController.ArbFFUnits.kPercentOut);
+        }
+        
     }
 
     @Override
@@ -96,5 +104,10 @@ public class BreakerBrushlessSparkMaxSwerveModuleDriveMotor extends BreakerGener
     @Override
     public double getMotorOutput() {
         return motor.getAppliedOutput();
+    }
+
+    @Override
+    public BreakerSwerveModuleDriveMotorConfig getConfig() {
+        return config;
     }
 }

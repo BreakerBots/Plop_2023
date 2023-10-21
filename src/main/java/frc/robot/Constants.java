@@ -107,6 +107,7 @@ public final class Constants {
       public static final BreakerSwerveModuleConfig MODULE_CONFIG = new BreakerSwerveModuleConfig(
           DRIVE_MOTOR_GEAR_RATIO_TO_ONE, AZIMUTH_MOTOR_GEAR_RATIO_TO_ONE, 
           WHEEL_DIAMETER, 
+          MAX_ATTAINABLE_MODULE_WHEEL_SPEED, 
           AZIMUTH_MOTOR_SUPPLY_CURRENT_LIMIT, DRIVE_MOTOR_SUPPLY_CURRENT_LIMIT, 
           MODULE_ANGLE_PID_CONFIG, MODULE_VELOCITY_PID_CONFIG, 
           MODULE_VELOCITY_FF
@@ -142,7 +143,7 @@ public final class Constants {
       public static final BreakerSwerveDriveBaseConfig DRIVE_BASE_CONFIG = new BreakerSwerveDriveBaseConfig(
       MAX_LINEAR_VEL, MAX_ANGULAR_VEL, 
       HEADING_COMPENSATION_ANGULAR_VEL_DEADBAND, HEADING_COMPENSATION_MIN_ACTIVE_LINEAR_VEL, 
-      MODULE_WHEEL_SPEED_DEADBAND, MAX_ATTAINABLE_MODULE_WHEEL_SPEED, 
+      MODULE_WHEEL_SPEED_DEADBAND,
       X_PID, Y_PID, THETA_PID)
       .setSlowModeMultipliers(SLOW_MODE_LINEAR_MULTIPLIER, SLOW_MODE_TURN_MULTIPLIER);
 
@@ -166,7 +167,7 @@ public final class Constants {
       public static final double BALANCE_PITCH_POSITION_TOLERENCE = 2.0;
       public static final double BALANCE_PITCH_VELOSITY_TOLERENCE = 1.0;
 
-      public static final BreakerSwerveVelocityRequest AUTO_BALANCE_REQUEST = new BreakerSwerveDriveBaseVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DISABLED, new Translation2d(), true);
+      public static final BreakerSwerveVelocityRequest AUTO_BALANCE_REQUEST = new BreakerSwerveDriveBaseVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DISABLED, new Translation2d(), false, true);
       public static final double AUTO_BALANCE_TIMEOUT_SEC = 15;
 
       //MoveToPose command constants

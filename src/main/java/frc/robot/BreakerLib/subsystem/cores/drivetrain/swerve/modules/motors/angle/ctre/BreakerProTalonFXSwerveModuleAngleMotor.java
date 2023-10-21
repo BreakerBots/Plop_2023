@@ -35,10 +35,12 @@ public class BreakerProTalonFXSwerveModuleAngleMotor extends BreakerGenericSwerv
     private BreakerSwerveAzimuthEncoder encoder;
     private Rotation2d targetAngle;
     private BreakerSwerveAzimuthControler azimuthControler;
+    private BreakerSwerveModuleAngleMotorConfig config;
     private final PositionVoltage positionRequest;
-    public BreakerProTalonFXSwerveModuleAngleMotor(TalonFX motor, BreakerSwerveAzimuthEncoder encoder, double encoderAbsoluteAngleOffsetDegrees, double azimuthGearRatio, double supplyCurrentLimit, boolean isMotorInverted,  BreakerSwerveMotorPIDConfig pidConfig) {
+    public BreakerProTalonFXSwerveModuleAngleMotor(TalonFX motor, BreakerSwerveAzimuthEncoder encoder, double encoderAbsoluteAngleOffsetDegrees, boolean isMotorInverted, BreakerSwerveModuleAngleMotorConfig config) {
         this.motor = motor;
         this.encoder = encoder;
+        this.config = config; 
         positionRequest = new PositionVoltage(0.0, true, 0.0, 0, false);
 
         encoder.config(false, encoderAbsoluteAngleOffsetDegrees);
@@ -49,21 +51,21 @@ public class BreakerProTalonFXSwerveModuleAngleMotor extends BreakerGenericSwerv
             if (cancoder.getCANBus() == motor.getCANBus()) {
                 turnConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
                 turnConfig.Feedback.FeedbackRemoteSensorID = cancoder.getDeviceID();
-                turnConfig.Feedback.RotorToSensorRatio = azimuthGearRatio;
+                turnConfig.Feedback.RotorToSensorRatio = config.getAzimuthGearRatio();
                 turnConfig.Feedback.SensorToMechanismRatio = 1.0;
-                turnConfig.Slot0.kP = pidConfig.kP;
-                turnConfig.Slot0.kI = pidConfig.kI;
-                turnConfig.Slot0.kD = pidConfig.kD;
+                turnConfig.Slot0.kP = config.getPIDConfig().kP;
+                turnConfig.Slot0.kI = config.getPIDConfig().kI;
+                turnConfig.Slot0.kD = config.getPIDConfig().kD;
                 turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
                 azimuthControler = new BreakerSwerveAzimuthControler((Rotation2d target) -> {motor.setControl(positionRequest.withPosition(target.getRotations()));});
             }
         }
         if (Objects.isNull(azimuthControler)) {
-            azimuthControler = new BreakerSwerveAzimuthControler(motor::setVoltage, encoder, pidConfig);
+            azimuthControler = new BreakerSwerveAzimuthControler(motor::setVoltage, encoder, config.getPIDConfig());
         }
         turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        turnConfig.CurrentLimits.SupplyCurrentLimit = supplyCurrentLimit;
-        turnConfig.CurrentLimits.SupplyCurrentThreshold = supplyCurrentLimit;
+        turnConfig.CurrentLimits.SupplyCurrentLimit = config.getSupplyCurrentLimit();
+        turnConfig.CurrentLimits.SupplyCurrentThreshold = config.getSupplyCurrentLimit();
         turnConfig.CurrentLimits.SupplyTimeThreshold = 1.5;
         turnConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         BreakerPhoenix6Util.checkStatusCode(motor.getConfigurator().apply(turnConfig),
@@ -126,6 +128,11 @@ public class BreakerProTalonFXSwerveModuleAngleMotor extends BreakerGenericSwerv
     @Override
     public double getMotorOutput() {
         return motor.getClosedLoopOutput().getValue();
+    }
+
+    @Override
+    public BreakerSwerveModuleAngleMotorConfig getConfig() {
+        return config;
     }
 
 }

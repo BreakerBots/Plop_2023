@@ -35,20 +35,20 @@ public abstract class BreakerGenericSwerveModule extends BreakerGenericDevice im
      * automaticly calls the overloded version of this method that independently
      * specifyes angle and speed
      */
-    public void setModuleTarget(SwerveModuleState targetModuleState) {
-        setModuleTarget(targetModuleState.angle, targetModuleState.speedMetersPerSecond);
+    public void setModuleTarget(SwerveModuleState targetModuleState, boolean isOpenLoop) {
+        setModuleTarget(targetModuleState.angle, targetModuleState.speedMetersPerSecond, isOpenLoop);
     }
 
     /** Sets the modules target speed to zero while maintaning the last set angle */
     public void stop() {
-        setModuleTarget(getModuleTargetState().angle, 0.0);
+        setModuleTarget(getModuleTargetState().angle, 0.0, false);
     }
 
     /**
      * Method defined in module code to handle angle and velocity control of the
      * module
      */
-    public abstract void setModuleTarget(Rotation2d targetAngle, double targetVelocityMetersPerSecond);
+    public abstract void setModuleTarget(Rotation2d targetAngle, double targetVelocityMetersPerSecond, boolean isOpenLoop);
 
     /** @return the absolute (+/- 180 deg) angle of the module as a {@link Rotation2d} */
     public abstract Rotation2d getModuleAbsoluteAngle();
@@ -96,6 +96,8 @@ public abstract class BreakerGenericSwerveModule extends BreakerGenericDevice im
     public abstract double getModuleDriveDistanceMeters();
 
     public abstract void resetModuleDriveEncoderPosition();
+
+    public abstract double getMaxAttainableWheelSpeed();
 
     /**
      * @return Module's health as an array.

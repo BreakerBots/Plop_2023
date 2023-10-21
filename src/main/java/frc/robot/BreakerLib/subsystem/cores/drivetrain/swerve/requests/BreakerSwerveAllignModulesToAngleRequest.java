@@ -21,6 +21,6 @@ public class BreakerSwerveAllignModulesToAngleRequest implements BreakerSwerveRe
       for (int i = 0; i < drivetrain.getSwerveModulePositions().length; i++) {
         requestStates[i] = new SwerveModuleState(0.0, angle);
       }
-      applyModuleStates(drivetrain, true, requestStates);
+      applyModuleStates(drivetrain, true, false, requestStates);
     }
   }

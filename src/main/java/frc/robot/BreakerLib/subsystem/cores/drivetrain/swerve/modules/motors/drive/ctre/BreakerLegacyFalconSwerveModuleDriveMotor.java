@@ -26,26 +26,29 @@ import frc.robot.BreakerLib.util.vendorutil.BreakerPhoenix5Util;
 /** Add your docs here. */
 @Deprecated
 public class BreakerLegacyFalconSwerveModuleDriveMotor extends BreakerGenericSwerveModuleDriveMotor {
+    private BreakerSwerveModuleDriveMotorConfig config;
     private WPI_TalonFX motor;
-    private double driveGearRatio, wheelDiameter, targetVelocity;
+    private double driveGearRatio, wheelDiameter, targetVelocity, maxAttainableWheelSpeed;
     private BreakerArbitraryFeedforwardProvider arbFF;
-    public BreakerLegacyFalconSwerveModuleDriveMotor(WPI_TalonFX motor, double driveGearRatio, double wheelDiameter, double supplyCurrentLimit, boolean isMotorInverted, BreakerArbitraryFeedforwardProvider arbFF, BreakerSwerveMotorPIDConfig pidConfig) {
+    public BreakerLegacyFalconSwerveModuleDriveMotor(WPI_TalonFX motor, boolean isMotorInverted, BreakerSwerveModuleDriveMotorConfig config) {
         this.motor = motor;
-        this.driveGearRatio = driveGearRatio;
+        this.config = config;
+        this.driveGearRatio = config.getDriveGearRatio();
         this.wheelDiameter = Units.metersToInches(wheelDiameter);
-        this.arbFF = arbFF;
+        this.arbFF = config.getArbFF();
+        maxAttainableWheelSpeed = config.getMaxAttainableWheelSpeed();
         targetVelocity = 0.0;
         TalonFXConfiguration driveConfig = new TalonFXConfiguration();
         driveConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
-        driveConfig.slot1.kP = pidConfig.kP;
-        driveConfig.slot1.kI = pidConfig.kI;
-        driveConfig.slot1.kD = pidConfig.kD;
-        driveConfig.slot1.kF = pidConfig.kF;
+        driveConfig.slot1.kP = config.getPIDConfig().kP;
+        driveConfig.slot1.kI = config.getPIDConfig().kI;
+        driveConfig.slot1.kD = config.getPIDConfig().kD;
+        driveConfig.slot1.kF =config.getPIDConfig().kF;
         driveConfig.slot1.closedLoopPeakOutput = 1.0;
         driveConfig.peakOutputForward = 1.0;
         driveConfig.peakOutputReverse = -1.0;
         driveConfig.voltageCompSaturation = 12.0;
-        driveConfig.supplyCurrLimit = new SupplyCurrentLimitConfiguration(true, supplyCurrentLimit, supplyCurrentLimit, 1.5);
+        driveConfig.supplyCurrLimit = new SupplyCurrentLimitConfiguration(true, config.getSupplyCurrentLimit(), config.getSupplyCurrentLimit(), 1.5);
         BreakerPhoenix5Util.checkError(motor.configAllSettings(driveConfig),
                 " Failed to config swerve module drive motor ");
         motor.selectProfileSlot(1, 0);
@@ -65,10 +68,14 @@ public class BreakerLegacyFalconSwerveModuleDriveMotor extends BreakerGenericSwe
     }
 
     @Override
-    public void setTargetVelocity(double targetMetersPerSecond) {
+    public void setTargetVelocity(double targetMetersPerSecond, boolean isOpenLoop) {
         targetVelocity = targetMetersPerSecond;
-        motor.set(TalonFXControlMode.Velocity, getMetersPerSecToNativeVelUnits(targetMetersPerSecond),
-        DemandType.ArbitraryFeedForward, arbFF.getArbitraryFeedforwardValue(targetMetersPerSecond));
+        if (isOpenLoop) {
+            motor.set(TalonFXControlMode.PercentOutput, targetMetersPerSecond / maxAttainableWheelSpeed);
+        } else {
+            motor.set(TalonFXControlMode.Velocity, getMetersPerSecToNativeVelUnits(targetMetersPerSecond),
+            DemandType.ArbitraryFeedForward, arbFF.getArbitraryFeedforwardValue(targetMetersPerSecond));
+        }
     }
 
     @Override
@@ -112,5 +119,10 @@ public class BreakerLegacyFalconSwerveModuleDriveMotor extends BreakerGenericSwe
     @Override
     public double getMotorOutput() {
         return motor.getMotorOutputPercent();
+    }
+
+    @Override
+    public BreakerSwerveModuleDriveMotorConfig getConfig() {
+        return config;
     }
 }

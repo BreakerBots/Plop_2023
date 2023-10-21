@@ -31,13 +31,15 @@ import frc.robot.BreakerLib.util.vendorutil.BreakerREVUtil;
 
 /** Add your docs here. */
 public class BreakerBrushlessSparkMaxSwerveModuleAngleMotor extends BreakerGenericSwerveModuleAngleMotor {
+    private BreakerSwerveModuleAngleMotorConfig config;
     private CANSparkMax motor;
     private BreakerSwerveAzimuthEncoder encoder;
     private Rotation2d targetAngle;
     private BreakerSwerveAzimuthControler azimuthControler;
-    public BreakerBrushlessSparkMaxSwerveModuleAngleMotor(CANSparkMax motor, BreakerSwerveAzimuthEncoder encoder, double encoderAbsoluteAngleOffsetDegrees, int supplyCurrentLimit, boolean isMotorInverted,  BreakerSwerveMotorPIDConfig pidConfig) {
+    public BreakerBrushlessSparkMaxSwerveModuleAngleMotor(CANSparkMax motor, BreakerSwerveAzimuthEncoder encoder, double encoderAbsoluteAngleOffsetDegrees, boolean isMotorInverted, BreakerSwerveModuleAngleMotorConfig config) {
         this.motor = motor;
         this.encoder = encoder;
+        this.config = config;
         motor.restoreFactoryDefaults();
         deviceName = "NEO_Swerve_Angle_Motor_(" + motor.getDeviceId() + ")";
 
@@ -46,9 +48,9 @@ public class BreakerBrushlessSparkMaxSwerveModuleAngleMotor extends BreakerGener
         azimuthControler = null;
         if (encoder.getBaseEncoderType() == BreakerSwerveSparkDutyCycleEncoder.class) {
             SparkMaxPIDController sparkPID = motor.getPIDController();
-            sparkPID.setP(pidConfig.kP);
-            sparkPID.setI(pidConfig.kI);
-            sparkPID.setD(pidConfig.kD);
+            sparkPID.setP(config.getPIDConfig().kP);
+            sparkPID.setI(config.getPIDConfig().kI);
+            sparkPID.setD(config.getPIDConfig().kD);
             sparkPID.setPositionPIDWrappingEnabled(true);
             sparkPID.setPositionPIDWrappingMaxInput(0.5);
             sparkPID.setPositionPIDWrappingMinInput(-0.5);
@@ -57,11 +59,11 @@ public class BreakerBrushlessSparkMaxSwerveModuleAngleMotor extends BreakerGener
         }
 
         if (Objects.isNull(azimuthControler)) {
-            azimuthControler = new BreakerSwerveAzimuthControler(motor::set, encoder, pidConfig);
+            azimuthControler = new BreakerSwerveAzimuthControler(motor::set, encoder, config.getPIDConfig());
         }
 
         BreakerREVUtil.checkError(motor.enableVoltageCompensation(12.0), "Failed to config " + deviceName + " voltage compensation");
-        BreakerREVUtil.checkError(motor.setSmartCurrentLimit(supplyCurrentLimit),  "Failed to config " + deviceName + " smart current limit");
+        BreakerREVUtil.checkError(motor.setSmartCurrentLimit((int)config.getSupplyCurrentLimit()),  "Failed to config " + deviceName + " smart current limit");
         targetAngle = new Rotation2d();
         motor.burnFlash();
     }
@@ -117,6 +119,11 @@ public class BreakerBrushlessSparkMaxSwerveModuleAngleMotor extends BreakerGener
     @Override
     public double getMotorOutput() {
         return motor.getAppliedOutput();
+    }
+
+    @Override
+    public BreakerSwerveModuleAngleMotorConfig getConfig() {
+        return config;
     }
 
 }

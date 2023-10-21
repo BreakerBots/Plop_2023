@@ -47,7 +47,7 @@ public class BreakerSwerveModuleVelocityLimitTest extends BreakerTestBase{
     work.append("Module States (Target Speed: " + maxVelocityToTest + ") - ");
     for (int i = 0; i < swerveModules.length; i++) {
         BreakerGenericSwerveModule mod = swerveModules[i];
-        mod.setModuleTarget(new Rotation2d(), maxVelocityToTest);
+        mod.setModuleTarget(new Rotation2d(), maxVelocityToTest, true);
         work.append(" ("+mod.getDeviceName() + " | current speed: " + mod.getModuleVelMetersPerSec() + ") ");
         double curSpeed = mod.getModuleVelMetersPerSec();
         if (maxVels[i] < curSpeed) {

@@ -64,6 +64,8 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain implements Brea
 
   private Rotation2d fieldRelativeMovementOffset = new Rotation2d();
 
+  private double lowestMaxAttainableModuleWheelSpeed;
+
 
   public BreakerSwerveDrive(
     BreakerSwerveDriveConfig config, BreakerGenericGyro gyro, 
@@ -83,6 +85,8 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain implements Brea
     for (int i = 0; i < targetModuleStates.length; i++) {
       targetModuleStates[i] = new SwerveModuleState();
       wheelPositions[i] = swerveModules[i].getWheelPositionRelativeToRobot();
+      double modMaxSpd = swerveModules[i].getMaxAttainableWheelSpeed();
+      lowestMaxAttainableModuleWheelSpeed = i < 1 ? modMaxSpd : Math.min(modMaxSpd, lowestMaxAttainableModuleWheelSpeed);
     }
     kinematics = new SwerveDriveKinematics(wheelPositions);
     odometer = odometryConfig.getOdometer(this);
@@ -104,14 +108,14 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain implements Brea
   //  * <p>
   //  * NOTE: Not affected by slow mode.
 
-  protected void setModuleStates(boolean applyRawModuleStates, SwerveModuleState... targetModuleStates) {
+  protected void setModuleStates(boolean applyRawModuleStates, boolean isOpenLoop, SwerveModuleState... targetModuleStates) {
     if (applyRawModuleStates) {
       for (int i = 0; i < swerveModules.length; i++) {
-        swerveModules[i].setModuleTarget(targetModuleStates[i]);
+        swerveModules[i].setModuleTarget(targetModuleStates[i], isOpenLoop);
         this.targetModuleStates[i] = targetModuleStates[i];
       }
     } else {
-      SwerveDriveKinematics.desaturateWheelSpeeds(targetModuleStates, config.getMaxAttainableModuleWheelSpeed());
+      SwerveDriveKinematics.desaturateWheelSpeeds(targetModuleStates, lowestMaxAttainableModuleWheelSpeed);
       for (int i = 0; i < swerveModules.length; i++) {
 
         if (Math.abs(targetModuleStates[i].speedMetersPerSecond) < config.getModuleWheelSpeedDeadband()) {
@@ -125,7 +129,7 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain implements Brea
           SwerveModuleState optimizedState = SwerveModuleState.optimize(targetModuleStates[i],
               swerveModules[i].getModuleAbsoluteAngle());
 
-          swerveModules[i].setModuleTarget(optimizedState);
+          swerveModules[i].setModuleTarget(optimizedState, isOpenLoop);
           this.targetModuleStates[i] = optimizedState;
         }
 
@@ -134,7 +138,7 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain implements Brea
     
   }
 
-  protected void move(ChassisSpeeds targetChassisSpeeds, SwerveMovementRefrenceFrame swerveMovementRefrenceFrame, SlowModeValue slowModeValue, Translation2d centerOfRotation, boolean headingCorrectionEnabled) {
+  protected void move(ChassisSpeeds targetChassisSpeeds, SwerveMovementRefrenceFrame swerveMovementRefrenceFrame, SlowModeValue slowModeValue, Translation2d centerOfRotation, boolean isOpenLoop, boolean headingCorrectionEnabled) {
     ChassisSpeeds targetVels = targetChassisSpeeds;
     Rotation2d curAng = odometer.getOdometryPoseMeters().getRotation();
 
@@ -157,7 +161,7 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain implements Brea
         targetVels.omegaRadiansPerSecond *= config.getSlowModeTurnMultiplier();
     }
 
-    setModuleStates(false, getKinematics().toSwerveModuleStates(targetVels, centerOfRotation));
+    setModuleStates(false, isOpenLoop, getKinematics().toSwerveModuleStates(targetVels, centerOfRotation));
   }
 
   public void applyRequest(BreakerSwerveRequest requestToApply) {
@@ -298,6 +302,10 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain implements Brea
     return targetModuleStates;
   }
 
+  public double getLowestMaxAttainableModuleWheelSpeed() {
+      return lowestMaxAttainableModuleWheelSpeed;
+  }
+
 
   @Override
   public void stop() {
@@ -378,12 +386,12 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain implements Brea
 
   public interface BreakerSwerveRequest {
     public abstract void apply(BreakerSwerveDrive drivetrain);
-    public default void applyChassisSpeeds(BreakerSwerveDrive drivetrain, ChassisSpeeds targetChassisSpeeds, SwerveMovementRefrenceFrame swerveMovementRefrenceFrame, SlowModeValue slowModeValue, Translation2d centerOfRotation, boolean headingCorrectionEnabled) {
-      drivetrain.move(targetChassisSpeeds, swerveMovementRefrenceFrame, slowModeValue, centerOfRotation, headingCorrectionEnabled);
+    public default void applyChassisSpeeds(BreakerSwerveDrive drivetrain, ChassisSpeeds targetChassisSpeeds, SwerveMovementRefrenceFrame swerveMovementRefrenceFrame, SlowModeValue slowModeValue, Translation2d centerOfRotation,  boolean isOpenLoop, boolean headingCorrectionEnabled) {
+      drivetrain.move(targetChassisSpeeds, swerveMovementRefrenceFrame, slowModeValue, centerOfRotation,  isOpenLoop, headingCorrectionEnabled);
     }
 
-    public default void applyModuleStates(BreakerSwerveDrive drivetrain, boolean applyRawModuleStates, SwerveModuleState... targetModuleStates) {
-      drivetrain.setModuleStates(applyRawModuleStates, targetModuleStates);
+    public default void applyModuleStates(BreakerSwerveDrive drivetrain, boolean applyRawModuleStates, boolean isOpenLoop, SwerveModuleState... targetModuleStates) {
+      drivetrain.setModuleStates(applyRawModuleStates, isOpenLoop, targetModuleStates);
     }
   }
 }

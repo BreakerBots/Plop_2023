@@ -16,7 +16,6 @@ public class BreakerSwerveDriveConfig {
     private double slowModeLinearMultiplier;
     private double slowModeTurnMultiplier;
     private double moduleWheelSpeedDeadband;
-    private double maxAttainableModuleWheelSpeed;
 
     /**
      * The overall configuration for a Breaker swerve drivetrain holding all constants,
@@ -31,11 +30,10 @@ public class BreakerSwerveDriveConfig {
      * @param wheelspeedDeadband             The min value (+/-) in m/s^2 that each modules wheel speed can be set too before being ingored
      * @param maxAttainableModuleWheelSpeed  The physical maximum speed (in m/s^2) your swerve modules are capable of achiving
      */
-    public BreakerSwerveDriveConfig(double maxLinearVel, double maxAngVel, double moduleWheelSpeedDeadband, double maxAttainableModuleWheelSpeed) {
+    public BreakerSwerveDriveConfig(double maxLinearVel, double maxAngVel, double moduleWheelSpeedDeadband) {
 
         this.maxLinearVel = maxLinearVel;
         this.maxAngleVel = maxAngVel;
-        this.maxAttainableModuleWheelSpeed = maxAttainableModuleWheelSpeed;
         this.moduleWheelSpeedDeadband = moduleWheelSpeedDeadband;
         slowModeLinearMultiplier = 1;
         slowModeTurnMultiplier = 1;
@@ -71,10 +69,6 @@ public class BreakerSwerveDriveConfig {
     /** @return Slow mode multiplier on turn motors. */
     public double getSlowModeTurnMultiplier() {
         return slowModeTurnMultiplier;
-    }
-
-    public double getMaxAttainableModuleWheelSpeed() {
-        return maxAttainableModuleWheelSpeed;
     }
 
     public double getModuleWheelSpeedDeadband() {

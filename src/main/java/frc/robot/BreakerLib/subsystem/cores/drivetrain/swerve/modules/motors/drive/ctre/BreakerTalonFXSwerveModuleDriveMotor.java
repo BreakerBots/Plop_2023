@@ -154,6 +154,6 @@ public class BreakerTalonFXSwerveModuleDriveMotor extends BreakerGenericSwerveMo
 
     @Override
     public BreakerSwerveModuleDriveMotorConfig getConfig() {
-        return null;
+        return config;
     }
 }

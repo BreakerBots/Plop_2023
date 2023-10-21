@@ -109,7 +109,7 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
     coneTOF.setRangingMode(RangingMode.Short, 999);
     coneTOF.setRangeOfInterest(9,9,11,11);
 
-    wristGoal = Rotation2d.fromDegrees(0.0); //getWristRotation();
+    wristGoal = Rotation2d.fromDegrees(90.0); //getWristRotation();
     wristGoalType = WristGoalType.UNKNOWN;
     prevControledGamePieceType = ControledGamePieceType.NONE;
 
@@ -261,9 +261,9 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
   }
  
   private void calculateAndApplyPIDF() {
-    pidOutput = pid.calculate(getWristRotation().getRadians(), wristGoal.getRadians());
+    pidOutput = -pid.calculate(getWristRotation().getRadians(), wristGoal.getRadians());
     State profiledSetpoint = pid.getSetpoint();
-    ffOutput =  ff.calculate(profiledSetpoint.position, profiledSetpoint.velocity);
+    ffOutput = -ff.calculate(profiledSetpoint.position, profiledSetpoint.velocity);
     System.out.println(pidOutput + ffOutput);
     wristMotor.setControl(wristVoltageRequest.withOutput(pidOutput + ffOutput));
   }
@@ -287,22 +287,22 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
 
   @Override
   public void periodic() {
-
-    if (DriverStation.isEnabled() && wristControlState == WristControlState.SEEKING) {
-      if (hasGamePiece() && rollerState.getRollerStateType() != RollerStateType.EXTAKEING) {
-        if (hasCone()) {
-          rollerGrippCone();
-        } else {
-          rollerGrippCube();
-        }
-      } else if (!hasGamePiece() && (wristGoalType == WristGoalType.STOW || wristGoalType == WristGoalType.UNKNOWN)) {
-        stopRoller();
-      }
-      calculateAndApplyPIDF();
-    } else {
-      privateSetWristGoal(WristGoalType.UNKNOWN, getWristRotation());
-      stopRoller();
-    }
+    calculateAndApplyPIDF();
+    // if (DriverStation.isEnabled() && wristControlState == WristControlState.SEEKING) {
+    //   if (hasGamePiece() && rollerState.getRollerStateType() != RollerStateType.EXTAKEING) {
+    //     if (hasCone()) {
+    //       rollerGrippCone();
+    //     } else {
+    //       rollerGrippCube();
+    //     }
+    //   } else if (!hasGamePiece() && (wristGoalType == WristGoalType.STOW || wristGoalType == WristGoalType.UNKNOWN)) {
+    //     stopRoller();
+    //   }
+    //   calculateAndApplyPIDF();
+    // } else {
+    //   // privateSetWristGoal(WristGoalType.UNKNOWN, getWristRotation());
+    //   // stopRoller();
+    // }
 
     ControledGamePieceType curControledGamePieceType = getControledGamePieceType();
     if (curControledGamePieceType != prevControledGamePieceType) {

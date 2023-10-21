@@ -240,19 +240,19 @@ public final class Constants {
       public static final boolean INVERT_WRIST = false;
       public static final boolean INVERT_ROLLER= false;
 
-      public static final double WRIST_CURRENT_LIMIT = 15.0;
+      public static final double WRIST_CURRENT_LIMIT = 10.0;
       public static final double WRIST_CURRENT_LIMIT_TIME = 0.5;
 
 
-      public static final double WRIST_KP = 5.0;
+      public static final double WRIST_KP = 1.5;
       public static final double WRIST_KI = 0.00;
       public static final double WRIST_KD = 0.00;
 
       //Feedfoward Constants
       public static final double WRIST_KS = 0.00;
-      public static final double WRIST_KG = 10.0;
-      public static final double WRIST_KV = 1.84;
-      public static final double WRIST_KA = 0.00;
+      public static final double WRIST_KG = -0.2;
+      public static final double WRIST_KV = 0.35;//1.84
+      public static final double WRIST_KA = 0.0;
 
       //Trapezodial Profile Constants
      public static final double WRIST_MAX_VELOCITY_RADS = 3;
@@ -262,7 +262,7 @@ public final class Constants {
       public static final double INTAKE_CONE_DUTY_CYCLE = -0.5;
       public static final int INTAKE_CONE_CURENT_LIMIT = 25;
 
-      public static final double INTAKE_CUBE_DUTY_CYCLE = 0.5;
+      public static final double INTAKE_CUBE_DUTY_CYCLE = 5.0;
       public static final int INTAKE_CUBE_CURENT_LIMIT = 25;
 
       public static final double INTAKE_CONE_GRIP_DUTY_CYCLE = -0.1;

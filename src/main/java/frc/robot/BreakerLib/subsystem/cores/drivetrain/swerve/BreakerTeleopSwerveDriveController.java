@@ -277,6 +277,8 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
       }
     }
 
+    //System.out.println(percentSpeeds.toChassisSpeeds(baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel()).toString());
+
     baseDrivetrain.applyRequest(percentSpeedRequest.withChassisPercentSpeeds(percentSpeeds));
   }
 

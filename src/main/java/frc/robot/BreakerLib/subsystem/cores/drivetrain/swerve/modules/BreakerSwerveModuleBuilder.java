@@ -4,8 +4,6 @@
 
 package frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules;
 
-import org.apache.commons.collections4.Get;
-
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
 

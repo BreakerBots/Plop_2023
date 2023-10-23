@@ -4,6 +4,8 @@
 
 package frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.ctre;
 
+import java.util.Optional;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.configs.AudioConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -65,6 +67,12 @@ public class BreakerTalonFXSwerveModuleDriveMotor extends BreakerGenericSwerveMo
         driveConfig.CurrentLimits.SupplyCurrentThreshold = config.getSupplyCurrentLimit();
         driveConfig.CurrentLimits.SupplyTimeThreshold = 1.5;
         driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        Optional<Double> outputRampPeriod = config.getOutputRampPeriod();
+        if (outputRampPeriod.isPresent()) {
+            driveConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = outputRampPeriod.get();
+            driveConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = outputRampPeriod.get();
+            driveConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = outputRampPeriod.get();
+        }
         BreakerPhoenix6Util.checkStatusCode(motor.getConfigurator().apply(driveConfig),
                 " Failed to config swerve module drive motor ");
     

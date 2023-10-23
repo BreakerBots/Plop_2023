@@ -316,6 +316,7 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
         BreakerLog.getInstance().logSuperstructureEvent("INTKAE BEAM BREAKS ENTERED ERROR STATE");
       }
     }
+    prevControledGamePieceType = curControledGamePieceType;
   }
 
   public static enum RollerState {

@@ -4,6 +4,8 @@
 
 package frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive;
 
+import java.util.Optional;
+
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule.BreakerSwerveMotorPIDConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.BreakerGenericSwerveModuleMotor;
 import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider;
@@ -32,16 +34,33 @@ public abstract class BreakerGenericSwerveModuleDriveMotor extends BreakerGeneri
         private double driveGearRatio;
         private double wheelDiameter;
         private double supplyCurrentLimit;
+        private Optional<Double> outputRampPeriod;
         private double maxAttainableWheelSpeed;
         private BreakerArbitraryFeedforwardProvider arbFF;
         private BreakerSwerveMotorPIDConfig pidConfig;
+        public BreakerSwerveModuleDriveMotorConfig(double driveGearRatio, double wheelDiameter, double supplyCurrentLimit, double maxAttainableWheelSpeed, double outputRampPeriod, BreakerArbitraryFeedforwardProvider arbFF, BreakerSwerveMotorPIDConfig pidConfig) {
+            this.arbFF = arbFF;
+            this.driveGearRatio = driveGearRatio;
+            this.pidConfig = pidConfig;
+            this.supplyCurrentLimit = supplyCurrentLimit;
+            this.outputRampPeriod = Optional.of(outputRampPeriod);
+            this.wheelDiameter = wheelDiameter;
+            this.maxAttainableWheelSpeed = maxAttainableWheelSpeed;
+        }
+
         public BreakerSwerveModuleDriveMotorConfig(double driveGearRatio, double wheelDiameter, double supplyCurrentLimit, double maxAttainableWheelSpeed, BreakerArbitraryFeedforwardProvider arbFF, BreakerSwerveMotorPIDConfig pidConfig) {
             this.arbFF = arbFF;
             this.driveGearRatio = driveGearRatio;
             this.pidConfig = pidConfig;
             this.supplyCurrentLimit = supplyCurrentLimit;
+            this.outputRampPeriod = Optional.empty();
             this.wheelDiameter = wheelDiameter;
             this.maxAttainableWheelSpeed = maxAttainableWheelSpeed;
+        }
+
+        public BreakerSwerveModuleDriveMotorConfig withOutputRampPeriod(double outputRampPeriod) {
+            this.outputRampPeriod = Optional.of(outputRampPeriod);
+            return this;
         }
 
         public BreakerArbitraryFeedforwardProvider getArbFF() {
@@ -58,6 +77,10 @@ public abstract class BreakerGenericSwerveModuleDriveMotor extends BreakerGeneri
 
         public double getSupplyCurrentLimit() {
             return supplyCurrentLimit;
+        }
+
+        public Optional<Double> getOutputRampPeriod() {
+            return outputRampPeriod;
         }
 
         public double getWheelDiameter() {

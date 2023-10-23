@@ -5,6 +5,7 @@
 package frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.angle.rev;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
@@ -42,24 +43,29 @@ public class BreakerBrushlessSparkMaxSwerveModuleAngleMotor extends BreakerGener
         this.config = config;
         motor.restoreFactoryDefaults();
         deviceName = "NEO_Swerve_Angle_Motor_(" + motor.getDeviceId() + ")";
-
         motor.setInverted(isMotorInverted);
         encoder.config(false, encoderAbsoluteAngleOffsetDegrees);
         azimuthControler = null;
         if (encoder.getBaseEncoderType() == BreakerSwerveSparkDutyCycleEncoder.class) {
             SparkMaxPIDController sparkPID = motor.getPIDController();
-            sparkPID.setP(config.getPIDConfig().kP);
-            sparkPID.setI(config.getPIDConfig().kI);
-            sparkPID.setD(config.getPIDConfig().kD);
-            sparkPID.setPositionPIDWrappingEnabled(true);
-            sparkPID.setPositionPIDWrappingMaxInput(0.5);
-            sparkPID.setPositionPIDWrappingMinInput(-0.5);
-            sparkPID.setFeedbackDevice((AbsoluteEncoder) encoder.getBaseEncoder());
+            BreakerREVUtil.checkError(sparkPID.setP(config.getPIDConfig().kP), "Failed to config " + deviceName + " closed loop kP");
+            BreakerREVUtil.checkError(sparkPID.setP(config.getPIDConfig().kI), "Failed to config " + deviceName + " closed loop kI");
+            BreakerREVUtil.checkError(sparkPID.setP(config.getPIDConfig().kD), "Failed to config " + deviceName + " closed loop kD");
+            BreakerREVUtil.checkError(sparkPID.setPositionPIDWrappingEnabled(true), "Failed to config " + deviceName + " closed loop wrapping enabled");
+            BreakerREVUtil.checkError(sparkPID.setPositionPIDWrappingMaxInput(0.5), "Failed to config " + deviceName + " closed loop wrapping max input");
+            BreakerREVUtil.checkError(sparkPID.setPositionPIDWrappingMinInput(-0.5), "Failed to config " + deviceName + " closed loop wrapping min input");
+            BreakerREVUtil.checkError(sparkPID.setFeedbackDevice((AbsoluteEncoder) encoder.getBaseEncoder()), "Failed to config " + deviceName + " closed loop feedback device");
             azimuthControler = new BreakerSwerveAzimuthControler((Rotation2d tgt) -> {sparkPID.setReference(tgt.getRotations(), ControlType.kPosition);});
         }
 
         if (Objects.isNull(azimuthControler)) {
             azimuthControler = new BreakerSwerveAzimuthControler(motor::set, encoder, config.getPIDConfig());
+        }
+
+        Optional<Double> outputRampPeriod = config.getOutputRampPeriod();
+        if (outputRampPeriod.isPresent()) {
+            BreakerREVUtil.checkError(motor.setClosedLoopRampRate(outputRampPeriod.get()), "Failed to config " + deviceName + " closed loop ramp rate");
+            BreakerREVUtil.checkError(motor.setOpenLoopRampRate(outputRampPeriod.get()), "Failed to config " + deviceName + " open loop ramp rate");
         }
 
         BreakerREVUtil.checkError(motor.enableVoltageCompensation(12.0), "Failed to config " + deviceName + " voltage compensation");

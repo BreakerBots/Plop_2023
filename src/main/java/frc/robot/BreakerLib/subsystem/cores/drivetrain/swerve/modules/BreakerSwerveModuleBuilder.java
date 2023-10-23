@@ -125,9 +125,13 @@ public class BreakerSwerveModuleBuilder {
     }
 
     public static class BreakerSwerveModuleConfig {
-
         private BreakerSwerveModuleAngleMotorConfig angleMotorConfig;
         private BreakerSwerveModuleDriveMotorConfig driveMotorConfig;
+        public BreakerSwerveModuleConfig(double driveGearRatio, double azimuthGearRatio, double wheelDiameter, double maxAttainableWheelSpeed, double angleSupplyCurrentLimit, double driveSupplyCurrentLimit, double angleOutputRampPeriod, double driveOutputRampPeriod, BreakerSwerveMotorPIDConfig anglePIDConfig, BreakerSwerveMotorPIDConfig drivePIDConfig, BreakerArbitraryFeedforwardProvider driveArbFF) {
+            angleMotorConfig = new BreakerSwerveModuleAngleMotorConfig(azimuthGearRatio, angleSupplyCurrentLimit, angleOutputRampPeriod, anglePIDConfig);
+            driveMotorConfig = new BreakerSwerveModuleDriveMotorConfig(driveGearRatio, wheelDiameter, driveSupplyCurrentLimit, maxAttainableWheelSpeed, driveOutputRampPeriod, driveArbFF, drivePIDConfig);
+        }
+
         public BreakerSwerveModuleConfig(double driveGearRatio, double azimuthGearRatio, double wheelDiameter, double maxAttainableWheelSpeed, double angleSupplyCurrentLimit, double driveSupplyCurrentLimit, BreakerSwerveMotorPIDConfig anglePIDConfig, BreakerSwerveMotorPIDConfig drivePIDConfig, BreakerArbitraryFeedforwardProvider driveArbFF) {
             angleMotorConfig = new BreakerSwerveModuleAngleMotorConfig(azimuthGearRatio, angleSupplyCurrentLimit, anglePIDConfig);
             driveMotorConfig = new BreakerSwerveModuleDriveMotorConfig(driveGearRatio, wheelDiameter, driveSupplyCurrentLimit, maxAttainableWheelSpeed, driveArbFF, drivePIDConfig);
@@ -136,6 +140,12 @@ public class BreakerSwerveModuleBuilder {
         public BreakerSwerveModuleConfig(BreakerSwerveModuleAngleMotorConfig angleMotorConfig, BreakerSwerveModuleDriveMotorConfig driveMotorConfig) {
             this.angleMotorConfig = angleMotorConfig;
             this.driveMotorConfig = driveMotorConfig;
+        }
+
+        public BreakerSwerveModuleConfig withOutputRampPeriods(double angleOutputRampPeriod, double driveOutputRampPeriod) {
+            angleMotorConfig.withOutputRampPeriod(angleOutputRampPeriod);
+            driveMotorConfig.withOutputRampPeriod(driveOutputRampPeriod);
+            return this;
         }
 
         public BreakerSwerveModuleAngleMotorConfig getAngleMotorConfig() {

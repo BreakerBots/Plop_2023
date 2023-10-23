@@ -6,9 +6,11 @@ package frc.robot.BreakerLib.util.vendorutil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.function.BooleanSupplier;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -16,6 +18,7 @@ import com.ctre.phoenix6.hardware.core.CoreTalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 
@@ -164,6 +167,52 @@ public class BreakerPhoenix6Util {
       this.messsage = messsage;
     }
   }
+
+  public static class TalonFXRemoteLimitController extends SubsystemBase {
+    private BooleanSupplier limitTriggeredSupplier;
+    private LimitDirection limitDirection;
+    private double limitTriggeredRotorPosition;
+    private TalonFX motor;
+    private boolean prevState, limitEnabled;
+    public TalonFXRemoteLimitController(TalonFX motor, BooleanSupplier limitTriggeredSupplier, LimitDirection limitDirection, double limitTriggeredRotorPosition) {
+        configMotor(motor, limitDirection, limitTriggeredRotorPosition, false);
+        prevState = false;
+        limitEnabled = false;
+    }
+
+    private static void configMotor(TalonFX motor, LimitDirection limitDirection, double limitTriggeredRotorPosition, boolean enableLimit) {
+        SoftwareLimitSwitchConfigs softLimitConfig = new SoftwareLimitSwitchConfigs();
+        motor.getConfigurator().refresh(softLimitConfig);
+        if (limitDirection == LimitDirection.FORWARD) {
+            softLimitConfig.ForwardSoftLimitThreshold = limitTriggeredRotorPosition;
+            softLimitConfig.ForwardSoftLimitEnable = enableLimit;
+        } else {
+            softLimitConfig.ReverseSoftLimitThreshold = limitTriggeredRotorPosition;
+            softLimitConfig.ReverseSoftLimitEnable = enableLimit;
+        }
+    }
+
+    public boolean isLimitTriggered() {
+        return limitTriggeredSupplier.getAsBoolean();
+    }
+
+    @Override
+    public void periodic() {
+        boolean curState = isLimitTriggered();
+        if (curState && !prevState) {
+            if (!limitEnabled) {
+                configMotor(motor, limitDirection, limitTriggeredRotorPosition, true);
+            }
+            motor.setRotorPosition(limitTriggeredRotorPosition);
+        }
+        prevState = curState;
+    }
+
+    public static enum LimitDirection {
+        FORWARD,
+        REVERSE
+    }
+}
 
   
 }

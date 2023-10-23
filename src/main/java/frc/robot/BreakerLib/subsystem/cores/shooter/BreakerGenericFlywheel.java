@@ -5,82 +5,77 @@
 package frc.robot.BreakerLib.subsystem.cores.shooter;
 
 import frc.robot.BreakerLib.devices.BreakerGenericLoopedDevice;
-import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.BreakerLib.util.test.suites.BreakerGenericTestSuiteImplementation;
-import frc.robot.BreakerLib.util.test.suites.flywheel.BreakerFlywheelTestSuite;
+//import frc.robot.BreakerLib.util.test.suites.flywheel.BreakerFlywheelTestSuite;
 
 /** A class representing a robot's shooter flywheel and its assocated controle loop */
-public abstract class BreakerGenericFlywheel extends BreakerGenericLoopedDevice implements BreakerGenericTestSuiteImplementation<BreakerFlywheelTestSuite> {
+public abstract class BreakerGenericFlywheel extends BreakerGenericLoopedDevice /* implements BreakerGenericTestSuiteImplementation<BreakerFlywheelTestSuite> */ {
     protected BreakerFlywheelConfig config;
-    protected double flywheelTargetRPM = 0;
-    protected BreakerFlywheelTestSuite testSuite;
+    protected double flywheelTargetVel = 0;
+   // protected BreakerFlywheelTestSuite testSuite;
     protected double lastVel = 0;
     protected double accel = 0;
     protected double accelTol;
     protected double velTol;
-    protected BreakerArbitraryFeedforwardProvider ffProvider;
     
 
     public BreakerGenericFlywheel(BreakerFlywheelConfig config) {
         this.config = config;
-        testSuite = new BreakerFlywheelTestSuite(this);
+        //testSuite = new BreakerFlywheelTestSuite(this);
         velTol = config.getVelocityTolerence();
         accelTol = config.getAcclerationTolerence();
-        ffProvider = config.getArbFFProvider();
     }
 
     
     /** 
      * @param flywheelTargetSpeedRPM
      */
-    public void setFlywheelSpeed(double flywheelTargetSpeedRPM) {
-        flywheelTargetRPM = flywheelTargetSpeedRPM;
+    public void setFlywheelVelocity(double flywheelTargetVel) {
+        this.flywheelTargetVel = flywheelTargetVel;
     }
 
-    public abstract double getFlywheelVelRSU();
-
-    public abstract double getFlywheelRPM();
+    public abstract double getFlywheelVelocity();
 
     
     /** 
      * @return double
      */
-    public double getFlywheelTargetRPM() {
-        return flywheelTargetRPM;
+    public double getFlywheelTargetVelocity() {
+        return flywheelTargetVel;
     }
 
-    /** sets flywheel speed to 0 RPM */
+    /** sets flywheel speed to 0 RPS */
     public void stopFlywheel() {
-        setFlywheelSpeed(0);
+        setFlywheelVelocity(0);
         BreakerLog.getInstance().logSuperstructureEvent("flywheel stoped");
     }
 
 
-    protected abstract void runFlywheel();
+    protected abstract void applyMotorControl(double targetVel);
 
     
     /** 
      * @return boolean
      */
     public boolean flywheelIsAtTargetVel() {
-        return BreakerMath.epsilonEquals(flywheelTargetRPM, getFlywheelRPM(), velTol) && BreakerMath.epsilonEquals(accel, 0, accelTol);
+        return BreakerMath.epsilonEquals(flywheelTargetVel, getFlywheelVelocity(), velTol) && BreakerMath.epsilonEquals(accel, 0, accelTol);
     }
 
     @Override
     public void periodic() {
-        runFlywheel();
-        accel = getFlywheelRPM() - lastVel;
-        lastVel = getFlywheelRPM();
+        applyMotorControl(flywheelTargetVel);
+        accel = getFlywheelVelocity() - lastVel;
+        lastVel = getFlywheelVelocity();
     }
 
     
-    /** 
-     * @return BreakerFlywheelTestSuite
-     */
-    @Override
-    public BreakerFlywheelTestSuite getTestSuite() {
-        return testSuite;
-    }
+    // /** 
+    //  * @return BreakerFlywheelTestSuite
+    //  */
+    // @Override
+    // public BreakerFlywheelTestSuite getTestSuite() {
+    //     return testSuite;
+    // }
 }

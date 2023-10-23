@@ -11,21 +11,21 @@ public class BreakerFlywheelConfig {
     private double kP;
     private double kI;
     private double kD;
-    private double kF;
+    private double kV;
+    private double kS;
     private double velocityTolerence;
     private double acclerationTolerence;
     private double flywheelGearRatio;
-    private BreakerArbitraryFeedforwardProvider arbFFProvider;
 
-    public BreakerFlywheelConfig(double kP, double kI, double kD, double kF, double velocityTolerence, double accelerationTolerence, double flywheelGearRatio, BreakerArbitraryFeedforwardProvider arbFFProvider) {
+    public BreakerFlywheelConfig(double kP, double kI, double kD, double kV, double kS, double velocityTolerence, double accelerationTolerence, double flywheelGearRatio) {
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
-        this.kF = kF;
+        this.kV = kV;
+        this.kS = kS;
         this.velocityTolerence= velocityTolerence;
         this.acclerationTolerence = accelerationTolerence;
         this.flywheelGearRatio = flywheelGearRatio;
-        this.arbFFProvider = arbFFProvider;
     }
 
     
@@ -35,14 +35,6 @@ public class BreakerFlywheelConfig {
     public double getkD() {
         return kD;
     }
-    
-    /** 
-     * @return double
-     */
-    public double getkF() {
-        return kF;
-    }
-
     
     /** 
      * @return double
@@ -57,6 +49,14 @@ public class BreakerFlywheelConfig {
      */
     public double getkP() {
         return kP;
+    }
+
+    public double getkS() {
+        return kS;
+    }
+
+    public double getkV() {
+        return kV;
     }
 
     
@@ -81,13 +81,5 @@ public class BreakerFlywheelConfig {
      */
     public double getFlywheelGearRatio() {
         return flywheelGearRatio;
-    }
-
-    
-    /** 
-     * @return BreakerArbitraryFeedforwardProvider
-     */
-    public BreakerArbitraryFeedforwardProvider getArbFFProvider() {
-        return arbFFProvider;
     }
 }

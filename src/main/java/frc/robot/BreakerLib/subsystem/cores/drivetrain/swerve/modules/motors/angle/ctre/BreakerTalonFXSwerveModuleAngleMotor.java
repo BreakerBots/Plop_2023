@@ -6,6 +6,7 @@ package frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.an
 
 import java.net.CacheRequest;
 import java.util.Objects;
+import java.util.Optional;
 
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -70,6 +71,10 @@ public class BreakerTalonFXSwerveModuleAngleMotor extends BreakerGenericSwerveMo
         turnConfig.CurrentLimits.SupplyCurrentThreshold = config.getSupplyCurrentLimit();
         turnConfig.CurrentLimits.SupplyTimeThreshold = 1.5;
         turnConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        Optional<Double> outputRampPeriod = config.getOutputRampPeriod();
+        if (outputRampPeriod.isPresent()) {
+            turnConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = outputRampPeriod.get();
+        }
         BreakerPhoenix6Util.checkStatusCode(motor.getConfigurator().apply(turnConfig),
                 " Failed to config swerve module drive motor ");
     

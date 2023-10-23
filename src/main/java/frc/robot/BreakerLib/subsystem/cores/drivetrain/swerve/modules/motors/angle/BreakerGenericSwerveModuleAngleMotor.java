@@ -4,6 +4,10 @@
 
 package frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.angle;
 
+import java.util.Optional;
+
+import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule.BreakerSwerveMotorPIDConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.BreakerGenericSwerveModuleMotor;
@@ -30,11 +34,25 @@ public abstract class BreakerGenericSwerveModuleAngleMotor extends BreakerGeneri
     public static class BreakerSwerveModuleAngleMotorConfig {
         private double azimuthGearRatio;
         private double supplyCurrentLimit;
+        private Optional<Double> outputRampPeriod;
         private BreakerSwerveMotorPIDConfig pidConfig;
+        public BreakerSwerveModuleAngleMotorConfig(double azimuthGearRatio, double supplyCurrentLimit, double outputRampPeriod,  BreakerSwerveMotorPIDConfig pidConfig) {
+            this.azimuthGearRatio = azimuthGearRatio;
+            this.supplyCurrentLimit = supplyCurrentLimit;
+            this.outputRampPeriod = Optional.of(outputRampPeriod);
+            this.pidConfig = pidConfig;
+        }
+
         public BreakerSwerveModuleAngleMotorConfig(double azimuthGearRatio, double supplyCurrentLimit, BreakerSwerveMotorPIDConfig pidConfig) {
             this.azimuthGearRatio = azimuthGearRatio;
             this.supplyCurrentLimit = supplyCurrentLimit;
+            this.outputRampPeriod = Optional.empty();
             this.pidConfig = pidConfig;
+        }
+
+        public BreakerSwerveModuleAngleMotorConfig withOutputRampPeriod(double outputRampPeriod) {
+            this.outputRampPeriod = Optional.of(outputRampPeriod);
+            return this;
         }
 
         public double getAzimuthGearRatio() {
@@ -43,6 +61,10 @@ public abstract class BreakerGenericSwerveModuleAngleMotor extends BreakerGeneri
 
         public double getSupplyCurrentLimit() {
             return supplyCurrentLimit;
+        }
+
+        public Optional<Double> getOutputRampPeriod() {
+            return outputRampPeriod;
         }
 
         public BreakerSwerveMotorPIDConfig getPIDConfig() {

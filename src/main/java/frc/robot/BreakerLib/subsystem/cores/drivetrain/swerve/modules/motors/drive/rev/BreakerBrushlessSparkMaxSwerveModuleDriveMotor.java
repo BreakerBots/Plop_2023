@@ -4,6 +4,8 @@
 
 package frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.rev;
 
+import java.util.Optional;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
@@ -32,10 +34,16 @@ public class BreakerBrushlessSparkMaxSwerveModuleDriveMotor extends BreakerGener
         motor.restoreFactoryDefaults();
         targetVelocity = 0.0;
         SparkMaxPIDController drivePID = motor.getPIDController();
-        drivePID.setP(config.getPIDConfig().kP);
-        drivePID.setI(config.getPIDConfig().kI);
-        drivePID.setD(config.getPIDConfig().kD);
-        drivePID.setFF(config.getPIDConfig().kF);
+        BreakerREVUtil.checkError(drivePID.setP(config.getPIDConfig().kP), "Failed to config " + deviceName + " closed loop kP");
+        BreakerREVUtil.checkError(drivePID.setP(config.getPIDConfig().kI), "Failed to config " + deviceName + " closed loop kI");
+        BreakerREVUtil.checkError(drivePID.setP(config.getPIDConfig().kD), "Failed to config " + deviceName + " closed loop kD");
+        BreakerREVUtil.checkError(drivePID.setP(config.getPIDConfig().kF), "Failed to config " + deviceName + " closed loop kF");
+
+        Optional<Double> outputRampPeriod = config.getOutputRampPeriod();
+        if (outputRampPeriod.isPresent()) {
+            BreakerREVUtil.checkError(motor.setClosedLoopRampRate(outputRampPeriod.get()), "Failed to config " + deviceName + " closed loop ramp rate");
+            BreakerREVUtil.checkError(motor.setOpenLoopRampRate(outputRampPeriod.get()), "Failed to config " + deviceName + " open loop ramp rate");
+        }
 
         BreakerREVUtil.checkError(motor.enableVoltageCompensation(12.0), "Failed to config " + deviceName + " voltage compensation");
         BreakerREVUtil.checkError(motor.setSmartCurrentLimit((int) config.getSupplyCurrentLimit()),  "Failed to config " + deviceName + " smart current limit");

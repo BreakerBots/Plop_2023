@@ -337,7 +337,7 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
                     } else {
                         currentState = ElevatorControlMode.AUTOMATIC;
                             hasBeenCalibrated = true;
-                            BreakerLog.getInstance().logSuperstructureEvent("Elevator calibation not supported in sim, action fallthrough");
+                            BreakerLog.getInstance().logSuperstructureEvent("Elevator calibation not supported in sim or while bypassed, action fallthrough");
                     }
                     break;
                 case NEUTRAL:

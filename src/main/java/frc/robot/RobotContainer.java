@@ -41,7 +41,9 @@ import frc.robot.commands.drive.TeleopSnapDriveToCardinalHeading.SwerveCardinal;
 import frc.robot.commands.superstructure.IntakeFromDoubleSubstation;
 import frc.robot.commands.superstructure.IntakeFromGround;
 import frc.robot.commands.superstructure.IntakeFromSingleSubstation;
+import frc.robot.commands.superstructure.SetSuperstructurePositionState;
 import frc.robot.commands.superstructure.StowElevatorIntakeAssembly;
+import frc.robot.commands.superstructure.SuperstructurePositionState;
 import frc.robot.commands.superstructure.elevator.ElevatorMoveToHight;
 import frc.robot.commands.superstructure.elevator.ManuallyControlElevator;
 import frc.robot.commands.superstructure.intake.EjectGamePiece;
@@ -152,12 +154,14 @@ public class RobotContainer {
   }
 
   private void configureAutonomousActionMap() {
-    // AUTONOMOUS_ACTION_MAP.put("EJECT_GAME_PIECE", new EjectGamePiece(handSys));
-    // AUTONOMOUS_ACTION_MAP.put("INTAKE_CONE_FROM_GROUND", new IntakeFromGround(elevatorSys, handSys, false, GamePieceType.CONE));
-    // AUTONOMOUS_ACTION_MAP.put("INTAKE_CUBE_FROM_GROUND", new IntakeFromGround(elevatorSys, handSys, false, GamePieceType.CUBE));
-    // AUTONOMOUS_ACTION_MAP.put("STOW", new StowElevatorIntakeAssembly(elevatorSys, handSys, false));
-    AUTONOMOUS_ACTION_MAP.put("", teleopDriveController);
-    
+    // AUTONOMOUS_ACTION_MAP.put("eject", new EjectGamePiece(handSys));
+    // AUTONOMOUS_ACTION_MAP.put("intake cone gnd", new IntakeFromGround(elevatorSys, handSys, false, GamePieceType.CUBE));
+    // AUTONOMOUS_ACTION_MAP.put("intake cube gnd", new IntakeFromGround(elevatorSys, handSys, false, GamePieceType.CUBE));
+    // AUTONOMOUS_ACTION_MAP.put("intake cone single sub", new IntakeFromSingleSubstation(elevatorSys, handSys, false, GamePieceType.CONE));
+    // AUTONOMOUS_ACTION_MAP.put("intake cube single sub", new IntakeFromSingleSubstation(elevatorSys, handSys, false, GamePieceType.CUBE));
+    // AUTONOMOUS_ACTION_MAP.put("intake cone double sub", new IntakeFromDoubleSubstation(elevatorSys, handSys, false, GamePieceType.CONE));
+    // AUTONOMOUS_ACTION_MAP.put("intake cube double sub", new IntakeFromDoubleSubstation(elevatorSys, handSys, false, GamePieceType.CUBE));
+    // AUTONOMOUS_ACTION_MAP.put("stow", new StowElevatorIntakeAssembly(elevatorSys, handSys, false));
   }
 
   private void configureRobotManager() {
@@ -173,6 +177,7 @@ public class RobotContainer {
         "Roman Abrahamson"
         )
       );
+      robotConfig.setLogFilePaths("/media/sda2/", "");
    // robotConfig.setAutoPaths(new BreakerAutoPath("Demo Path", new DemoPath(drivetrainSys, visionSys, imuSys)));
     BreakerRobotManager.setup(drivetrainSys, robotConfig);
   }

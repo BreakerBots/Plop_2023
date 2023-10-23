@@ -74,6 +74,8 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
 
   private final DutyCycleOut rollerDutyCycleRequest;
   private final VoltageOut wristVoltageRequest;
+
+  private final boolean bypassRollerSafty;
   public Hand() {
     wristMotor = new TalonFX(HandConstants.WRIST_ID);
     rollerMotor = new TalonFX(HandConstants.ROLLER_ID);
@@ -115,6 +117,8 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
 
     rollerDutyCycleRequest = new DutyCycleOut(0.0, false, false);
     wristVoltageRequest = new VoltageOut(0.0, false, false);
+
+    bypassRollerSafty = true;
     BreakerLog.getInstance().registerLogable("Hand", this);
   }
 
@@ -288,21 +292,21 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
   @Override
   public void periodic() {
     calculateAndApplyPIDF();
-    // if (DriverStation.isEnabled() && wristControlState == WristControlState.SEEKING) {
-    //   if (hasGamePiece() && rollerState.getRollerStateType() != RollerStateType.EXTAKEING) {
-    //     if (hasCone()) {
-    //       rollerGrippCone();
-    //     } else {
-    //       rollerGrippCube();
-    //     }
-    //   } else if (!hasGamePiece() && (wristGoalType == WristGoalType.STOW || wristGoalType == WristGoalType.UNKNOWN)) {
-    //     stopRoller();
-    //   }
-    //   calculateAndApplyPIDF();
-    // } else {
-    //   // privateSetWristGoal(WristGoalType.UNKNOWN, getWristRotation());
-    //   // stopRoller();
-    // }
+    if (DriverStation.isEnabled() && wristControlState == WristControlState.SEEKING) {
+      if (hasGamePiece() && rollerState.getRollerStateType() != RollerStateType.EXTAKEING) {
+        if (hasCone()) {
+          rollerGrippCone();
+        } else {
+          rollerGrippCube();
+        }
+      } else if (!hasGamePiece() && !bypassRollerSafty && (wristGoalType == WristGoalType.STOW || wristGoalType == WristGoalType.UNKNOWN)) {
+        stopRoller();
+      }
+      calculateAndApplyPIDF();
+    } else {
+      // privateSetWristGoal(WristGoalType.UNKNOWN, getWristRotation());
+      // stopRoller();
+    }
 
     ControledGamePieceType curControledGamePieceType = getControledGamePieceType();
     if (curControledGamePieceType != prevControledGamePieceType) {

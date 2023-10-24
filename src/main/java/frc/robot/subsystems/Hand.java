@@ -111,7 +111,7 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
     coneTOF.setRangingMode(RangingMode.Short, 999);
     coneTOF.setRangeOfInterest(9,9,11,11);
 
-    wristGoal = Rotation2d.fromDegrees(90.0); //getWristRotation();
+    wristGoal = getWristRotation();
     wristGoalType = WristGoalType.UNKNOWN;
     prevControledGamePieceType = ControledGamePieceType.NONE;
 
@@ -206,28 +206,28 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
   }
 
   public void rollerIntakeCone() {
-    if (wristGoalType == WristGoalType.PICKUP && !hasGamePiece()) {
+    if ((wristGoalType == WristGoalType.PICKUP && !hasGamePiece()) || bypassRollerSafty) {
       rollerState = RollerState.INTAKEING_CONE;
       setRollerMotor(HandConstants.INTAKE_CONE_DUTY_CYCLE, HandConstants.INTAKE_CONE_CURENT_LIMIT);
     }
   }
 
   public void rollerIntakeCube() {
-    if (wristGoalType == WristGoalType.PICKUP && !hasGamePiece()) {
+    if ((wristGoalType == WristGoalType.PICKUP && !hasGamePiece()) || bypassRollerSafty) {
       rollerState = RollerState.INTAKEING_CUBE;
       setRollerMotor(HandConstants.INTAKE_CUBE_DUTY_CYCLE, HandConstants.INTAKE_CUBE_CURENT_LIMIT);
     }
   }
 
   public void rollerExtakeCone() {
-    if ((wristGoalType != WristGoalType.STOW || wristGoalType != WristGoalType.UNKNOWN) && getControledGamePieceType() == ControledGamePieceType.CONE) {
+    if ((wristGoalType != WristGoalType.STOW && wristGoalType != WristGoalType.UNKNOWN) && getControledGamePieceType() == ControledGamePieceType.CONE) {
       rollerState = RollerState.EXTAKEING_CONE;
       setRollerMotor(HandConstants.EXTAKE_CONE_DUTY_CYCLE, HandConstants.EXTAKE_CONE_CURENT_LIMIT);
     }
   }
 
   public void rollerExtakeCube() {
-    if ((wristGoalType != WristGoalType.STOW || wristGoalType != WristGoalType.UNKNOWN) && getControledGamePieceType() == ControledGamePieceType.CUBE) {
+    if ((wristGoalType != WristGoalType.STOW && wristGoalType != WristGoalType.UNKNOWN) && getControledGamePieceType() == ControledGamePieceType.CUBE) {
       rollerState = RollerState.EXTAKEING_CUBE;
       setRollerMotor(HandConstants.EXTAKE_CUBE_DUTY_CYCLE, HandConstants.EXTAKE_CUBE_CURENT_LIMIT);
     }
@@ -268,7 +268,8 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
     pidOutput = -pid.calculate(getWristRotation().getRadians(), wristGoal.getRadians());
     State profiledSetpoint = pid.getSetpoint();
     ffOutput = -ff.calculate(profiledSetpoint.position, profiledSetpoint.velocity);
-    System.out.println(pidOutput + ffOutput);
+    
+    System.out.println(profiledSetpoint.velocity);
     wristMotor.setControl(wristVoltageRequest.withOutput(pidOutput + ffOutput));
   }
 
@@ -288,10 +289,14 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
     return wristGoal;
   }
 
+  public boolean isBypassRollerSafty() {
+      return bypassRollerSafty;
+  }
+
 
   @Override
   public void periodic() {
-    calculateAndApplyPIDF();
+    //calculateAndApplyPIDF();
     if (DriverStation.isEnabled() && wristControlState == WristControlState.SEEKING) {
       if (hasGamePiece() && rollerState.getRollerStateType() != RollerStateType.EXTAKEING) {
         if (hasCone()) {
@@ -299,13 +304,13 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
         } else {
           rollerGrippCube();
         }
-      } else if (!hasGamePiece() && !bypassRollerSafty && (wristGoalType == WristGoalType.STOW || wristGoalType == WristGoalType.UNKNOWN)) {
+      } else if (!hasGamePiece() && ((wristGoalType == WristGoalType.STOW && wristGoalType == WristGoalType.UNKNOWN))) {
         stopRoller();
       }
-      calculateAndApplyPIDF();
+      //calculateAndApplyPIDF();
     } else {
-      // privateSetWristGoal(WristGoalType.UNKNOWN, getWristRotation());
-      // stopRoller();
+      privateSetWristGoal(WristGoalType.UNKNOWN, getWristRotation());
+      stopRoller();
     }
 
     ControledGamePieceType curControledGamePieceType = getControledGamePieceType();

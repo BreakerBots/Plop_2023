@@ -224,6 +224,8 @@ public final class Constants {
       public static final double CALIBRATION_PAHSE_TIMEOUT = 7.5;
       public static final double HIGHT_TOLARENCE = 0.01;
 
+      public static final double ARB_TEST_HEIGHT = 0.6;
+
       //Command configs
       public static final double MOVE_TO_HEIGHT_COMMAND_TIMEOUT = 5.0;
 
@@ -285,6 +287,8 @@ public final class Constants {
       public static final double EJECT_COMMAND_CUTOFF_TIMEOUT = 4.0;
 
       public static final double WRIST_SET_GOAL_COMMAND_TIMEOUT_SEC = 3.0;
+
+      public static final double ARB_WRIST_TEST_ANG = 60;
   }
 
   public static class FieldConstants {

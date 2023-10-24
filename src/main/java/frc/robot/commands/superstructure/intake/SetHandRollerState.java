@@ -34,7 +34,7 @@ public class SetHandRollerState extends InstantCommand {
 
 
         BreakerLog.getInstance().logEvent("Intake roller start requested (request: EXTAKE)");
-        if ((hand.getWristGoalType() != WristGoalType.STOW && hand.getWristGoalType() != WristGoalType.UNKNOWN) || hand.isBypassRollerSafty()) {
+        if (hand.getWristGoalType() != WristGoalType.STOW && hand.getWristGoalType() != WristGoalType.UNKNOWN) {
           switch (controledGamePiece) {
             case CONE:
               hand.rollerExtakeCone();
@@ -62,7 +62,7 @@ public class SetHandRollerState extends InstantCommand {
 
 
         BreakerLog.getInstance().logEvent("Intake roller start requested (request: INTAKE_CONE)");
-        if ((hand.getWristGoalType() != WristGoalType.STOW && hand.getWristGoalType() != WristGoalType.UNKNOWN) || hand.isBypassRollerSafty()) {
+        if (hand.getWristGoalType() != WristGoalType.STOW && hand.getWristGoalType() != WristGoalType.UNKNOWN) {
           if (!hand.hasGamePiece()) {
             hand.rollerIntakeCone();
             BreakerLog.getInstance().logSuperstructureEvent("INTAKE ROLLER START REQUEST SUCESSSFULL, ROLLER STARTED INTAKEING (request: INTAKE_CONE)");
@@ -79,7 +79,7 @@ public class SetHandRollerState extends InstantCommand {
 
 
         BreakerLog.getInstance().logEvent("Intake roller start requested (request: INTAKE_CUBE)");
-        if ((hand.getWristGoalType() != WristGoalType.STOW && hand.getWristGoalType() != WristGoalType.UNKNOWN) || hand.isBypassRollerSafty()) {
+        if (hand.getWristGoalType() != WristGoalType.STOW && hand.getWristGoalType() != WristGoalType.UNKNOWN) {
           if (!hand.hasGamePiece()) {
             hand.rollerIntakeCube();
             BreakerLog.getInstance().logSuperstructureEvent("INTAKE ROLLER START REQUEST SUCESSSFULL, ROLLER STARTED INTAKEING  (request: INTAKE_CUBE)");

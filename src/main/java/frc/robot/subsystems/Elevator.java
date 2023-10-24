@@ -426,18 +426,18 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
     }
 
     public static enum ElevatorTargetState {
-        PLACE_HYBRID(0.0),
-        PLACE_CONE_MID(0.0),
-        PLACE_CONE_HIGH(0.0),
-        PLACE_CUBE_MID(0.0),
-        PLACE_CUBE_HIGH(0.0),
-        PICKUP_GROUND_CONE(0.0),
-        PICKUP_GROUND_CUBE(0.0),
-        PICKUP_SINGLE_SUBSTATION_CONE(0.0),
-        PICKUP_SINGLE_SUBSTATION_CUBE(0.0),
-        PICKUP_DOUBLE_SUBSTATION_CONE(0.0),
-        PICKUP_DOUBLE_SUBSTATION_CUBE(0.0),
-        ARB_TEST_HEIGHT(0.6),
+        PLACE_HYBRID(ElevatorConstants.ARB_TEST_HEIGHT),
+        PLACE_CONE_MID(ElevatorConstants.ARB_TEST_HEIGHT),
+        PLACE_CONE_HIGH(ElevatorConstants.ARB_TEST_HEIGHT),
+        PLACE_CUBE_MID(ElevatorConstants.ARB_TEST_HEIGHT),
+        PLACE_CUBE_HIGH(ElevatorConstants.ARB_TEST_HEIGHT),
+        PICKUP_GROUND_CONE(ElevatorConstants.ARB_TEST_HEIGHT),
+        PICKUP_GROUND_CUBE(ElevatorConstants.ARB_TEST_HEIGHT),
+        PICKUP_SINGLE_SUBSTATION_CONE(ElevatorConstants.ARB_TEST_HEIGHT),
+        PICKUP_SINGLE_SUBSTATION_CUBE(ElevatorConstants.ARB_TEST_HEIGHT),
+        PICKUP_DOUBLE_SUBSTATION_CONE(ElevatorConstants.ARB_TEST_HEIGHT),
+        PICKUP_DOUBLE_SUBSTATION_CUBE(ElevatorConstants.ARB_TEST_HEIGHT),
+        ARB_TEST_HEIGHT(ElevatorConstants.ARB_TEST_HEIGHT),
         STOW(ElevatorConstants.MIN_HEIGHT_GND_REL);
 
         private final double targetHeight;

@@ -4,27 +4,22 @@
 
 package frc.robot.commands.superstructure;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import frc.robot.GamePieceType;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.superstructure.intake.SetHandRollerState;
 import frc.robot.commands.superstructure.intake.SetHandRollerState.IntakeRollerStateRequest;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Hand;
-import frc.robot.subsystems.Elevator.ElevatorTargetState;
-
+import frc.robot.subsystems.Hand.RollerState;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class IntakeFromGround extends SetSuperstructureState {
-  /** Creates a new IntakeFromGround. */
-  public IntakeFromGround(Elevator elevator, Hand hand, boolean verifyIntakeAcutation, GamePieceType gamePieceType) {
-    super(
-      elevator, 
-      hand, 
-      gamePieceType.isCube() ? SuperstructurePositionState.PICKUP_GROUND_CUBE : SuperstructurePositionState.PICKUP_GROUND_CONE, 
-      gamePieceType.isCube() ? IntakeRollerStateRequest.INTAKE_CUBE : IntakeRollerStateRequest.INTAKE_CONE, 
-      verifyIntakeAcutation
+public class SetSuperstructureState extends SequentialCommandGroup {
+  /** Creates a new SetSuperstructureState. */
+  public SetSuperstructureState(Elevator elevator, Hand hand, SuperstructurePositionState superstructurePositionState, IntakeRollerStateRequest rollerStateRequest, boolean verifyIntakeAcutation) {
+    addCommands(
+      new SetSuperstructurePositionState(elevator, hand, superstructurePositionState, verifyIntakeAcutation),
+      new SetHandRollerState(hand, rollerStateRequest)
     );
   }
 }

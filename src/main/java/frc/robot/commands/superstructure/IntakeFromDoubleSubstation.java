@@ -15,12 +15,15 @@ import frc.robot.subsystems.Elevator.ElevatorTargetState;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class IntakeFromDoubleSubstation extends ParallelCommandGroup {
+public class IntakeFromDoubleSubstation extends SetSuperstructureState {
   /** Creates a new IntakeFromGround. */
   public IntakeFromDoubleSubstation(Elevator elevator, Hand hand, boolean verifyIntakeAcutation, GamePieceType gamePieceType) {
-    addCommands(
-      new SetSuperstructurePositionState(elevator, hand, gamePieceType.isCube() ? SuperstructurePositionState.PICKUP_DOUBLE_SUBSTATION_CUBE : SuperstructurePositionState.PICKUP_DOUBLE_SUBSTATION_CONE, verifyIntakeAcutation),
-      new SetHandRollerState(hand, gamePieceType.isCube() ? IntakeRollerStateRequest.INTAKE_CUBE : IntakeRollerStateRequest.INTAKE_CONE)
+    super(
+      elevator, 
+      hand, 
+      gamePieceType.isCube() ? SuperstructurePositionState.PICKUP_DOUBLE_SUBSTATION_CUBE : SuperstructurePositionState.PICKUP_DOUBLE_SUBSTATION_CONE, 
+      gamePieceType.isCube() ? IntakeRollerStateRequest.INTAKE_CUBE : IntakeRollerStateRequest.INTAKE_CONE, 
+      verifyIntakeAcutation
     );
   }
 }

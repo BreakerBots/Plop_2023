@@ -74,8 +74,6 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
 
   private final DutyCycleOut rollerDutyCycleRequest;
   private final VoltageOut wristVoltageRequest;
-
-  private final boolean bypassRollerSafty;
   public Hand() {
     wristMotor = new TalonFX(HandConstants.WRIST_ID);
     rollerMotor = new TalonFX(HandConstants.ROLLER_ID);
@@ -118,7 +116,6 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
     rollerDutyCycleRequest = new DutyCycleOut(0.0, false, false);
     wristVoltageRequest = new VoltageOut(0.0, false, false);
 
-    bypassRollerSafty = true;
     BreakerLog.getInstance().registerLogable("Hand", this);
   }
 
@@ -206,14 +203,14 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
   }
 
   public void rollerIntakeCone() {
-    if ((wristGoalType == WristGoalType.PICKUP && !hasGamePiece()) || bypassRollerSafty) {
+    if ((wristGoalType == WristGoalType.PICKUP && !hasGamePiece())) {
       rollerState = RollerState.INTAKEING_CONE;
       setRollerMotor(HandConstants.INTAKE_CONE_DUTY_CYCLE, HandConstants.INTAKE_CONE_CURENT_LIMIT);
     }
   }
 
   public void rollerIntakeCube() {
-    if ((wristGoalType == WristGoalType.PICKUP && !hasGamePiece()) || bypassRollerSafty) {
+    if ((wristGoalType == WristGoalType.PICKUP && !hasGamePiece())) {
       rollerState = RollerState.INTAKEING_CUBE;
       setRollerMotor(HandConstants.INTAKE_CUBE_DUTY_CYCLE, HandConstants.INTAKE_CUBE_CURENT_LIMIT);
     }
@@ -289,10 +286,6 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
     return wristGoal;
   }
 
-  public boolean isBypassRollerSafty() {
-      return bypassRollerSafty;
-  }
-
 
   @Override
   public void periodic() {
@@ -304,10 +297,10 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
         } else {
           rollerGrippCube();
         }
-      } else if (!hasGamePiece() && ((wristGoalType == WristGoalType.STOW && wristGoalType == WristGoalType.UNKNOWN))) {
+      } else if (!hasGamePiece() && ((wristGoalType == WristGoalType.STOW || wristGoalType == WristGoalType.UNKNOWN))) {
         stopRoller();
       }
-      //calculateAndApplyPIDF();
+      calculateAndApplyPIDF();
     } else {
       privateSetWristGoal(WristGoalType.UNKNOWN, getWristRotation());
       stopRoller();
@@ -396,17 +389,17 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
   }
 
   public static enum WristGoal{
-    PLACE_HYBRID(WristGoalType.PLACE, Rotation2d.fromDegrees(0)),
-    PLACE_CONE_MID(WristGoalType.PLACE, Rotation2d.fromDegrees(0)),
-    PLACE_CONE_HIGH(WristGoalType.PLACE, Rotation2d.fromDegrees(0)),
-    PLACE_CUBE_MID(WristGoalType.PLACE, Rotation2d.fromDegrees(0)),
-    PLACE_CUBE_HIGH(WristGoalType.PLACE, Rotation2d.fromDegrees(0)),
-    PICKUP_GROUND_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(0)),
-    PICKUP_GROUND_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(0)),
-    PICKUP_SINGLE_SUBSTATION_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(0)),
-    PICKUP_SINGLE_SUBSTATION_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(0)),
-    PICKUP_DOUBLE_SUBSTATION_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(0)),
-    PICKUP_DOUBLE_SUBSTATION_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(0)),
+    PLACE_HYBRID(WristGoalType.PLACE, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
+    PLACE_CONE_MID(WristGoalType.PLACE, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
+    PLACE_CONE_HIGH(WristGoalType.PLACE, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
+    PLACE_CUBE_MID(WristGoalType.PLACE, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
+    PLACE_CUBE_HIGH(WristGoalType.PLACE, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
+    PICKUP_GROUND_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
+    PICKUP_GROUND_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
+    PICKUP_SINGLE_SUBSTATION_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
+    PICKUP_SINGLE_SUBSTATION_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
+    PICKUP_DOUBLE_SUBSTATION_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
+    PICKUP_DOUBLE_SUBSTATION_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
     STOW(WristGoalType.STOW, Rotation2d.fromDegrees(90));
 
         private final Rotation2d goalAngle;

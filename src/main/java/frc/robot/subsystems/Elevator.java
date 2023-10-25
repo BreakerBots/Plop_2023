@@ -105,7 +105,7 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
        // leftConfig.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = ElevatorConstants.MIN_HEIGHT_ROBOT_REL;
        // leftConfig.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
 
-        leftConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;//Break
+        leftConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         leftConfig.CurrentLimits.SupplyCurrentLimit = ElevatorConstants.SUPPLY_CUR_LIMIT;
         leftConfig.CurrentLimits.SupplyTimeThreshold = ElevatorConstants.SUPPLY_CUR_LIMIT_TIME;
         leftConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -114,7 +114,7 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
         leftMotor.getConfigurator().apply(leftConfig);
 
         TalonFXConfiguration rightConfig = new TalonFXConfiguration();
-        rightConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;//Break
+        rightConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         rightConfig.CurrentLimits.SupplyCurrentLimit = ElevatorConstants.SUPPLY_CUR_LIMIT;
         rightConfig.CurrentLimits.SupplyTimeThreshold = ElevatorConstants.SUPPLY_CUR_LIMIT_TIME;
         rightConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -428,14 +428,14 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
     public static enum ElevatorTargetState {
         PLACE_HYBRID(ElevatorConstants.ARB_TEST_HEIGHT),
         PLACE_CONE_MID(ElevatorConstants.ARB_TEST_HEIGHT),
-        PLACE_CONE_HIGH(ElevatorConstants.ARB_TEST_HEIGHT),
+        PLACE_CONE_HIGH(ElevatorConstants.MAX_HEIGHT_GND_REL - 0.01),
         PLACE_CUBE_MID(ElevatorConstants.ARB_TEST_HEIGHT),
         PLACE_CUBE_HIGH(ElevatorConstants.ARB_TEST_HEIGHT),
-        PICKUP_GROUND_CONE(ElevatorConstants.ARB_TEST_HEIGHT),
-        PICKUP_GROUND_CUBE(ElevatorConstants.ARB_TEST_HEIGHT),
+        PICKUP_GROUND_CONE(ElevatorConstants.MIN_HEIGHT_GND_REL),
+        PICKUP_GROUND_CUBE(ElevatorConstants.MIN_HEIGHT_GND_REL),
         PICKUP_SINGLE_SUBSTATION_CONE(ElevatorConstants.ARB_TEST_HEIGHT),
         PICKUP_SINGLE_SUBSTATION_CUBE(ElevatorConstants.ARB_TEST_HEIGHT),
-        PICKUP_DOUBLE_SUBSTATION_CONE(ElevatorConstants.ARB_TEST_HEIGHT),
+        PICKUP_DOUBLE_SUBSTATION_CONE(1.02),
         PICKUP_DOUBLE_SUBSTATION_CUBE(ElevatorConstants.ARB_TEST_HEIGHT),
         ARB_TEST_HEIGHT(ElevatorConstants.ARB_TEST_HEIGHT),
         STOW(ElevatorConstants.MIN_HEIGHT_GND_REL);

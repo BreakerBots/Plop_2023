@@ -394,13 +394,13 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
     PLACE_CONE_HIGH(WristGoalType.PLACE, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
     PLACE_CUBE_MID(WristGoalType.PLACE, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
     PLACE_CUBE_HIGH(WristGoalType.PLACE, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
-    PICKUP_GROUND_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
-    PICKUP_GROUND_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
+    PICKUP_GROUND_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(11.0)),
+    PICKUP_GROUND_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(-7.0)),
     PICKUP_SINGLE_SUBSTATION_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
     PICKUP_SINGLE_SUBSTATION_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
-    PICKUP_DOUBLE_SUBSTATION_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
+    PICKUP_DOUBLE_SUBSTATION_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(36.0)),
     PICKUP_DOUBLE_SUBSTATION_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
-    STOW(WristGoalType.STOW, Rotation2d.fromDegrees(90));
+    STOW(WristGoalType.STOW, Rotation2d.fromDegrees(80));
 
         private final Rotation2d goalAngle;
         private final WristGoalType goalType;

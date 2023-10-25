@@ -246,26 +246,26 @@ public final class Constants {
       public static final double WRIST_CURRENT_LIMIT_TIME = 0.5;
 
 
-      public static final double WRIST_KP = 1.5;
+      public static final double WRIST_KP = 2.5;
       public static final double WRIST_KI = 0.00;
-      public static final double WRIST_KD = 0.00;
+      public static final double WRIST_KD = 0.0;
 
       //Feedfoward Constants
       public static final double WRIST_KS = 0.00;
-      public static final double WRIST_KG = 0.21;
-      public static final double WRIST_KV = 1.84;//1.84
+      public static final double WRIST_KG = 0.22;
+      public static final double WRIST_KV = 0.4;//1.84
       public static final double WRIST_KA = 0.25;
 
       //Trapezodial Profile Constants
-     public static final double WRIST_MAX_VELOCITY_RADS = 1;
-     public static final double WRIST_MAX_ACCELERATION_RADS_PER_SEC = 10.0;
+     public static final double WRIST_MAX_VELOCITY_RADS = 2;
+     public static final double WRIST_MAX_ACCELERATION_RADS_PER_SEC = 4.0;
 
       // Roller state constants
-      public static final double INTAKE_CONE_DUTY_CYCLE = -0.5;
-      public static final int INTAKE_CONE_CURENT_LIMIT = 25;
+      public static final double INTAKE_CONE_DUTY_CYCLE = -0.2;
+      public static final int INTAKE_CONE_CURENT_LIMIT = 20;
 
-      public static final double INTAKE_CUBE_DUTY_CYCLE = 0.5;
-      public static final int INTAKE_CUBE_CURENT_LIMIT = 25;
+      public static final double INTAKE_CUBE_DUTY_CYCLE = 0.2;
+      public static final int INTAKE_CUBE_CURENT_LIMIT = 20;
 
       public static final double INTAKE_CONE_GRIP_DUTY_CYCLE = -0.1;
       public static final int INTAKE_CONE_GRIP_CURENT_LIMIT = 5;

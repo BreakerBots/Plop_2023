@@ -61,6 +61,13 @@ public class BreakerMovementState2d {
     public Pose2d getPositionComponent() {
         return position;
     }
+
+    /**
+     * @return The velocity component of this BreakerMovementState2d
+     */
+    public Breaker3AxisForces getVelocityComponent() {
+        return positionDerivatives[0];
+    }
  
     public Breaker3AxisForces[] getDerivativesOfPosition() {
         return Arrays.copyOf(positionDerivatives, positionDerivatives.length);

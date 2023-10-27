@@ -109,7 +109,7 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
     coneTOF.setRangingMode(RangingMode.Short, 999);
     coneTOF.setRangeOfInterest(9,9,11,11);
 
-    wristGoal = getWristRotation();
+    wristGoal = WristGoal.STOW.getGoalAngle();
     wristGoalType = WristGoalType.UNKNOWN;
     prevControledGamePieceType = ControledGamePieceType.NONE;
 
@@ -231,12 +231,12 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
   }
 
   private void rollerGrippCone() {
-    setRollerMotor(HandConstants.INTAKE_CONE_GRIP_DUTY_CYCLE, HandConstants.INTAKE_CONE_GRIP_CURENT_LIMIT);
+    //setRollerMotor(HandConstants.INTAKE_CONE_GRIP_DUTY_CYCLE, HandConstants.INTAKE_CONE_GRIP_CURENT_LIMIT);
     rollerState = RollerState.GRIPPING_CONE;
   }
 
   private void rollerGrippCube() {
-    setRollerMotor(HandConstants.INTAKE_CUBE_GRIP_DUTY_CYCLE, HandConstants.INTAKE_CUBE_GRIP_CURENT_LIMIT);
+    //setRollerMotor(HandConstants.INTAKE_CUBE_GRIP_DUTY_CYCLE, HandConstants.INTAKE_CUBE_GRIP_CURENT_LIMIT);
     rollerState = RollerState.GRIPPING_CUBE;
   }
 
@@ -258,7 +258,7 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
   private void privateSetWristGoal(WristGoalType goalType, Rotation2d wristGoal) {
     this.wristGoal = wristGoal;
     this.wristGoalType = goalType;
-    
+    pid.reset(getWristRotation().getRadians(), getWristVelocity());
   }
  
   private void calculateAndApplyPIDF() {
@@ -276,6 +276,10 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
 
   public Rotation2d getWristRotation() {
     return Rotation2d.fromRotations(encoder.getAbsolutePosition().getValue());
+  }
+
+  public double getWristVelocity() {
+    return encoder.getVelocity().getValue() * (2*Math.PI);
   }
 
   public WristGoalType getWristGoalType() {
@@ -390,17 +394,17 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
 
   public static enum WristGoal{
     PLACE_HYBRID(WristGoalType.PLACE, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
-    PLACE_CONE_MID(WristGoalType.PLACE, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
-    PLACE_CONE_HIGH(WristGoalType.PLACE, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
-    PLACE_CUBE_MID(WristGoalType.PLACE, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
-    PLACE_CUBE_HIGH(WristGoalType.PLACE, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
+    PLACE_CONE_MID(WristGoalType.PLACE, Rotation2d.fromDegrees(67.3)),
+    PLACE_CONE_HIGH(WristGoalType.PLACE, Rotation2d.fromDegrees(53.0)),
+    PLACE_CUBE_MID(WristGoalType.PLACE, Rotation2d.fromDegrees(51.5)),
+    PLACE_CUBE_HIGH(WristGoalType.PLACE, Rotation2d.fromDegrees(67.5)),
     PICKUP_GROUND_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(11.0)),
     PICKUP_GROUND_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(-7.0)),
     PICKUP_SINGLE_SUBSTATION_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
     PICKUP_SINGLE_SUBSTATION_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
     PICKUP_DOUBLE_SUBSTATION_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(36.0)),
-    PICKUP_DOUBLE_SUBSTATION_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
-    STOW(WristGoalType.STOW, Rotation2d.fromDegrees(80));
+    PICKUP_DOUBLE_SUBSTATION_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(53.0)),
+    STOW(WristGoalType.STOW, Rotation2d.fromDegrees(90));
 
         private final Rotation2d goalAngle;
         private final WristGoalType goalType;

@@ -109,8 +109,9 @@ public class RobotContainer {
     //TEST
     // driverControllerSys.getButtonA().onTrue(new ElevatorMoveToHight(elevatorSys, ElevatorTargetState.ARB_TEST_HEIGHT));
     // driverControllerSys.getButtonB().onTrue(new ElevatorMoveToHight(elevatorSys, ElevatorTargetState.STOW));
-    driverControllerSys.getButtonX().onTrue(new IntakeFromGround(elevatorSys, handSys, false, GamePieceType.CUBE));
+    driverControllerSys.getButtonX().onTrue(new SetSuperstructurePositionState(elevatorSys, handSys, SuperstructurePositionState.PLACE_CUBE_MID, false));
     driverControllerSys.getButtonY().onTrue(new IntakeFromDoubleSubstation(elevatorSys, handSys, false, GamePieceType.CONE));
+    driverControllerSys.getButtonA().onTrue(new EjectGamePiece(handSys));
     driverControllerSys.getButtonB().onTrue(new StowElevatorIntakeAssembly(elevatorSys, handSys, false));
 
     //drive controls

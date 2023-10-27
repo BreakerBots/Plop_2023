@@ -252,16 +252,16 @@ public final class Constants {
 
       //Feedfoward Constants
       public static final double WRIST_KS = 0.00;
-      public static final double WRIST_KG = 0.22;
-      public static final double WRIST_KV = 0.4;//1.84
-      public static final double WRIST_KA = 0.25;
+      public static final double WRIST_KG = 0.64;//25
+      public static final double WRIST_KV = 0.45;//4
+      public static final double WRIST_KA = 0.02;//25
 
       //Trapezodial Profile Constants
      public static final double WRIST_MAX_VELOCITY_RADS = 2;
      public static final double WRIST_MAX_ACCELERATION_RADS_PER_SEC = 4.0;
 
       // Roller state constants
-      public static final double INTAKE_CONE_DUTY_CYCLE = -0.2;
+      public static final double INTAKE_CONE_DUTY_CYCLE = -0.3;
       public static final int INTAKE_CONE_CURENT_LIMIT = 20;
 
       public static final double INTAKE_CUBE_DUTY_CYCLE = 0.2;

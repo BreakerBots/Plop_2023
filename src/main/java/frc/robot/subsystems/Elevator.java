@@ -264,9 +264,9 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
         boolean fwd = getForwardLimitTriggered();
         boolean rev = getReverseLimitTriggered();
         if (rev && !revLimitTriggeredPrevCycle) {
-            leftMotor.setRotorPosition(ElevatorConstants.MIN_ROT);
+            leftMotor.setRotorPosition(ElevatorConstants.MIN_HEIGHT_ROBOT_REL);
         } else if (fwd && !fwdLimitTriggeredPrevCycle) {
-            leftMotor.setRotorPosition(ElevatorConstants.MAX_ROT);
+            leftMotor.setRotorPosition(ElevatorConstants.MAX_HEIGHT_ROBOT_REL);
         }
 
         if (fwd || rev) {
@@ -427,16 +427,16 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
 
     public static enum ElevatorTargetState {
         PLACE_HYBRID(ElevatorConstants.ARB_TEST_HEIGHT),
-        PLACE_CONE_MID(ElevatorConstants.ARB_TEST_HEIGHT),
-        PLACE_CONE_HIGH(ElevatorConstants.MAX_HEIGHT_GND_REL - 0.01),
-        PLACE_CUBE_MID(ElevatorConstants.ARB_TEST_HEIGHT),
-        PLACE_CUBE_HIGH(ElevatorConstants.ARB_TEST_HEIGHT),
+        PLACE_CONE_MID(0.655),
+        PLACE_CONE_HIGH(1.01),
+        PLACE_CUBE_MID(0.696),
+        PLACE_CUBE_HIGH(1.019),
         PICKUP_GROUND_CONE(ElevatorConstants.MIN_HEIGHT_GND_REL),
         PICKUP_GROUND_CUBE(ElevatorConstants.MIN_HEIGHT_GND_REL),
         PICKUP_SINGLE_SUBSTATION_CONE(ElevatorConstants.ARB_TEST_HEIGHT),
         PICKUP_SINGLE_SUBSTATION_CUBE(ElevatorConstants.ARB_TEST_HEIGHT),
         PICKUP_DOUBLE_SUBSTATION_CONE(1.02),
-        PICKUP_DOUBLE_SUBSTATION_CUBE(ElevatorConstants.ARB_TEST_HEIGHT),
+        PICKUP_DOUBLE_SUBSTATION_CUBE(0.944),
         ARB_TEST_HEIGHT(ElevatorConstants.ARB_TEST_HEIGHT),
         STOW(ElevatorConstants.MIN_HEIGHT_GND_REL);
 

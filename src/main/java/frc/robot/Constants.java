@@ -126,7 +126,7 @@ public final class Constants {
       public static final PIDController Y_PID = new PIDController(Y_PID_KP, Y_PID_KI, Y_PID_KD);
 
       //Theta-axis positional PID
-      public static final double THETA_PID_KP = 4.5;
+      public static final double THETA_PID_KP = 3.5;
       public static final double THETA_PID_KI = 0.0;
       public static final double THETA_PID_KD = 0.0;
       public static final PIDController THETA_PID = new PIDController(THETA_PID_KP, THETA_PID_KI, THETA_PID_KD);
@@ -267,11 +267,13 @@ public final class Constants {
       public static final double INTAKE_CUBE_DUTY_CYCLE = 0.2;//0.2
       public static final int INTAKE_CUBE_CURENT_LIMIT = 20;
 
-      public static final double INTAKE_CONE_GRIP_DUTY_CYCLE = -0.1;//-0.1
-      public static final int INTAKE_CONE_GRIP_CURENT_LIMIT = 5;
+      public static final double INTAKE_CONE_GRIP_TIMEOUT = 0.65;
+      public static final double INTAKE_CONE_GRIP_DUTY_CYCLE = -0.3;//-0.1
+      public static final int INTAKE_CONE_GRIP_CURENT_LIMIT = 20;//5
 
-      public static final double INTAKE_CUBE_GRIP_DUTY_CYCLE = 0.1;//0.1
-      public static final int INTAKE_CUBE_GRIP_CURENT_LIMIT = 5;
+      public static final double INTAKE_CUBE_GRIP_TIMEOUT = 0.65;
+      public static final double INTAKE_CUBE_GRIP_DUTY_CYCLE = 0.2;//0.1
+      public static final int INTAKE_CUBE_GRIP_CURENT_LIMIT = 20;//5
 
       public static final double EXTAKE_CONE_DUTY_CYCLE = 0.75;
       public static final int EXTAKE_CONE_CURENT_LIMIT = 25;

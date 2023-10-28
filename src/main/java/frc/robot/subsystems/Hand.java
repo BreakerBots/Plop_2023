@@ -15,6 +15,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.IsPROLicensedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
@@ -28,8 +29,11 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.counter.UpDownCounter;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.AllianceManager;
 import frc.robot.GamePieceType;
@@ -74,6 +78,8 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
 
   private final DutyCycleOut rollerDutyCycleRequest;
   private final VoltageOut wristVoltageRequest;
+
+  private Command gripGamePieceTimed;
   public Hand() {
     wristMotor = new TalonFX(HandConstants.WRIST_ID);
     rollerMotor = new TalonFX(HandConstants.ROLLER_ID);
@@ -116,7 +122,10 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
     rollerDutyCycleRequest = new DutyCycleOut(0.0, false, false);
     wristVoltageRequest = new VoltageOut(0.0, false, false);
 
+    gripGamePieceTimed = new GripGamePieceTimed();
+
     BreakerLog.getInstance().registerLogable("Hand", this);
+    
   }
 
   public Optional<Double> getConeOffset() {
@@ -296,10 +305,8 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
     //calculateAndApplyPIDF();
     if (DriverStation.isEnabled() && wristControlState == WristControlState.SEEKING) {
       if (hasGamePiece() && rollerState.getRollerStateType() != RollerStateType.EXTAKEING) {
-        if (hasCone()) {
-          rollerGrippCone();
-        } else {
-          rollerGrippCube();
+        if (!prevControledGamePieceType.hasGamePiece()) {
+          gripGamePieceTimed.schedule();
         }
       } else if (!hasGamePiece() && ((wristGoalType == WristGoalType.STOW || wristGoalType == WristGoalType.UNKNOWN))) {
         stopRoller();
@@ -323,6 +330,50 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
       }
     }
     prevControledGamePieceType = curControledGamePieceType;
+  }
+
+  private class GripGamePieceTimed extends CommandBase {
+    private double timeout = 0.0;
+    private final Timer timer;
+    public GripGamePieceTimed() {
+      timer = new Timer();
+    }
+
+    @Override
+    public void initialize() {
+      if (prevControledGamePieceType.hasGamePiece()) {
+        timeout = hasCone() ? HandConstants.INTAKE_CONE_GRIP_TIMEOUT : HandConstants.INTAKE_CUBE_GRIP_TIMEOUT;
+        timer.restart();
+      } else {
+        this.cancel();
+      }
+      
+    }
+
+    @Override
+    public void execute() {
+      if (hasGamePiece() && rollerState.getRollerStateType() != RollerStateType.EXTAKEING) {
+        if (hasCone()) {
+          rollerGrippCone();
+        } else {
+          rollerGrippCube();
+        }
+      }
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+      timer.stop();
+      timer.reset();
+      stopRoller();
+    }
+
+    @Override
+    public boolean isFinished() {
+      return timer.hasElapsed(timeout) || !hasGamePiece() || rollerState.getRollerStateType() == RollerStateType.EXTAKEING;
+    }
+
+    
   }
 
   public static enum RollerState {
@@ -393,7 +444,7 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
   }
 
   public static enum WristGoal{
-    PLACE_HYBRID(WristGoalType.PLACE, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
+    PLACE_HYBRID(WristGoalType.PLACE, Rotation2d.fromDegrees(90)),
     PLACE_CONE_MID(WristGoalType.PLACE, Rotation2d.fromDegrees(67.3)),
     PLACE_CONE_HIGH(WristGoalType.PLACE, Rotation2d.fromDegrees(53.0)),
     PLACE_CUBE_MID(WristGoalType.PLACE, Rotation2d.fromDegrees(51.5)),

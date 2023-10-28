@@ -63,8 +63,8 @@ public class TeleopManualScoreGamePiece extends ParallelRaceGroup {
             )
           )
         ),
-      new EjectGamePiece(hand),
-      new ConditionalCommand(new InstantCommand(() -> cmdEndMsgFail()), new InstantCommand(() -> cmdEndMsgSuccess()), hand::hasGamePiece)
+        new EjectGamePiece(hand),
+        new ConditionalCommand(new InstantCommand(() -> cmdEndMsgFail()), new InstantCommand(() -> cmdEndMsgSuccess()), hand::hasGamePiece)
       )
     );
   }

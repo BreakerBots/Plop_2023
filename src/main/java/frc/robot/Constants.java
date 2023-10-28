@@ -252,7 +252,7 @@ public final class Constants {
 
       //Feedfoward Constants
       public static final double WRIST_KS = 0.00;
-      public static final double WRIST_KG = 0.64;//25
+      public static final double WRIST_KG = 0.64;//64
       public static final double WRIST_KV = 0.45;//4
       public static final double WRIST_KA = 0.02;//25
 

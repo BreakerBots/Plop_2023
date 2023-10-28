@@ -272,7 +272,7 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
         percentSpeeds.omegaPercentOfMax = overrideTurnSupplier.getAsDouble();
       } else {
         ChassisSpeeds chassisSpeeds = percentSpeeds.toChassisSpeeds(baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
-        chassisSpeeds.omegaRadiansPerSecond = overrideHorizontalSupplier.getAsDouble();
+        chassisSpeeds.omegaRadiansPerSecond = overrideTurnSupplier.getAsDouble();
         percentSpeeds = new ChassisPercentSpeeds(chassisSpeeds, baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
       }
     }

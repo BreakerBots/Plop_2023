@@ -44,6 +44,9 @@ public class TeleopManualScoreGamePiece extends ParallelRaceGroup {
   public TeleopManualScoreGamePiece(NodeHeight targeNodeHeight, BreakerXboxController driverController, Elevator elevator, Hand hand) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
+    this.hand = hand;
+    this.driverController = driverController;
+    this.targeNodeHeight = targeNodeHeight;
     addCommands(
       new WaitUntilCommand(ScoreingConstants.TELEOP_SCOREING_MANUAL_CMD_TIMEOUT)
       .andThen(
@@ -55,8 +58,8 @@ public class TeleopManualScoreGamePiece extends ParallelRaceGroup {
           new ParallelDeadlineGroup(
             new WaitUntilCommand(driverController.getButtonB()),
             new SequentialCommandGroup(
-              new SetSuperstructurePositionState(elevator, hand, getTargetState(), true),
-              new BreakerGamepadTimedRumbleCommand(driverController, 1.0, 1.0, 1.0)
+              new SetSuperstructurePositionState(elevator, hand, getTargetState(), true),//true
+              new BreakerGamepadTimedRumbleCommand(driverController, 3.0, 1.0, 1.0)
             )
           )
         ),

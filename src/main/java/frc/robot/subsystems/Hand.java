@@ -231,12 +231,12 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
   }
 
   private void rollerGrippCone() {
-    //setRollerMotor(HandConstants.INTAKE_CONE_GRIP_DUTY_CYCLE, HandConstants.INTAKE_CONE_GRIP_CURENT_LIMIT);
+    setRollerMotor(HandConstants.INTAKE_CONE_GRIP_DUTY_CYCLE, HandConstants.INTAKE_CONE_GRIP_CURENT_LIMIT);
     rollerState = RollerState.GRIPPING_CONE;
   }
 
   private void rollerGrippCube() {
-    //setRollerMotor(HandConstants.INTAKE_CUBE_GRIP_DUTY_CYCLE, HandConstants.INTAKE_CUBE_GRIP_CURENT_LIMIT);
+    setRollerMotor(HandConstants.INTAKE_CUBE_GRIP_DUTY_CYCLE, HandConstants.INTAKE_CUBE_GRIP_CURENT_LIMIT);
     rollerState = RollerState.GRIPPING_CUBE;
   }
 
@@ -271,7 +271,7 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
   }
 
   public boolean atWristGoal() {
-    return BreakerMath.epsilonEquals(wristGoal.getDegrees(), getWristRotation().getDegrees(), 0);
+    return BreakerMath.epsilonEquals(wristGoal.getDegrees(), getWristRotation().getDegrees(), 3.0);
   }
 
   public Rotation2d getWristRotation() {

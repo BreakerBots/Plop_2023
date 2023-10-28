@@ -30,45 +30,45 @@ public class OperatorControlPad {
     private final JoystickButton intakeDoubleSubstationCubeButton, intakeDoubleSubstationConeButton;
     private final JoystickButton elevatorStowButton;
     private final JoystickButton scrollClick;
-    private final JoystickButton ejectGamePieceButton, rollerExtakeButton;
+    private final JoystickButton ejectGamePieceButton;
     private final Trigger leftNodeSelectedTrigger, centerNodeSelectedTrigger, rightNodeSelectedTrigger;
     private final Trigger highNodeSelectedTrigger, midNodeSelectedTrigger, lowNodeSelectedTrigger;
     private final Trigger nodeHeightSelectedTrigger, nodeCoulmnSelectedTrigger;
     private final Trigger scoringCommandRequestTrigger, nodeGroupSelectedTrigger, inGroupNodeSelectedTrigger;
     public OperatorControlPad(int port) {
         hid = new GenericHID(OPERATOR_PAD_PORT);
-        leftNodeGroupButton = new JoystickButton(hid, 0);
-        centerNodeGroupButton = new JoystickButton(hid, 0);
-        rightNodeGroupButton = new JoystickButton(hid, 0);
+        leftNodeGroupButton = new JoystickButton(hid, 1);
+        centerNodeGroupButton = new JoystickButton(hid, 2);
+        rightNodeGroupButton = new JoystickButton(hid, 3);
 
-        leftHighNodeButton = new JoystickButton(hid, port);
-        leftMidNodeButton = new JoystickButton(hid, port);
-        leftLowNodeButton = new JoystickButton(hid, port);
+        leftHighNodeButton = new JoystickButton(hid, 6);
+        leftMidNodeButton = new JoystickButton(hid, 11);
+        leftLowNodeButton = new JoystickButton(hid, 16);
 
-        centerHighNodeButton = new JoystickButton(hid, port);
-        centerMidNodeButton = new JoystickButton(hid, port);
-        centerLowNodeButton = new JoystickButton(hid, port);
+        centerHighNodeButton = new JoystickButton(hid, 7);
+        centerMidNodeButton = new JoystickButton(hid, 12);
+        centerLowNodeButton = new JoystickButton(hid, 17);
 
-        rightHighNodeButton = new JoystickButton(hid, port);
-        rightMidNodeButton = new JoystickButton(hid, port);
-        rightLowNodeButton = new JoystickButton(hid, port);
+        rightHighNodeButton = new JoystickButton(hid, 8);
+        rightMidNodeButton = new JoystickButton(hid, 13);
+        rightLowNodeButton = new JoystickButton(hid, 18);
 
-        ejectGamePieceButton = new JoystickButton(hid, port);
-        rollerExtakeButton = new JoystickButton(hid, port);
+        ejectGamePieceButton = new JoystickButton(hid, 21);
+       // rollerExtakeButton = new JoystickButton(hid, );
 
         
-        elevatorStowButton = new JoystickButton(hid, port);
+        elevatorStowButton = new JoystickButton(hid, 20);
         
-        intakeGroundConeButton = new JoystickButton(hid, port);
-        intakeGroundCubeButton = new JoystickButton(hid, port);
+        intakeGroundConeButton = new JoystickButton(hid, 14);
+        intakeGroundCubeButton = new JoystickButton(hid, 15);
 
-        intakeSingleSubstationConeButton = new JoystickButton(hid, port);
-        intakeSingleSubstationCubeButton = new JoystickButton(hid, port);
+        intakeSingleSubstationConeButton = new JoystickButton(hid, 9);
+        intakeSingleSubstationCubeButton = new JoystickButton(hid, 10);
 
-        intakeDoubleSubstationConeButton = new JoystickButton(hid, port);
-        intakeDoubleSubstationCubeButton = new JoystickButton(hid, port);
+        intakeDoubleSubstationConeButton = new JoystickButton(hid, 4);
+        intakeDoubleSubstationCubeButton = new JoystickButton(hid, 5);
 
-        scrollClick = new JoystickButton(hid, port);
+        scrollClick = new JoystickButton(hid, 22);
 
       
         leftNodeSelectedTrigger = leftHighNodeButton.or(leftMidNodeButton).or(leftLowNodeButton);
@@ -170,11 +170,6 @@ public class OperatorControlPad {
     public JoystickButton getEjectGamePieceButton() {
         return ejectGamePieceButton;
     }
-
-    public JoystickButton getRollerExtakeButton() {
-        return rollerExtakeButton;
-    }
-
 
     public JoystickButton getScrollClick() {
         return scrollClick;

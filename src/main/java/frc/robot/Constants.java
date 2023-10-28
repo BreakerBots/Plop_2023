@@ -261,16 +261,16 @@ public final class Constants {
      public static final double WRIST_MAX_ACCELERATION_RADS_PER_SEC = 4.0;
 
       // Roller state constants
-      public static final double INTAKE_CONE_DUTY_CYCLE = -0.3;
+      public static final double INTAKE_CONE_DUTY_CYCLE = -0.3;//-0.3
       public static final int INTAKE_CONE_CURENT_LIMIT = 20;
 
-      public static final double INTAKE_CUBE_DUTY_CYCLE = 0.2;
+      public static final double INTAKE_CUBE_DUTY_CYCLE = 0.2;//0.2
       public static final int INTAKE_CUBE_CURENT_LIMIT = 20;
 
-      public static final double INTAKE_CONE_GRIP_DUTY_CYCLE = -0.1;
+      public static final double INTAKE_CONE_GRIP_DUTY_CYCLE = -0.1;//-0.1
       public static final int INTAKE_CONE_GRIP_CURENT_LIMIT = 5;
 
-      public static final double INTAKE_CUBE_GRIP_DUTY_CYCLE = 0.1;
+      public static final double INTAKE_CUBE_GRIP_DUTY_CYCLE = 0.1;//0.1
       public static final int INTAKE_CUBE_GRIP_CURENT_LIMIT = 5;
 
       public static final double EXTAKE_CONE_DUTY_CYCLE = 0.75;

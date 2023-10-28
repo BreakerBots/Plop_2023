@@ -103,7 +103,7 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
     rollerState = RollerState.NEUTRAL;
     wristControlState = WristControlState.SEEKING;
 
-    encoder = BreakerCANCoderFactory.createCANCoder(HandConstants.WRIST_ENCODER_ID, AbsoluteSensorRangeValue.Signed_PlusMinusHalf, -0.414551, SensorDirectionValue.Clockwise_Positive);
+    encoder = BreakerCANCoderFactory.createCANCoder(HandConstants.WRIST_ENCODER_ID, AbsoluteSensorRangeValue.Signed_PlusMinusHalf, -0.413818, SensorDirectionValue.Clockwise_Positive);
 
     diagnostics = new SystemDiagnostics("Intake");
     diagnostics.addPhoenix6TalonFXs(rollerMotor, wristMotor);

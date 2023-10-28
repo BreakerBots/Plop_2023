@@ -257,8 +257,8 @@ public final class Constants {
       public static final double WRIST_KA = 0.02;//25
 
       //Trapezodial Profile Constants
-     public static final double WRIST_MAX_VELOCITY_RADS = 2;
-     public static final double WRIST_MAX_ACCELERATION_RADS_PER_SEC = 4.0;
+     public static final double WRIST_MAX_VELOCITY_RADS = 3;
+     public static final double WRIST_MAX_ACCELERATION_RADS_PER_SEC = 6.0;
 
       // Roller state constants
       public static final double INTAKE_CONE_DUTY_CYCLE = -0.3;//-0.3

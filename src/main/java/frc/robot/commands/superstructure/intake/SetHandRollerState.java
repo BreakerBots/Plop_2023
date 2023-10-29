@@ -34,7 +34,7 @@ public class SetHandRollerState extends InstantCommand {
 
 
         BreakerLog.getInstance().logEvent("Intake roller start requested (request: EXTAKE)");
-        if (hand.getWristGoalType() != WristGoalType.STOW && hand.getWristGoalType() != WristGoalType.UNKNOWN) {
+        if (hand.getWristGoalType() != WristGoalType.UNKNOWN) {
           switch (controledGamePiece) {
             case CONE:
               hand.rollerExtakeCone();

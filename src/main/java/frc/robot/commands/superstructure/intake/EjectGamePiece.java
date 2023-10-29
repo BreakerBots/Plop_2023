@@ -24,7 +24,7 @@ public class EjectGamePiece extends SequentialCommandGroup {
     addCommands(
       new InstantCommand(() -> {
        BreakerLog.getInstance().logSuperstructureEvent("GAME PIECE EJECTION PROCEDURE STARTED");
-        if (hand.getWristGoalType() == WristGoalType.STOW || hand.getWristGoalType() == WristGoalType.UNKNOWN) {
+        if (hand.getWristGoalType() == WristGoalType.UNKNOWN) {
           BreakerLog.getInstance().logEvent("GAME PIECE EJECTION PROCEDURE FAILED, WRIST NOT IN EJECTABLE POSITION");
           this.cancel();
         }

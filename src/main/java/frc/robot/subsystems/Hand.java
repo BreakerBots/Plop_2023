@@ -226,14 +226,14 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
   }
 
   public void rollerExtakeCone() {
-    if ((wristGoalType != WristGoalType.STOW && wristGoalType != WristGoalType.UNKNOWN) && getControledGamePieceType() == ControledGamePieceType.CONE) {
+    if ((wristGoalType != WristGoalType.UNKNOWN) && getControledGamePieceType() == ControledGamePieceType.CONE) {
       rollerState = RollerState.EXTAKEING_CONE;
       setRollerMotor(HandConstants.EXTAKE_CONE_DUTY_CYCLE, HandConstants.EXTAKE_CONE_CURENT_LIMIT);
     }
   }
 
   public void rollerExtakeCube() {
-    if ((wristGoalType != WristGoalType.STOW && wristGoalType != WristGoalType.UNKNOWN) && getControledGamePieceType() == ControledGamePieceType.CUBE) {
+    if ((wristGoalType != WristGoalType.UNKNOWN) && getControledGamePieceType() == ControledGamePieceType.CUBE) {
       rollerState = RollerState.EXTAKEING_CUBE;
       setRollerMotor(HandConstants.EXTAKE_CUBE_DUTY_CYCLE, HandConstants.EXTAKE_CUBE_CURENT_LIMIT);
     }

@@ -133,7 +133,7 @@ public class RobotContainer {
     driverControllerSys.getLeftBumper()
     .or(driverControllerSys.getRightBumper())
     .or(operatorControlPadSys.getElevatorStowButton())
-    .onTrue(new StowElevatorIntakeAssembly(elevatorSys, handSys, true));
+    .onTrue(new StowElevatorIntakeAssembly(elevatorSys, handSys, false));
 
     //intake from ground, (driver controls: X = cube, Y = cone) (operator controls: 14 = cube, 15 = cone)
     driverControllerSys.getButtonY().or(operatorControlPadSys.getIntakeGroundConeButton()).onTrue(new IntakeFromGround(elevatorSys, handSys, false, GamePieceType.CONE));

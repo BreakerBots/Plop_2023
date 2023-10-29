@@ -148,9 +148,17 @@ public final class Constants {
       .setSlowModeMultipliers(SLOW_MODE_LINEAR_MULTIPLIER, SLOW_MODE_TURN_MULTIPLIER);
 
       //heading snap constants
-      public static final double HEADING_SNAP_POSITIONAL_TOLERENCE_RAD = Math.toRadians(2.5);
-      public static final double HEADING_SNAP_VELOCITY_TOLERENCE_RAD_PER_SEC = Math.toRadians(1.5);
+      public static final double HEADING_SNAP_VEL_RAD_PER_SEC = 2*Math.PI;
+      public static final double HEADING_SNAP_ACCEL_RAD_PER_SEC_SQ = 10.0;
+      public static final double HEADING_SNAP_POSITIONAL_TOLERENCE_RAD = Math.toRadians(1.5);
+      public static final double HEADING_SNAP_VELOCITY_TOLERENCE_RAD_PER_SEC = Math.toRadians(9999);
       public static final double HEADING_SNAP_TIMEOUT_SEC = 5.0;
+      public static final double HEADING_SNAP_PID_KP = 3.5;
+      public static final double HEADING_SNAP_PID_KI = 0.0;
+      public static final double HEADING_SNAP_PID_KD = 0.0;
+      public static final Constraints HEADING_SNAP_PID_CONSTRAINTS = new Constraints(HEADING_SNAP_VEL_RAD_PER_SEC, HEADING_SNAP_ACCEL_RAD_PER_SEC_SQ);
+      public static final ProfiledPIDController HEADING_SNAP_PID = new ProfiledPIDController(HEADING_SNAP_PID_KP,  HEADING_SNAP_PID_KI,  HEADING_SNAP_PID_KD, HEADING_SNAP_PID_CONSTRAINTS);
+
 
       //Auto Balance constants
       public static final double BALANCE_ROLL_PID_KP = 0.04;
@@ -267,7 +275,7 @@ public final class Constants {
       public static final double INTAKE_CUBE_DUTY_CYCLE = 0.2;//0.2
       public static final int INTAKE_CUBE_CURENT_LIMIT = 20;
 
-      public static final double INTAKE_CONE_GRIP_TIMEOUT = 0.65;
+      public static final double INTAKE_CONE_GRIP_TIMEOUT = 1.5;
       public static final double INTAKE_CONE_GRIP_DUTY_CYCLE = -0.3;//-0.1
       public static final int INTAKE_CONE_GRIP_CURENT_LIMIT = 20;//5
 

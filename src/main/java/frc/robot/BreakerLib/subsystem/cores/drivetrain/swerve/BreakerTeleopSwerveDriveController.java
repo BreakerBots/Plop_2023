@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerGenericGamepad;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
 import frc.robot.BreakerLib.physics.vector.BreakerVector2;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDriveBase.BreakerSwerveDriveBasePercentSpeedRequest;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwervePercentSpeedRequest;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwerveVelocityRequest;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwervePercentSpeedRequest.ChassisPercentSpeeds;
@@ -36,7 +37,7 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
   private DoubleSupplier forwardSpeedPercentSupplier, horizontalSpeedPercentSupplier, turnSpeedPercentSupplier,
       overrideForwardSupplier, overrideHorizontalSupplier, overrideTurnSupplier;
   private AppliedModifierUnits overrideFwdUnits, overrideHorizUnits, overrideTurnUnits;
-  private BreakerSwervePercentSpeedRequest percentSpeedRequest;
+  private BreakerSwerveDriveBasePercentSpeedRequest percentSpeedRequest;
 
   /**
    * Creates a BreakerSwerveDriveController which only utilizes HID input.
@@ -53,7 +54,7 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
     forwardOverride = false;
     horizontalOverride = false;
     turnOverride = false;
-    percentSpeedRequest = new BreakerSwervePercentSpeedRequest(new ChassisPercentSpeeds());
+    percentSpeedRequest = new BreakerSwerveDriveBasePercentSpeedRequest(new ChassisPercentSpeeds());
     addRequirements(baseDrivetrain);
   }
 
@@ -78,7 +79,7 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
     forwardOverride = false;
     horizontalOverride = false;
     turnOverride = false;
-    percentSpeedRequest = new BreakerSwervePercentSpeedRequest(new ChassisPercentSpeeds());
+    percentSpeedRequest = new BreakerSwerveDriveBasePercentSpeedRequest(new ChassisPercentSpeeds());
     addRequirements(baseDrivetrain);
   }
 

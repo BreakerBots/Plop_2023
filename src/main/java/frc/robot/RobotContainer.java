@@ -153,7 +153,7 @@ public class RobotContainer {
     // operatorControlPadSys.getRollerExtakeButton().onTrue(new SetHandRollerState(handSys, IntakeRollerStateRequest.EXTAKE));
 
     //game piece eject, (operator controls: fire button)
-    //operatorControlPadSys.getEjectGamePieceButton().onTrue(new EjectGamePiece(handSys));
+    operatorControlPadSys.getEjectGamePieceButton().onTrue(new EjectGamePiece(handSys));
 
     //teleop autobalance
     driverControllerSys.getStartButton().toggleOnTrue(new TeleopBalanceChargingStation(drivetrainSys, imuSys, teleopDriveController, driverControllerSys, false, false));

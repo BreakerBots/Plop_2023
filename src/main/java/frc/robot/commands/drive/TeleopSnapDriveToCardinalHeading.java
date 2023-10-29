@@ -5,6 +5,7 @@
 package frc.robot.commands.drive;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -20,7 +21,7 @@ public class TeleopSnapDriveToCardinalHeading extends CommandBase {
   private SwerveCardinal cardinal;
   private Drive drive;
   private BreakerTeleopSwerveDriveController teleopDriveController;
-  private PIDController pid;
+  private ProfiledPIDController pid;
   private double maxAngVel;
   private final Timer timer = new Timer();
   public TeleopSnapDriveToCardinalHeading(SwerveCardinal cardinal, Drive drive, BreakerTeleopSwerveDriveController teleopDriveController) {
@@ -28,7 +29,8 @@ public class TeleopSnapDriveToCardinalHeading extends CommandBase {
     this.cardinal = cardinal;
     this.drive = drive;
     this.teleopDriveController = teleopDriveController;
-    pid = drive.getConfig().getPIDControllerTheta();
+    pid = DriveConstants.HEADING_SNAP_PID;
+    pid.enableContinuousInput(-Math.PI, Math.PI);
     maxAngVel = drive.getConfig().getMaxAngleVel();
   }
 
@@ -36,13 +38,14 @@ public class TeleopSnapDriveToCardinalHeading extends CommandBase {
   @Override
   public void initialize() {
     timer.restart();
+    pid.reset(drive.getOdometryPoseMeters().getRotation().getRadians(), drive.getFieldRelativeChassisSpeeds().omegaRadiansPerSecond);
+    teleopDriveController.overrideTurnInput(() -> {return pid.calculate(drive.getOdometryPoseMeters().getRotation().getRadians(), cardinal.getRotation().getRadians());}, AppliedModifierUnits.UNIT_PER_SEC);
     BreakerLog.getInstance().logEvent(String.format("TeleopSnapDriveToCardinalHeading instance started (goal: %s)", cardinal.toString()));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    teleopDriveController.overrideTurnInput(() -> {return pid.calculate(drive.getOdometryPoseMeters().getRotation().getRadians(), cardinal.getRotation().getRadians());}, AppliedModifierUnits.UNIT_PER_SEC);
     if (timer.hasElapsed(DriveConstants.HEADING_SNAP_TIMEOUT_SEC)) {
       this.cancel();
     }
@@ -53,6 +56,7 @@ public class TeleopSnapDriveToCardinalHeading extends CommandBase {
   public void end(boolean interrupted) {
     timer.stop();
     timer.reset();
+    teleopDriveController.endAllOverrides();
     if (interrupted) {
       BreakerLog.getInstance().logEvent(String.format("TeleopSnapDriveToCardinalHeading instance timed out or was cancled, command FAIL, (goal: %s)", cardinal.toString()));
     } else {
@@ -63,7 +67,8 @@ public class TeleopSnapDriveToCardinalHeading extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return BreakerMath.epsilonEquals(drive.getOdometryPoseMeters().getRotation().getRadians(), cardinal.getRotation().getRadians(), DriveConstants.HEADING_SNAP_POSITIONAL_TOLERENCE_RAD) && drive.getFieldRelativeChassisSpeeds().omegaRadiansPerSecond <= DriveConstants.HEADING_SNAP_VELOCITY_TOLERENCE_RAD_PER_SEC;
+    //System.out.printf("%.2f, %.2f\n", drive.getOdometryPoseMeters().getRotation().getRadians(), cardinal.getRotation().getRadians());
+    return BreakerMath.epsilonEquals(drive.getOdometryPoseMeters().getRotation().getRadians(), cardinal.getRotation().getRadians(), DriveConstants.HEADING_SNAP_POSITIONAL_TOLERENCE_RAD); //&& Math.abs(drive.getFieldRelativeChassisSpeeds().omegaRadiansPerSecond) <= DriveConstants.HEADING_SNAP_VELOCITY_TOLERENCE_RAD_PER_SEC;
   }
 
   public static enum SwerveCardinal {

@@ -58,7 +58,7 @@ public class TeleopManualScoreGamePiece extends ParallelRaceGroup {
           new ParallelDeadlineGroup(
             new WaitUntilCommand(driverController.getButtonB()),
             new SequentialCommandGroup(
-              new SetSuperstructurePositionState(elevator, hand, getTargetState(), false),//true
+              new SetSuperstructurePositionState(elevator, hand, getTargetState(), true),//true
               new BreakerGamepadTimedRumbleCommand(driverController, 3.0, 1.0, 1.0)
             )
           )

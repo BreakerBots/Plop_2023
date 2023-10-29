@@ -68,6 +68,7 @@ public class TeleopBalanceChargingStation extends CommandBase {
   public void end(boolean interrupted) {
     timer.stop();
     timer.reset();
+    driveController.endAllOverrides();
     if (interrupted) {
       BreakerLog.getInstance().logEvent("TeleopBalanceChargingStation command instance TIMED OUT or was CANCLED, command did not neccicaraly fail");
     } else if (endOnBalance) {

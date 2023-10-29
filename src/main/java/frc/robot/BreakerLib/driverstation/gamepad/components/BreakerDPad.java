@@ -41,7 +41,7 @@ public class BreakerDPad {
                 DefaultButtonAngles.BOTTOM_RIGHT,
                 DefaultButtonAngles.DOWN,
                 DefaultButtonAngles.BOTTOM_LEFT,
-                DefaultButtonAngles.BOTTOM_LEFT,
+                DefaultButtonAngles.LEFT,
                 DefaultButtonAngles.TOP_LEFT);
     }
 

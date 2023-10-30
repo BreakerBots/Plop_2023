@@ -180,7 +180,7 @@ public class RobotContainer {
           .addRobot(MiscConstants.ROBORIO_SN, "Plop"), 
         2023, 
         "v1",
-        "Roman Abrahamson"
+        "Roman Abrahamson, Sebastian Rueda"
         )
       );
       robotConfig.setLogFilePaths("/media/sda2/", "");
@@ -188,7 +188,7 @@ public class RobotContainer {
     BreakerRobotManager.setup(drivetrainSys, robotConfig);
   }
 
-    public static boolean globalCancle() {
+    public static boolean globalCancel() {
       return operatorControlPadSys.getScrollClick().getAsBoolean();
     }
 

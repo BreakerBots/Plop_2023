@@ -109,7 +109,7 @@ public class TeleopScoreGamePiece extends CommandBase {
 
   @Override
   public void execute() {
-      if (RobotContainer.globalCancle()) {
+      if (RobotContainer.globalCancel()) {
         BreakerLog.getInstance().logEvent("TeleopScoreGamePiece instance MANUALY CANCLED, command has ended");
         this.cancel();
       }

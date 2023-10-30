@@ -22,6 +22,7 @@ import frc.robot.GamePieceType;
 import frc.robot.Node;
 import frc.robot.Node.NodeType;
 import frc.robot.OperatorControlPad;
+import frc.robot.RobotContainer;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
@@ -98,12 +99,17 @@ public class TeleopScoreGamePiece extends CommandBase {
       BreakerLog.getInstance().logEvent("TeleopScoreGamePiece instance FAILED, no node selected");
       this.cancel();
     }
+
+    if (Objects.nonNull(scoreingSequince)) {
+      scoreingSequince.schedule();
+    }
+
   
   }
 
   @Override
   public void execute() {
-      if (operatorControlPad.getScrollClick().getAsBoolean()) {
+      if (RobotContainer.globalCancle()) {
         BreakerLog.getInstance().logEvent("TeleopScoreGamePiece instance MANUALY CANCLED, command has ended");
         this.cancel();
       }

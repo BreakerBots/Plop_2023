@@ -188,6 +188,10 @@ public class RobotContainer {
     BreakerRobotManager.setup(drivetrainSys, robotConfig);
   }
 
+    public static boolean globalCancle() {
+      return operatorControlPadSys.getScrollClick().getAsBoolean();
+    }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

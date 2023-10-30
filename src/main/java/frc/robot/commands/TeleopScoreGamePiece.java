@@ -164,7 +164,7 @@ public class TeleopScoreGamePiece extends CommandBase {
   public boolean isFinished() {
     if (Objects.nonNull(scoreingSequince)) {
       return scoreingSequince.isFinished();
-    }
+    } 
     return false;
   }
 }

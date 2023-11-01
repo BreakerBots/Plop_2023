@@ -161,14 +161,14 @@ public final class Constants {
 
 
       //Auto Balance constants
-      public static final double BALANCE_ROLL_PID_KP = 0.04;
+      public static final double BALANCE_ROLL_PID_KP = 0.02;
       public static final double BALANCE_ROLL_PID_KI = 0.0;
       public static final double BALANCE_ROLL_PID_KD = 0.0001;
       public static final PIDController BALANCE_ROLL_PID = new PIDController(BALANCE_ROLL_PID_KP, BALANCE_ROLL_PID_KI, BALANCE_ROLL_PID_KD);
       public static final double BALANCE_ROLL_POSITION_TOLERENCE = 2.0;
       public static final double BALANCE_ROLL_VELOSITY_TOLERENCE = 1.0;
 
-      public static final double BALANCE_PITCH_PID_KP = 0.04;
+      public static final double BALANCE_PITCH_PID_KP = 0.02;
       public static final double BALANCE_PITCH_PID_KI = 0.0;
       public static final double BALANCE_PITCH_PID_KD = 0.0001;
       public static final PIDController BALANCE_PITCH_PID = new PIDController(BALANCE_PITCH_PID_KP, BALANCE_PITCH_PID_KI, BALANCE_PITCH_PID_KD);
@@ -276,12 +276,12 @@ public final class Constants {
       public static final int INTAKE_CUBE_CURENT_LIMIT = 20;
 
       public static final double INTAKE_CONE_GRIP_TIMEOUT = 1.5;
-      public static final double INTAKE_CONE_GRIP_DUTY_CYCLE = -0.3;//-0.1
-      public static final int INTAKE_CONE_GRIP_CURENT_LIMIT = 20;//5
+      public static final double INTAKE_CONE_GRIP_DUTY_CYCLE = -0.1;//-0.1
+      public static final int INTAKE_CONE_GRIP_CURENT_LIMIT = 5;//5
 
       public static final double INTAKE_CUBE_GRIP_TIMEOUT = 0.65;
-      public static final double INTAKE_CUBE_GRIP_DUTY_CYCLE = 0.2;//0.1
-      public static final int INTAKE_CUBE_GRIP_CURENT_LIMIT = 20;//5
+      public static final double INTAKE_CUBE_GRIP_DUTY_CYCLE = 0.1;//0.1
+      public static final int INTAKE_CUBE_GRIP_CURENT_LIMIT = 5;//5
 
       public static final double EXTAKE_CONE_DUTY_CYCLE = 0.75;
       public static final int EXTAKE_CONE_CURENT_LIMIT = 25;

@@ -79,7 +79,7 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
   private final DutyCycleOut rollerDutyCycleRequest;
   private final VoltageOut wristVoltageRequest;
 
-  private Command gripGamePieceTimed;
+  //private Command gripGamePieceTimed;
   public Hand() {
     wristMotor = new TalonFX(HandConstants.WRIST_ID);
     rollerMotor = new TalonFX(HandConstants.ROLLER_ID);
@@ -122,7 +122,7 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
     rollerDutyCycleRequest = new DutyCycleOut(0.0, false, false);
     wristVoltageRequest = new VoltageOut(0.0, false, false);
 
-    gripGamePieceTimed = new GripGamePieceTimed();
+    //gripGamePieceTimed = new GripGamePieceTimed();
 
     BreakerLog.getInstance().registerLogable("Hand", this);
     
@@ -250,10 +250,10 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
   }
 
   public void stopRoller() {
-   // if (!hasGamePiece()) {
+    if (!hasGamePiece()) {
       rollerState = RollerState.NEUTRAL;
       rollerMotor.stopMotor();
-    //}
+    }
   }
 
   public RollerState getRollerState() {
@@ -303,8 +303,13 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
     //calculateAndApplyPIDF();
     if (DriverStation.isEnabled() && wristControlState == WristControlState.SEEKING) {
       if (hasGamePiece() && rollerState.getRollerStateType() != RollerStateType.EXTAKEING) {
-        if (!prevControledGamePieceType.hasGamePiece()) {
-          gripGamePieceTimed.schedule();
+        // if (!prevControledGamePieceType.hasGamePiece()) {
+        //   gripGamePieceTimed.schedule();
+        // }
+        if (hasCone()) {
+          rollerGrippCone();
+        } else {
+          rollerGrippCube();
         }
       } else if (!hasGamePiece() && ((wristGoalType == WristGoalType.STOW || wristGoalType == WristGoalType.UNKNOWN))) {
         stopRoller();
@@ -327,53 +332,53 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
         BreakerLog.getInstance().logSuperstructureEvent("INTKAE BEAM BREAKS ENTERED ERROR STATE");
       }
     }
-    prevControledGamePieceType = curControledGamePieceType;
+    //prevControledGamePieceType = curControledGamePieceType;
   }
 
-  private class GripGamePieceTimed extends CommandBase {
-    private double timeout = 0.0;
-    private final Timer timer;
-    public GripGamePieceTimed() {
-      timer = new Timer();
-    }
+  // private class GripGamePieceTimed extends CommandBase {
+  //   private double timeout = 0.0;
+  //   private final Timer timer;
+  //   public GripGamePieceTimed() {
+  //     timer = new Timer();
+  //   }
 
-    @Override
-    public void initialize() {
-      if (!prevControledGamePieceType.hasGamePiece()) {
-        timeout = hasCone() ? HandConstants.INTAKE_CONE_GRIP_TIMEOUT : HandConstants.INTAKE_CUBE_GRIP_TIMEOUT;
-        timer.restart();
-      } else {
-        this.cancel();
-      }
+  //   @Override
+  //   public void initialize() {
+  //     if (!prevControledGamePieceType.hasGamePiece()) {
+  //       timeout = hasCone() ? HandConstants.INTAKE_CONE_GRIP_TIMEOUT : HandConstants.INTAKE_CUBE_GRIP_TIMEOUT;
+  //       timer.restart();
+  //     } else {
+  //       this.cancel();
+  //     }
       
-    }
+  //   }
 
-    @Override
-    public void execute() {
-      if (hasGamePiece() && rollerState.getRollerStateType() != RollerStateType.EXTAKEING) {
-        if (hasCone()) {
-          rollerGrippCone();
-        } else {
-          rollerGrippCube();
-        }
-      }
-    }
+  //   @Override
+  //   public void execute() {
+  //     if (hasGamePiece() && rollerState.getRollerStateType() != RollerStateType.EXTAKEING) {
+  //       if (hasCone()) {
+  //         rollerGrippCone();
+  //       } else {
+  //         rollerGrippCube();
+  //       }
+  //     }
+  //   }
 
-    @Override
-    public void end(boolean interrupted) {
-      timer.stop();
-      timer.reset();
-      stopRoller();
-    }
+  //   @Override
+  //   public void end(boolean interrupted) {
+  //     timer.stop();
+  //     timer.reset();
+  //     stopRoller();
+  //   }
 
-    @Override
-    public boolean isFinished() {
-      System.out.println(timer.hasElapsed(timeout) || !hasGamePiece() || rollerState.getRollerStateType() == RollerStateType.EXTAKEING);
-      return timer.hasElapsed(timeout) || !hasGamePiece() || rollerState.getRollerStateType() == RollerStateType.EXTAKEING;
-    }
+  //   @Override
+  //   public boolean isFinished() {
+  //     System.out.println(timer.hasElapsed(timeout) || !hasGamePiece() || rollerState.getRollerStateType() == RollerStateType.EXTAKEING);
+  //     return timer.hasElapsed(timeout) || !hasGamePiece() || rollerState.getRollerStateType() == RollerStateType.EXTAKEING;
+  //   }
 
     
-  }
+  // }
 
   public static enum RollerState {
     INTAKEING_CONE(RollerStateType.INTAKEING, ControledGamePieceType.CONE),

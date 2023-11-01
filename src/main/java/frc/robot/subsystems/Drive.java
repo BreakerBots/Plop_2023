@@ -22,6 +22,7 @@ import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.B
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.BreakerSwerveCANcoder;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.ctre.BreakerTalonFXSwerveModuleDriveMotor.TalonFXControlOutputUnits;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.BreakerLib.util.math.BreakerMath.MirrorSymetryAxis2d;
 import frc.robot.Constants.FieldConstants;
@@ -35,6 +36,8 @@ import java.util.Optional;
 
 /** Add your docs here. */
 public class Drive extends BreakerSwerveDriveBase {
+
+    private static BreakerPigeon2 pigeon;
 
     private static TalonFX driveFL = new TalonFX(FL_DRIVE_ID, CANIVORE_1);
     private static TalonFX turnFL = new TalonFX(FL_TURN_ID, CANIVORE_1);
@@ -91,6 +94,8 @@ public class Drive extends BreakerSwerveDriveBase {
         BreakerDashboard.getDiagnosticsTab().add("BR Module", backRightModule);
 
         BreakerLog.getInstance().registerLogable("Drive", this);
+
+        this.pigeon = pigeon;
     }
 
     @Override
@@ -123,5 +128,13 @@ public class Drive extends BreakerSwerveDriveBase {
     @Override
     public void periodic() {
         field.setRobotPose(getOdometryPoseMeters());
+    }
+
+    @Override
+    public void toLog(LogTable table) {
+        // TODO Auto-generated method stub
+        super.toLog(table);
+        table.put("IMUPitchDeg", pigeon.getPitch());
+        table.put("IMURollDeg", pigeon.getRoll());
     }
 }

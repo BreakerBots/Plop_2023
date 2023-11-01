@@ -4,10 +4,12 @@
 
 package frc.robot.commands;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -37,16 +39,9 @@ import frc.robot.subsystems.Hand.ControledGamePieceType;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class TeleopManualScoreGamePiece extends ParallelRaceGroup {
-  /** Creates a new dsfsd. */
-  private NodeHeight targeNodeHeight;
-  private Hand hand;
   private BreakerXboxController driverController;
-  public TeleopManualScoreGamePiece(NodeHeight targeNodeHeight, BreakerXboxController driverController, Elevator elevator, Hand hand) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
-    this.hand = hand;
+  public TeleopManualScoreGamePiece(NodeHeight targetNodeHeight, BreakerXboxController driverController, Elevator elevator, Hand hand) {
     this.driverController = driverController;
-    this.targeNodeHeight = targeNodeHeight;
     addCommands(
       new WaitUntilCommand(ScoreingConstants.TELEOP_SCOREING_MANUAL_CMD_TIMEOUT)
       .andThen(
@@ -58,7 +53,8 @@ public class TeleopManualScoreGamePiece extends ParallelRaceGroup {
           new ParallelDeadlineGroup(
             new WaitUntilCommand(driverController.getButtonB()),
             new SequentialCommandGroup(
-              new SetSuperstructurePositionState(elevator, hand, getTargetState(), true),//true
+              new InstantCommand(() -> preEjectCheck(hand)),
+              new SetElevatorToScoreingPosition(elevator, hand, targetNodeHeight),
               new BreakerGamepadTimedRumbleCommand(driverController, 3.0, 1.0, 1.0)
             )
           )
@@ -69,34 +65,16 @@ public class TeleopManualScoreGamePiece extends ParallelRaceGroup {
     );
   }
 
-  private SuperstructurePositionState getTargetState() {
-    Optional<GamePieceType> gpt = hand.getControledGamePieceType().getGamePieceType();
-   if (gpt.isPresent()) {
-      switch (targeNodeHeight) {
-        case HIGH:
-          if (gpt.get() == GamePieceType.CONE) {
-            return SuperstructurePositionState.PLACE_CONE_HIGH;
-          }
-          return SuperstructurePositionState.PLACE_CUBE_HIGH;
-        case MID:
-          if (gpt.get() == GamePieceType.CONE) {
-            return SuperstructurePositionState.PLACE_CONE_MID;
-          }
-          return SuperstructurePositionState.PLACE_CUBE_MID;
-        case LOW:
-        default:
-          return SuperstructurePositionState.PLACE_HYBRID;
-      }
-    } else {
+  private void preEjectCheck(Hand hand) {
+    if (!hand.hasGamePiece()) {
       cancleCmd("TeleopManualScoreGamePiece instance FAILED, could not detect controled game piece");
-      return SuperstructurePositionState.STOW;
     }
   }
 
   private void cancleCmd(String msg) {
-    this.cancel();
     new TriplePulseRumble(driverController).schedule();
     BreakerLog.getInstance().logEvent(msg);
+    this.cancel();
   }
 
   private void cmdEndMsgFail() {
@@ -107,5 +85,54 @@ public class TeleopManualScoreGamePiece extends ParallelRaceGroup {
   private void cmdEndMsgSuccess() {
     new DoublePulseRumble(driverController).schedule();
     BreakerLog.getInstance().logEvent("TeleopManualScoreGamePiece instance SUCESFULL, post eject check passed, game piece sucessfully ejected");
+  }
+
+  private static class SetElevatorToScoreingPosition extends CommandBase {
+    private SetSuperstructurePositionState sspt;
+    private Elevator elevator;
+    private Hand hand;
+    private NodeHeight targetNodeHeight;
+    public SetElevatorToScoreingPosition(Elevator elevator, Hand hand, NodeHeight targetNodeHeight) {
+      this.elevator = elevator;
+      this.hand = hand;
+      this.targetNodeHeight = targetNodeHeight;
+    }
+
+    @Override
+    public void initialize() {
+      sspt = new SetSuperstructurePositionState(elevator, hand, getTargetState(), false);
+      sspt.schedule();
+    }
+
+    private SuperstructurePositionState getTargetState() {
+      Optional<GamePieceType> gpt = hand.getControledGamePieceType().getGamePieceType();
+     if (gpt.isPresent()) {
+        switch (targetNodeHeight) {
+          case HIGH:
+            if (gpt.get() == GamePieceType.CONE) {
+              return SuperstructurePositionState.PLACE_CONE_HIGH;
+            }
+            return SuperstructurePositionState.PLACE_CUBE_HIGH;
+          case MID:
+            if (gpt.get() == GamePieceType.CONE) {
+              return SuperstructurePositionState.PLACE_CONE_MID;
+            }
+            return SuperstructurePositionState.PLACE_CUBE_MID;
+          case LOW:
+          default:
+            return SuperstructurePositionState.PLACE_HYBRID;
+        }
+      } else {
+        return SuperstructurePositionState.STOW;
+      }
+    }
+
+    @Override
+    public boolean isFinished() {
+        if (Objects.nonNull(sspt)) {
+          return sspt.isFinished();
+        }
+        return true;
+    }
   }
 }

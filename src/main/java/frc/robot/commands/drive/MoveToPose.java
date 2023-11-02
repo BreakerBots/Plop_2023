@@ -36,6 +36,7 @@ public class MoveToPose extends CommandBase {
   @Override
   public void initialize() {
     timer.restart();
+    DriveConstants.BREAKER_HOLONOMIC_DRIVE_CONTROLLER.reset(drivetrain.getOdometryPoseMeters());
     BreakerLog.getInstance().logEvent(String.format("MoveToPose command instance STARTED (tgt: %s)", goal.toString()));
   }
 

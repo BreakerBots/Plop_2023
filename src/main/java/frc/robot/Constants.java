@@ -179,10 +179,15 @@ public final class Constants {
       public static final double AUTO_BALANCE_TIMEOUT_SEC = 15;
 
       //MoveToPose command constants
-      public static final PIDController BHDC_LINEAR_PID = new PIDController(Math.hypot(X_PID_KP, Y_PID_KP), Math.hypot(X_PID_KI, Y_PID_KI), Math.hypot(X_PID_KD, Y_PID_KD));
-      public static final double BDHC_MAX_ANGULAR_ACCEL = 3.0;
-      public static final ProfiledPIDController BHDC_THETA_PID = new ProfiledPIDController(THETA_PID_KP, THETA_PID_KI, THETA_PID_KD, new Constraints(MAX_ANGULAR_VEL, BDHC_MAX_ANGULAR_ACCEL));
+      public static final ProfiledPIDController BHDC_X_PID = new  ProfiledPIDController(X_PID_KP, X_PID_KI, X_PID_KD, new Constraints(0.0, 0.0));
+      public static final ProfiledPIDController BHDC_Y_PID = new  ProfiledPIDController(Y_PID_KP, Y_PID_KI, Y_PID_KD, new Constraints(0.0, 0.0));
+      public static final ProfiledPIDController BHDC_THETA_PID = new ProfiledPIDController(THETA_PID_KP, THETA_PID_KI, THETA_PID_KD, new Constraints(0.0, 0.0));
       public static final BreakerHolonomicDriveController BREAKER_HOLONOMIC_DRIVE_CONTROLLER = new BreakerHolonomicDriveController(BHDC_LINEAR_PID, BHDC_THETA_PID);
+      
+     
+      public static final double MOVE_TO_POSE_TIMEOUT_SEC = 25.0;
+      public static final BreakerSwerveVelocityRequest MOVE_TO_POSE_REQUEST = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DISABLED, new Translation2d());
+
       public static final double BHDC_POSE_TOL_X = 0.03;
       public static final double BHDC_POSE_TOL_Y = 0.03;
       public static final Rotation2d BHDC_POSE_TOL_T = Rotation2d.fromDegrees(3.0);
@@ -191,8 +196,6 @@ public final class Constants {
       public static final double BHDC_VEL_TOL_Y = 0.005;
       public static final double BHDC_VEL_TOL_T = Math.toRadians(5.0);
       public static final ChassisSpeeds BHDC_VELOCITY_TOLERENCE = new ChassisSpeeds(BHDC_VEL_TOL_X, BHDC_VEL_TOL_Y, BHDC_VEL_TOL_T);
-      public static final double MOVE_TO_POSE_TIMEOUT_SEC = 25.0;
-      public static final BreakerSwerveVelocityRequest MOVE_TO_POSE_REQUEST = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DISABLED, new Translation2d());
 
   }
 

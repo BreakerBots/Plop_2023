@@ -109,6 +109,10 @@ public class BreakerVector3 implements BreakerInterpolable<BreakerVector3> {
         return vectorRotation;
     }
 
+    public BreakerVector3 abs() {
+        return new BreakerVector3(Math.abs(x), Math.abs(y), Math.abs(z));
+    }
+
     /** 
      * @param rotation
      * @return BreakerVector3

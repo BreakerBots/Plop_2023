@@ -103,6 +103,10 @@ public class BreakerVector2 implements BreakerInterpolable<BreakerVector2> {
         return y;
     }
 
+    public BreakerVector2 abs() {
+        return new BreakerVector2(Math.abs(x), Math.abs(y));
+    }
+
     
     /** 
      * @param outher

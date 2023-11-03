@@ -280,8 +280,8 @@ public final class Constants {
       public static final int INTAKE_CONE_GRIP_CURENT_LIMIT = 5;//5
 
       public static final double INTAKE_CUBE_GRIP_TIMEOUT = 0.65;
-      public static final double INTAKE_CUBE_GRIP_DUTY_CYCLE = 0.1;//0.1
-      public static final int INTAKE_CUBE_GRIP_CURENT_LIMIT = 5;//5
+      public static final double INTAKE_CUBE_GRIP_DUTY_CYCLE = 0.07;//0.1
+      public static final int INTAKE_CUBE_GRIP_CURENT_LIMIT = 2;//5
 
       public static final double EXTAKE_CONE_DUTY_CYCLE = 0.75;
       public static final int EXTAKE_CONE_CURENT_LIMIT = 25;

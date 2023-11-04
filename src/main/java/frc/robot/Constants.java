@@ -182,7 +182,7 @@ public final class Constants {
       public static final ProfiledPIDController BHDC_X_PID = new  ProfiledPIDController(X_PID_KP, X_PID_KI, X_PID_KD, new Constraints(0.0, 0.0));
       public static final ProfiledPIDController BHDC_Y_PID = new  ProfiledPIDController(Y_PID_KP, Y_PID_KI, Y_PID_KD, new Constraints(0.0, 0.0));
       public static final ProfiledPIDController BHDC_THETA_PID = new ProfiledPIDController(THETA_PID_KP, THETA_PID_KI, THETA_PID_KD, new Constraints(0.0, 0.0));
-      public static final BreakerHolonomicDriveController BREAKER_HOLONOMIC_DRIVE_CONTROLLER = new BreakerHolonomicDriveController(BHDC_LINEAR_PID, BHDC_THETA_PID);
+      public static final BreakerHolonomicDriveController BREAKER_HOLONOMIC_DRIVE_CONTROLLER = new BreakerHolonomicDriveController(new PIDController(BALANCE_PITCH_PID_KP, BALANCE_PITCH_PID_KI, BALANCE_PITCH_PID_KD), BHDC_THETA_PID);
       
      
       public static final double MOVE_TO_POSE_TIMEOUT_SEC = 25.0;

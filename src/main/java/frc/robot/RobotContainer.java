@@ -37,6 +37,7 @@ import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameC
 import frc.robot.commands.TeleopManualScoreGamePiece;
 import frc.robot.commands.TeleopScoreGamePiece;
 import frc.robot.commands.auto.routines.DemoPath;
+import frc.robot.commands.auto.routines.NoVisionDemoPath;
 import frc.robot.commands.drive.TeleopBalanceChargingStation;
 import frc.robot.commands.drive.TeleopSnapDriveToCardinalHeading;
 import frc.robot.commands.drive.TeleopSnapDriveToCardinalHeading.SwerveCardinal;
@@ -199,6 +200,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return BreakerRobotManager.getSelectedAutoPath();
+    return new NoVisionDemoPath(drivetrainSys, elevatorSys, handSys, imuSys);//BreakerRobotManager.getSelectedAutoPath();
   }
 }

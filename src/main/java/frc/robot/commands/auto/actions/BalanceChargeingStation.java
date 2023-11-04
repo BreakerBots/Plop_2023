@@ -40,11 +40,12 @@ public class BalanceChargeingStation extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double robotRelX = DriveConstants.BALANCE_PITCH_PID.calculate(imu.getPitch(),  0.0);
-    double robotRelY = DriveConstants.BALANCE_ROLL_PID.calculate(imu.getRoll(), 0.0);
+    double robotRelX = DriveConstants.BALANCE_ROLL_PID.calculate(imu.getRoll(), 0.0);
+    double robotRelY = DriveConstants.BALANCE_PITCH_PID.calculate(imu.getPitch(), 0.0);
     ChassisSpeeds robotRelSpeeds = new ChassisSpeeds(robotRelX, robotRelY, 0.0);
-    ChassisSpeeds fieldRelSpds = BreakerMath.fromRobotRelativeSpeeds(robotRelSpeeds, drive.getOdometryPoseMeters().getRotation());
+    ChassisSpeeds fieldRelSpds = BreakerMath.fromRobotRelativeSpeeds(robotRelSpeeds, drive.getAbsoluteOdometryPoseMeters().getRotation());
     fieldRelSpds.vyMetersPerSecond = 0.0;
+    fieldRelSpds.vxMetersPerSecond *= -1;
     drive.applyRequest(DriveConstants.AUTO_BALANCE_REQUEST.withChassisSpeeds(fieldRelSpds));
     if (enableTimeout && timer.hasElapsed(DriveConstants.AUTO_BALANCE_TIMEOUT_SEC)) {
       this.cancel();

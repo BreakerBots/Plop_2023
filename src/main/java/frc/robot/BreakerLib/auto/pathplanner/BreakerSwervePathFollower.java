@@ -53,7 +53,7 @@ public class BreakerSwervePathFollower extends CommandBase {
     this.trajectory = trajectory;
     this.config = config;
     this.stopAtEnd = stopAtEnd;
-    velocityRequest = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DISABLED, new Translation2d());
+    velocityRequest = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.ROBOT_RELATIVE, SlowModeValue.DISABLED, new Translation2d());
     addRequirements(config.getDrivetrain());
     
     if (config.getUseAllianceColor() && trajectory.fromGUI && trajectory.getInitialPose().getX() > 8.27) {

@@ -93,6 +93,7 @@ public enum Node {
         C6(C6_BASE_ALLIGNMENT_POSE),
         C7(C7_BASE_ALLIGNMENT_POSE),
         C8(C8_BASE_ALLIGNMENT_POSE);
+        
         private Pose2d blueBaseAllignmentPose;
         private NodeCoulmn(Pose2d blueBaseAllignmentPose) {
             this.blueBaseAllignmentPose = blueBaseAllignmentPose;

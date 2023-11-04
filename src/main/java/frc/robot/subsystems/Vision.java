@@ -15,6 +15,8 @@ import frc.robot.BreakerLib.devices.vision.photon.BreakerPhotonVision;
 import frc.robot.BreakerLib.position.movement.BreakerMovementState2d;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerGenericVisionOdometer;
 import frc.robot.BreakerLib.position.odometry.vision.posefilter.BreakerVisionPoseFilterOdometer;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
 import frc.robot.Constants.VisionConstants;
 
 public class Vision extends SubsystemBase implements BreakerGenericVisionOdometer {
@@ -23,10 +25,11 @@ public class Vision extends SubsystemBase implements BreakerGenericVisionOdomete
   private BreakerPhotonVision vision;
   public Vision() {
     frontCam = new BreakerPhotonCamera(VisionConstants.FRONT_CAMERA_NAME, VisionConstants.FRONT_CAMERA_POSE);
-    leftCam  = new BreakerPhotonCamera(VisionConstants.LEFT_CAMERA_NAME, VisionConstants.LEFT_CAMERA_POSE);
-    rightCam = new BreakerPhotonCamera(VisionConstants.RIGHT_CAMERA_NAME, VisionConstants.RIGHT_CAMERA_POSE);
-    backCam = new BreakerPhotonCamera(VisionConstants.BACK_CAMERA_NAME, VisionConstants.BACK_CAMERA_POSE);
-    vision = new BreakerPhotonVision(VisionConstants.POSE_FILTER_TRUST_COEF, VisionConstants.POSE_FILTER_MAX_UNCERTANTY, VisionConstants.POSE_FILTER_DISTANCE_SCALE_FACTOR, VisionConstants.POSE_FILTER_MAX_DISTANCE, new BreakerPhotonCamera[]{frontCam, leftCam, rightCam, backCam}, VisionConstants.APRILTAG_FIELD_LAYOUT);
+    // leftCam  = new BreakerPhotonCamera(VisionConstants.LEFT_CAMERA_NAME, VisionConstants.LEFT_CAMERA_POSE);
+    // rightCam = new BreakerPhotonCamera(VisionConstants.RIGHT_CAMERA_NAME, VisionConstants.RIGHT_CAMERA_POSE);
+    // backCam = new BreakerPhotonCamera(VisionConstants.BACK_CAMERA_NAME, VisionConstants.BACK_CAMERA_POSE);
+    vision = new BreakerPhotonVision(VisionConstants.POSE_FILTER_TRUST_COEF, VisionConstants.POSE_FILTER_MAX_UNCERTANTY, VisionConstants.POSE_FILTER_DISTANCE_SCALE_FACTOR, VisionConstants.POSE_FILTER_MAX_DISTANCE, new BreakerPhotonCamera[]{frontCam/*,leftCam, rightCam, backCam*/}, VisionConstants.APRILTAG_FIELD_LAYOUT);
+    BreakerLog.getInstance().registerLogable("Vision", this);
   }
 
   @Override
@@ -62,6 +65,11 @@ public class Vision extends SubsystemBase implements BreakerGenericVisionOdomete
   @Override
   public boolean isAnyTargetVisable() {
     return vision.getBaseVisionOdometer().isAnyTargetVisable();
+  }
+
+  @Override
+  public void toLog(LogTable table) {
+      BreakerGenericVisionOdometer.super.toLog(table);
   }
 
 

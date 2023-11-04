@@ -70,7 +70,7 @@ public class RobotContainer {
     public static final BreakerXboxController driverControllerSys = new BreakerXboxController(0);
     private static final OperatorControlPad operatorControlPadSys = new OperatorControlPad(OperatorConstants.OPERATOR_PAD_PORT);
 
-    //private static final Vision visionSys = new Vision();
+    private static final Vision visionSys = new Vision();
     private static final BreakerPigeon2 imuSys = new BreakerPigeon2(MiscConstants.IMU_ID, MiscConstants.CANIVORE_1);
 
     private static final Drive drivetrainSys = new Drive(imuSys/*, visionSys*/);

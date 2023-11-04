@@ -291,7 +291,7 @@ public class BreakerMath {
             numer += valuesToAvg.get(i) * weight;
         }
 
-        for (int i = 0; i < valuesToAvg.get(i); i++) {
+        for (int i = 0; i < valuesToAvg.size(); i++) {
             denom += i < weights.size() ? weights.get(i) : 1.0;
         }
 

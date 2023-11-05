@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.GamePieceType;
 import frc.robot.Node;
+import frc.robot.Node.NodeHeight;
 import frc.robot.Node.NodeType;
 import frc.robot.OperatorControlPad;
 import frc.robot.RobotContainer;
@@ -73,19 +74,35 @@ public class TeleopScoreGamePiece extends CommandBase {
         if (selectedNode.getType().isGamePieceSupported(controledGamePiece.get())) {
 
           SuperstructurePositionState superTgt = getSuperstructureTarget();
-          Pose2d allignmentPose = selectedNode.getAllignmentPose();
+          Optional<Double> scoringConeOffsetY =  hand.getConeOffset();
+          Pose2d allignmentPose = selectedNode.getAllignmentPose().plus(new Transform2d(new Translation2d(0.0, (scoringConeOffsetY.isPresent() ? hand.getConeOffset().get() : 0.0)), new Rotation2d()));
+          Pose2d extensionPose = selectedNode.getExtensionAllignmentPose().plus(new Transform2d(new Translation2d(0.0, (scoringConeOffsetY.isPresent() ? hand.getConeOffset().get() : 0.0)), new Rotation2d()));
           BreakerLog.getInstance().logEvent(String.format("TeleopScoreGamePiece instance selected node indentified, scoreing sequince starting (node: %s) (superstructure tgt: %s) (allignment pose: %s)", selectedNode.toString(), superTgt.toString(), allignmentPose.toString()));
           new SinglePulseRumble(driverController).schedule();
-          Optional<Double> scoringConeOffsetY =  hand.getConeOffset();
-          scoreingSequince = 
-          new SequentialCommandGroup( 
-            new ParallelCommandGroup(
-              new MoveToPose(selectedNode.getAllignmentPose().plus(new Transform2d(new Translation2d(0.0, (scoringConeOffsetY.isPresent() ? hand.getConeOffset().get() : 0.0)), new Rotation2d())), ScoreingConstants.TELEOP_SCOREING_MOVE_TO_POSE_MAX_LINEAR_VEL, drivetrain), 
-              new SetSuperstructurePositionState(elevator, hand, superTgt, true)
-            ),
-            new ConditionalCommand(new EjectGamePiece(hand), new InstantCommand(this::cancel), () -> preEjectCheck(superTgt)),
-            new InstantCommand(this::postEjectCheck)
-            );
+          if (selectedNode.getHeight() != NodeHeight.LOW) {
+            scoreingSequince = 
+              new SequentialCommandGroup( 
+                new MoveToPose(extensionPose, drivetrain, ScoreingConstants.TELEOP_SCOREING_PRE_EXTEND_ALLIGN_LINEAR_CONSTRAINTS, ScoreingConstants.TELEOP_SCOREING_POST_EXTEND_ALLIGN_ANGULAR_CONSTRAINTS),
+                new SetSuperstructurePositionState(elevator, hand, superTgt, false),
+                new MoveToPose(allignmentPose, drivetrain, ScoreingConstants.TELEOP_SCOREING_POST_EXTEND_ALLIGN_CONSTRAINTS, ScoreingConstants.TELEOP_SCOREING_POST_EXTEND_ALLIGN_ANGULAR_CONSTRAINTS),
+                //new ConditionalCommand(new EjectGamePiece(hand), new InstantCommand(this::cancel), () -> preEjectCheck(superTgt)),
+                new EjectGamePiece(hand),
+                new InstantCommand(this::postEjectCheck)
+              );
+          } else {
+            scoreingSequince = 
+              new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                  new MoveToPose(allignmentPose, drivetrain, ScoreingConstants.TELEOP_SCOREING_PRE_EXTEND_ALLIGN_LINEAR_CONSTRAINTS, ScoreingConstants.TELEOP_SCOREING_PRE_EXTEND_ALLIGN_ANGULAR_CONSTRAINTS),
+                  new SetSuperstructurePositionState(elevator, hand, SuperstructurePositionState.PLACE_HYBRID, false)
+                ),
+                new EjectGamePiece(hand),
+                new InstantCommand(() -> new SetSuperstructurePositionState(elevator, hand, SuperstructurePositionState.STOW, false).schedule()),
+                new InstantCommand(this::postEjectCheck)
+
+
+              );
+          }
         } else {
           BreakerLog.getInstance().logEvent(String.format("TeleopScoreGamePiece instance FAILED, selected node type is not compatable with currently controled game piece (node: %s) (controled game piece: %s)", selectedNode.toString(), controledGamePiece.get().toString()));
           this.cancel();
@@ -115,16 +132,16 @@ public class TeleopScoreGamePiece extends CommandBase {
       }
   }
 
-  private boolean preEjectCheck(SuperstructurePositionState superTarget) {
-    boolean check = (elevator.atTargetHeight() && (elevator.getTargetHeightMeters() == superTarget.getElevatorTargetState().getTargetHeight())) && (hand.atWristGoal() && hand.getWristGoalAngle() == superTarget.getWristGoal().getGoalAngle()) && BreakerMath.epsilonEqualsPose2d(selectedNode.getAllignmentPose(), drivetrain.getOdometryPoseMeters(), DriveConstants.BHDC_POSE_TOLERENCE);
-    if (!check) {
-      BreakerLog.getInstance().logEvent("TeleopScoreGamePiece instance FAILED, game piece eject procedure pre init check failed, elevator or drive not at desired states");
-    } else {
-      BreakerLog.getInstance().logEvent("TeleopScoreGamePiece instance game piece eject procedure pre init check PASSED, begining eject");
-    }
-    return check;
+  // private boolean preEjectCheck(SuperstructurePositionState superTarget) {
+  //   boolean check = (elevator.atTargetHeight() && (elevator.getTargetHeightMeters() == superTarget.getElevatorTargetState().getTargetHeight())) && (hand.atWristGoal() && hand.getWristGoalAngle() == superTarget.getWristGoal().getGoalAngle()) && BreakerMath.epsilonEqualsPose2d(selectedNode.getAllignmentPose(), drivetrain.getOdometryPoseMeters(), DriveConstants.BHDC_POSE_TOLERENCE);
+  //   if (!check) {
+  //     BreakerLog.getInstance().logEvent("TeleopScoreGamePiece instance FAILED, game piece eject procedure pre init check failed, elevator or drive not at desired states");
+  //   } else {
+  //     BreakerLog.getInstance().logEvent("TeleopScoreGamePiece instance game piece eject procedure pre init check PASSED, begining eject");
+  //   }
+  //   return check;
 
-  }
+  // }
 
   private void postEjectCheck() {
     if (hand.hasGamePiece()) {

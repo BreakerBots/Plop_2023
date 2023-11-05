@@ -37,7 +37,7 @@ import java.util.Optional;
 /** Add your docs here. */
 public class Drive extends BreakerSwerveDriveBase {
 
-    private static BreakerPigeon2 pigeon;
+    private BreakerPigeon2 pigeon;
 
     private static TalonFX driveFL = new TalonFX(FL_DRIVE_ID, CANIVORE_1);
     private static TalonFX turnFL = new TalonFX(FL_TURN_ID, CANIVORE_1);
@@ -78,8 +78,8 @@ public class Drive extends BreakerSwerveDriveBase {
     private static Field2d field = new Field2d();
     
 
-    public Drive(BreakerPigeon2 pigeon/*, Vision vision*/) {
-        super(DRIVE_BASE_CONFIG, /*new BreakerSwerveOdometryConfig(vision, ENCODER_ODOMETRY_STANDARD_DEVATIONS, VISION_ODOMETRY_STANDARD_DEVATIONS), */ pigeon, frontLeftModule, frontRightModule, backLeftModule, backRightModule);
+    public Drive(BreakerPigeon2 pigeon, Vision vision) {
+        super(DRIVE_BASE_CONFIG, new BreakerSwerveOdometryConfig(vision, ENCODER_ODOMETRY_STANDARD_DEVATIONS, VISION_ODOMETRY_STANDARD_DEVATIONS), pigeon, frontLeftModule, frontRightModule, backLeftModule, backRightModule);
 
         BreakerDashboard.getMainTab().add(field);
         

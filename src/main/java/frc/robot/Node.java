@@ -71,8 +71,12 @@ public enum Node {
         return type;
     }
 
+    public Pose2d getExtensionAllignmentPose() {
+        return new Pose2d(coulmn.getBlueBaseAllignmentPose().getX() + height.getExtensionOffset() + type.getExtensionOffset(), coulmn.getBlueBaseAllignmentPose().getY(), coulmn.getBlueBaseAllignmentPose().getRotation());
+    }
+
     public Pose2d getAllignmentPose() {
-        return new Pose2d(coulmn.getBlueBaseAllignmentPose().getX() + height.getAllignmentOffset() + type.getAllignmentOffset(), coulmn.getBlueBaseAllignmentPose().getY(), coulmn.getBlueBaseAllignmentPose().getRotation());
+        return coulmn.getBlueBaseAllignmentPose();
     }
  
     public static Optional<Node> fromCoulmnAndHeight(NodeCoulmn tgtCoulmn, NodeHeight tgtHeight) {
@@ -115,16 +119,16 @@ public enum Node {
 
     public enum NodeHeight {
         LOW(0.0),
-        MID(0.0),
-        HIGH(0.0);
+        MID(0.70),
+        HIGH(0.70);
 
-        private double allignmentOffset;
-        private NodeHeight(double allignmentOffset) {
-            this.allignmentOffset = allignmentOffset;
+        private double extensionOffset;
+        private NodeHeight(double extensionOffset) {
+            this.extensionOffset = extensionOffset;
         }
 
-        public double getAllignmentOffset() {
-            return allignmentOffset;
+        public double getExtensionOffset() {
+            return extensionOffset;
         }
     }
 
@@ -132,13 +136,13 @@ public enum Node {
         HYBRID(0.0),
         CONE(0.0),
         CUBE(0.0);
-        private double allignmentOffset;
-        private NodeType(double allignmentOffset) {
-            this.allignmentOffset = allignmentOffset;
+        private double extensionOffset;
+        private NodeType(double extensionOffset) {
+            this.extensionOffset = extensionOffset;
         }
 
-        public double getAllignmentOffset() {
-            return allignmentOffset;
+        public double getExtensionOffset() {
+            return extensionOffset;
         }
 
         public boolean isGamePieceSupported(GamePieceType gamePieceType) {

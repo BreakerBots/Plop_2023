@@ -11,6 +11,7 @@ import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
@@ -22,13 +23,15 @@ public class MoveToPose extends CommandBase {
   /** Creates a new MoveToPose. */
   private Pose2d goal;
   private Drive drivetrain;
-  private double maxLinearVel;
+  private Constraints linearConstraints;
+  private Constraints angularConstraints;
   private final Timer timer = new Timer();
 
-  public MoveToPose(Pose2d goal, double maxLinearVel, Drive drivetrain) {
+  public MoveToPose(Pose2d goal, Drive drivetrain, Constraints linearConstraints, Constraints angularConstraints) {
     this.drivetrain = drivetrain;
     this.goal = goal;
-    this.maxLinearVel = maxLinearVel;
+    this.linearConstraints = linearConstraints;
+    this.angularConstraints = angularConstraints;
     addRequirements(drivetrain);
   }
 
@@ -36,14 +39,14 @@ public class MoveToPose extends CommandBase {
   @Override
   public void initialize() {
     timer.restart();
-    DriveConstants.BREAKER_HOLONOMIC_DRIVE_CONTROLLER.reset(drivetrain.getOdometryPoseMeters());
+    DriveConstants.BREAKER_HOLONOMIC_DRIVE_CONTROLLER.reset(drivetrain.getOdometryPoseMeters(), drivetrain.getFieldRelativeChassisSpeeds());
     BreakerLog.getInstance().logEvent(String.format("MoveToPose command instance STARTED (tgt: %s)", goal.toString()));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    ChassisSpeeds targetSpeeds = DriveConstants.BREAKER_HOLONOMIC_DRIVE_CONTROLLER.calculate(goal, drivetrain.getOdometryPoseMeters(), maxLinearVel);
+    ChassisSpeeds targetSpeeds = DriveConstants.BREAKER_HOLONOMIC_DRIVE_CONTROLLER.calculate(goal, drivetrain.getOdometryPoseMeters(), linearConstraints, angularConstraints);
     drivetrain.applyRequest(DriveConstants.MOVE_TO_POSE_REQUEST.withChassisSpeeds(targetSpeeds));
     if (timer.hasElapsed(DriveConstants.MOVE_TO_POSE_TIMEOUT_SEC)) {
       this.cancel();

@@ -35,6 +35,7 @@ public class OperatorControlPad {
     private final Trigger highNodeSelectedTrigger, midNodeSelectedTrigger, lowNodeSelectedTrigger;
     private final Trigger nodeHeightSelectedTrigger, nodeCoulmnSelectedTrigger;
     private final Trigger scoringCommandRequestTrigger, nodeGroupSelectedTrigger, inGroupNodeSelectedTrigger;
+    private final Trigger scoreManualOverrideButton;
     public OperatorControlPad(int port) {
         hid = new GenericHID(OPERATOR_PAD_PORT);
         leftNodeGroupButton = new JoystickButton(hid, 1);
@@ -54,7 +55,7 @@ public class OperatorControlPad {
         rightLowNodeButton = new JoystickButton(hid, 18);
 
         ejectGamePieceButton = new JoystickButton(hid, 21);
-       // rollerExtakeButton = new JoystickButton(hid, );
+        scoreManualOverrideButton = new JoystickButton(hid, 19);
 
         
         elevatorStowButton = new JoystickButton(hid, 20);
@@ -173,6 +174,10 @@ public class OperatorControlPad {
 
     public JoystickButton getScrollClick() {
         return scrollClick;
+    }
+
+    public Trigger getScoreManualOverrideButton() {
+        return scoreManualOverrideButton;
     }
 
     public Optional<Node> getSelectedScoringNode() {

@@ -433,9 +433,9 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
         PLACE_CUBE_HIGH(1.019),
         PICKUP_GROUND_CONE(ElevatorConstants.MIN_HEIGHT_GND_REL),
         PICKUP_GROUND_CUBE(ElevatorConstants.MIN_HEIGHT_GND_REL),
-        PICKUP_SINGLE_SUBSTATION_CONE(ElevatorConstants.ARB_TEST_HEIGHT),
-        PICKUP_SINGLE_SUBSTATION_CUBE(ElevatorConstants.ARB_TEST_HEIGHT),
-        PICKUP_DOUBLE_SUBSTATION_CONE(1.02),
+        PICKUP_SINGLE_SUBSTATION_CONE(0.281),
+        PICKUP_SINGLE_SUBSTATION_CUBE(0.512),
+        PICKUP_DOUBLE_SUBSTATION_CONE(1.046),
         PICKUP_DOUBLE_SUBSTATION_CUBE(0.944),
         ARB_TEST_HEIGHT(ElevatorConstants.ARB_TEST_HEIGHT),
         STOW(ElevatorConstants.MIN_HEIGHT_GND_REL);

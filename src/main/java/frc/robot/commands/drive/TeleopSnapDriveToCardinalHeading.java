@@ -22,7 +22,6 @@ public class TeleopSnapDriveToCardinalHeading extends CommandBase {
   private Drive drive;
   private BreakerTeleopSwerveDriveController teleopDriveController;
   private ProfiledPIDController pid;
-  private double maxAngVel;
   private final Timer timer = new Timer();
   public TeleopSnapDriveToCardinalHeading(SwerveCardinal cardinal, Drive drive, BreakerTeleopSwerveDriveController teleopDriveController) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -31,7 +30,6 @@ public class TeleopSnapDriveToCardinalHeading extends CommandBase {
     this.teleopDriveController = teleopDriveController;
     pid = DriveConstants.HEADING_SNAP_PID;
     pid.enableContinuousInput(-Math.PI, Math.PI);
-    maxAngVel = drive.getConfig().getMaxAngleVel();
   }
 
   // Called when the command is initially scheduled.

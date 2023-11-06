@@ -19,9 +19,11 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
@@ -257,7 +259,7 @@ public final class Constants {
       public static final double WRIST_CURRENT_LIMIT_TIME = 0.5;
 
 
-      public static final double WRIST_KP = 2.5;
+      public static final double WRIST_KP = 2.25;
       public static final double WRIST_KI = 0.00;
       public static final double WRIST_KD = 0.0;
 
@@ -280,7 +282,7 @@ public final class Constants {
 
       public static final double INTAKE_CONE_GRIP_TIMEOUT = 1.5;
       public static final double INTAKE_CONE_GRIP_DUTY_CYCLE = -0.1;//-0.1
-      public static final int INTAKE_CONE_GRIP_CURENT_LIMIT = 5;//5
+      public static final int INTAKE_CONE_GRIP_CURENT_LIMIT = 7;//5
 
       public static final double INTAKE_CUBE_GRIP_TIMEOUT = 0.65;
       public static final double INTAKE_CUBE_GRIP_DUTY_CYCLE = 0.07;//0.1
@@ -315,11 +317,10 @@ public final class Constants {
       public static final String RIGHT_CAMERA_NAME = "rightCam";
       public static final String BACK_CAMERA_NAME = "backCam";
 
-      public static final Transform3d FRONT_CAMERA_POSE = new Transform3d();
-      public static final Transform3d LEFT_CAMERA_POSE = new Transform3d();
-      public static final Transform3d RIGHT_CAMERA_POSE = new Transform3d();
-      public static final Transform3d BACK_CAMERA_POSE = new Transform3d();
-
+      public static final Transform3d FRONT_CAMERA_POSE = new Transform3d(new Translation3d(Units.inchesToMeters(11.371), 0.0, 6.319), new Rotation3d(0.0,Math.toRadians(10),Math.PI));
+      public static final Transform3d LEFT_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0.0,0.0,0.0));//20.539
+      public static final Transform3d RIGHT_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0.0,0.0,0.0));
+      public static final Transform3d BACK_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0.0,0.0,0.0));
       public static final double POSE_FILTER_TRUST_COEF = 2.8;
       public static final double POSE_FILTER_MAX_UNCERTANTY = 0.2;
       public static final double POSE_FILTER_DISTANCE_SCALE_FACTOR = 0.75;

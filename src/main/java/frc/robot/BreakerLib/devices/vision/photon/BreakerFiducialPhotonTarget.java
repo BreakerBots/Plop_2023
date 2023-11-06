@@ -94,7 +94,7 @@ public class BreakerFiducialPhotonTarget extends SubsystemBase implements Breake
 
     /** @return 3d pose of camera. */
     public Pose3d getCameraPose3d() {
-        return aprilTag.pose.transformBy(assignedTarget.getBestCameraToTarget().inverse());
+        return aprilTag.pose.transformBy(assignedTarget.getBestCameraToTarget());
     }
 
     /** @return 2d pose of camera. */
@@ -104,7 +104,7 @@ public class BreakerFiducialPhotonTarget extends SubsystemBase implements Breake
 
     /** @return 3d pose of robot from target data. */
     public Pose3d getRobotPose3d() {
-        return getCameraPose3d().transformBy(camera.get3dCamPositionRelativeToRobot().inverse());
+        return getCameraPose3d().transformBy(camera.get3dCamPositionRelativeToRobot());
     }
 
     /** @return 2d pose of robot from target data. */

@@ -145,6 +145,7 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
     CurrentLimitsConfigs updatedCurLimits = new CurrentLimitsConfigs();
     rollerMotor.getConfigurator().refresh(updatedCurLimits);
     updatedCurLimits.SupplyCurrentLimit = currentLimit;
+    updatedCurLimits.SupplyTimeThreshold = 1.0;
     updatedCurLimits.SupplyCurrentLimitEnable = true;
     rollerMotor.getConfigurator().apply(updatedCurLimits);
 
@@ -455,9 +456,9 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
     PLACE_CUBE_HIGH(WristGoalType.PLACE, Rotation2d.fromDegrees(67.5)),
     PICKUP_GROUND_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(7.0)),
     PICKUP_GROUND_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(-7.0)),
-    PICKUP_SINGLE_SUBSTATION_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
-    PICKUP_SINGLE_SUBSTATION_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(HandConstants.ARB_WRIST_TEST_ANG)),
-    PICKUP_DOUBLE_SUBSTATION_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(36.0)),
+    PICKUP_SINGLE_SUBSTATION_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(80.0)),
+    PICKUP_SINGLE_SUBSTATION_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(94.0)),
+    PICKUP_DOUBLE_SUBSTATION_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(36.3)),
     PICKUP_DOUBLE_SUBSTATION_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(53.0)),
     STOW(WristGoalType.STOW, Rotation2d.fromDegrees(90));
 

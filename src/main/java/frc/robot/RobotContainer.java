@@ -11,6 +11,8 @@ import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.controls.StaticBrake;
 
 import edu.wpi.first.hal.simulation.RoboRioDataJNI;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.RobotController;
@@ -118,10 +120,10 @@ public class RobotContainer {
     driverControllerSys.getDPad().getDown().onTrue(new TeleopSnapDriveToCardinalHeading(SwerveCardinal.BACK, drivetrainSys, teleopDriveController));
 
     //scoreing controls 
-    operatorControlPadSys.getScoringCommandRequestTrigger().and(operatorControlPadSys.getScoreManualOverrideButton().negate()).onTrue(new TeleopScoreGamePiece(operatorControlPadSys, driverControllerSys ,drivetrainSys, elevatorSys, handSys));
-    operatorControlPadSys.getLeftHighNodeButton().and(operatorControlPadSys.getScoreManualOverrideButton()).onTrue(new TeleopManualScoreGamePiece(NodeHeight.HIGH, driverControllerSys, elevatorSys, handSys));
-    operatorControlPadSys.getLeftMidNodeButton().and(operatorControlPadSys.getScoreManualOverrideButton()).onTrue(new TeleopManualScoreGamePiece(NodeHeight.MID, driverControllerSys, elevatorSys, handSys));
-    operatorControlPadSys.getLeftLowNodeButton().and(operatorControlPadSys.getScoreManualOverrideButton()).onTrue(new TeleopManualScoreGamePiece(NodeHeight.LOW, driverControllerSys, elevatorSys, handSys));
+    //operatorControlPadSys.getScoringCommandRequestTrigger().and(operatorControlPadSys.getScoreManualOverrideButton().negate()).onTrue(new TeleopScoreGamePiece(operatorControlPadSys, driverControllerSys ,drivetrainSys, elevatorSys, handSys));
+    operatorControlPadSys.getLeftHighNodeButton()/*.and(operatorControlPadSys.getScoreManualOverrideButton())*/.onTrue(new TeleopManualScoreGamePiece(NodeHeight.HIGH, driverControllerSys, elevatorSys, handSys));
+    operatorControlPadSys.getLeftMidNodeButton()/*.and(operatorControlPadSys.getScoreManualOverrideButton())*/.onTrue(new TeleopManualScoreGamePiece(NodeHeight.MID, driverControllerSys, elevatorSys, handSys));
+    operatorControlPadSys.getLeftLowNodeButton()/*.and(operatorControlPadSys.getScoreManualOverrideButton())*/.onTrue(new TeleopManualScoreGamePiece(NodeHeight.LOW, driverControllerSys, elevatorSys, handSys));
 
     //stow elevator (driver controls: LB / RB = stow) (operator controls: 20 = stow)
     driverControllerSys.getLeftBumper()
@@ -151,6 +153,7 @@ public class RobotContainer {
 
     //teleop autobalance
     driverControllerSys.getStartButton().toggleOnTrue(new TeleopBalanceChargingStation(drivetrainSys, imuSys, teleopDriveController, driverControllerSys, false, false));
+    driverControllerSys.getBackButton().onTrue(new InstantCommand(() -> drivetrainSys.setAbsoluteOdometryPosition(new Pose2d(drivetrainSys.getAbsoluteOdometryPoseMeters().getTranslation(), new Rotation2d()))));
   }
 
   private void configureAutonomousActionMap() {

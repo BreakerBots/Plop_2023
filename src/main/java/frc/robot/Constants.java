@@ -317,7 +317,7 @@ public final class Constants {
       public static final String RIGHT_CAMERA_NAME = "rightCam";
       public static final String BACK_CAMERA_NAME = "backCam";
 
-      public static final Transform3d FRONT_CAMERA_POSE = new Transform3d(new Translation3d(Units.inchesToMeters(11.371), 0.0, 6.319), new Rotation3d(0.0,Math.toRadians(10),Math.PI));
+      public static final Transform3d FRONT_CAMERA_POSE = new Transform3d(new Translation3d(Units.inchesToMeters(11.371), 0.0, 6.319), new Rotation3d(0.0,Math.toRadians(10),0.0));
       public static final Transform3d LEFT_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0.0,0.0,0.0));//20.539
       public static final Transform3d RIGHT_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0.0,0.0,0.0));
       public static final Transform3d BACK_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0.0,0.0,0.0));

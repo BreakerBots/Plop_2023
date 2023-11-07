@@ -141,9 +141,10 @@ public class BreakerVisionPoseFilter {
 
         double x = xAverage.getAverage();
         double y = yAverage.getAverage();
-        double yaw = yAngAverage.getAverage();
+        double yAng = yAngAverage.getAverage();
+        double xAng = xAngAverage.getAverage();
       
-        return new Pose2d(x, y, new Rotation2d(yaw));
+        return new Pose2d(x, y, new Rotation2d(xAng, yAng));
     }
 
     private double getWeight(BreakerGenericFiducialTarget tgt) {

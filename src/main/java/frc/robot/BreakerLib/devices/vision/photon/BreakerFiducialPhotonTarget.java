@@ -14,6 +14,8 @@ import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -104,7 +106,8 @@ public class BreakerFiducialPhotonTarget extends SubsystemBase implements Breake
 
     /** @return 3d pose of robot from target data. */
     public Pose3d getRobotPose3d() {
-        return getCameraPose3d().transformBy(camera.get3dCamPositionRelativeToRobot());
+        Pose3d pos = aprilTag.pose.transformBy(assignedTarget.getBestCameraToTarget().inverse().plus(new Transform3d(camera.get3dCamPositionRelativeToRobot().getTranslation().unaryMinus(), new Rotation3d())));
+        return new Pose3d(pos.getTranslation(), pos.getRotation().plus(camera.get3dCamPositionRelativeToRobot().getRotation()));//.transformBy(camera.get3dCamPositionRelativeToRobot().inverse());
     }
 
     /** @return 2d pose of robot from target data. */

@@ -50,9 +50,12 @@ public class BreakerSwerveDrivePoseEstimator extends SubsystemBase implements Br
         lastUpdateTimestamp = Timer.getFPGATimestamp();
     }
 
-    public Pose2d addVisionMeasurment(Pose2d robotPoseFromVision, double visionDataTimestamp) {
-        poseEstimator.addVisionMeasurement(robotPoseFromVision,
-                visionDataTimestamp);
+    public Pose2d 
+    addVisionMeasurment(Pose2d robotPoseFromVision, double visionDataTimestamp) {
+        poseEstimator.addVisionMeasurement(
+            robotPoseFromVision,
+            visionDataTimestamp
+            );
         lastVisionPose = robotPoseFromVision;
         lastVisionTimestamp = visionDataTimestamp;
         return poseEstimator.getEstimatedPosition();

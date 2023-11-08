@@ -182,21 +182,23 @@ public final class Constants {
       public static final double AUTO_BALANCE_TIMEOUT_SEC = 15;
 
       //MoveToPose command constants
-      public static final ProfiledPIDController BHDC_X_PID = new  ProfiledPIDController(X_PID_KP, X_PID_KI, X_PID_KD, new Constraints(0.0, 0.0));
-      public static final ProfiledPIDController BHDC_Y_PID = new  ProfiledPIDController(Y_PID_KP, Y_PID_KI, Y_PID_KD, new Constraints(0.0, 0.0));
-      public static final ProfiledPIDController BHDC_THETA_PID = new ProfiledPIDController(THETA_PID_KP, THETA_PID_KI, THETA_PID_KD, new Constraints(0.0, 0.0));
-      public static final BreakerProfiledHolonomicDriveControler BREAKER_HOLONOMIC_DRIVE_CONTROLLER = new BreakerProfiledHolonomicDriveControler(BHDC_X_PID, BHDC_Y_PID, BHDC_THETA_PID);
-      
+    //   public static final ProfiledPIDController BHDC_X_PID = new  ProfiledPIDController(X_PID_KP, X_PID_KI, X_PID_KD, new Constraints(0.0, 0.0));
+    //   public static final ProfiledPIDController BHDC_Y_PID = new  ProfiledPIDController(Y_PID_KP, Y_PID_KI, Y_PID_KD, new Constraints(0.0, 0.0));
+        public static final PIDController BHDC_LINEAR_PID = new PIDController(Math.hypot(X_PID_KP, Y_PID_KP), Math.hypot(X_PID_KI, Y_PID_KI), Math.hypot(X_PID_KD, Y_PID_KD));
+      public static final ProfiledPIDController BHDC_THETA_PID = new ProfiledPIDController(THETA_PID_KP, THETA_PID_KI, THETA_PID_KD, new Constraints(DriveConstants.MAX_ANGULAR_VEL, 1.0));
+      //public static final BreakerProfiledHolonomicDriveControler BREAKER_HOLONOMIC_DRIVE_CONTROLLER = new BreakerProfiledHolonomicDriveControler(BHDC_X_PID, BHDC_Y_PID, BHDC_THETA_PID);
+      public static final BreakerHolonomicDriveController BREAKER_HOLONOMIC_DRIVE_CONTROLLER = new BreakerHolonomicDriveController(BHDC_LINEAR_PID, BHDC_THETA_PID);
+
       public static final double MOVE_TO_POSE_TIMEOUT_SEC = 25.0;
       public static final BreakerSwerveVelocityRequest MOVE_TO_POSE_REQUEST = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DISABLED, new Translation2d());
 
-      public static final double BHDC_POSE_TOL_X = 0.03;
-      public static final double BHDC_POSE_TOL_Y = 0.03;
-      public static final Rotation2d BHDC_POSE_TOL_T = Rotation2d.fromDegrees(3.0);
+      public static final double BHDC_POSE_TOL_X = 0.2;//0.03
+      public static final double BHDC_POSE_TOL_Y = 0.2;
+      public static final Rotation2d BHDC_POSE_TOL_T = Rotation2d.fromDegrees(25.0);//3.0
       public static final Pose2d BHDC_POSE_TOLERENCE = new Pose2d(BHDC_POSE_TOL_X, BHDC_POSE_TOL_Y, BHDC_POSE_TOL_T);
-      public static final double BHDC_VEL_TOL_X = 0.005;
-      public static final double BHDC_VEL_TOL_Y = 0.005;
-      public static final double BHDC_VEL_TOL_T = Math.toRadians(5.0);
+      public static final double BHDC_VEL_TOL_X = 0.5;//0.005
+      public static final double BHDC_VEL_TOL_Y = 0.5;
+      public static final double BHDC_VEL_TOL_T = Math.toRadians(5.0);//5.0
       public static final ChassisSpeeds BHDC_VELOCITY_TOLERENCE = new ChassisSpeeds(BHDC_VEL_TOL_X, BHDC_VEL_TOL_Y, BHDC_VEL_TOL_T);
 
   }
@@ -324,7 +326,7 @@ public final class Constants {
       public static final double POSE_FILTER_TRUST_COEF = 2.8;
       public static final double POSE_FILTER_MAX_UNCERTANTY = 0.2;
       public static final double POSE_FILTER_DISTANCE_SCALE_FACTOR = 0.75;
-      public static final double POSE_FILTER_MAX_DISTANCE = 6.0;
+      public static final double POSE_FILTER_MAX_DISTANCE = 2.5;
 
       public static final AprilTagFieldLayout APRILTAG_FIELD_LAYOUT = exceptionSafeReadApriltags();
       public static final AprilTagFieldLayout APRILTAG_TEST_LAYOUT = new AprilTagFieldLayout(new ArrayList<AprilTag>(), FieldConstants.FIELD_LENGTH_X, 8.001);
@@ -376,7 +378,7 @@ public final class Constants {
       public static final int RED_LEFT_NODE_GROUP_CENTRAL_COULMN_ORDINAL = 1;
       public static final int RED_CENTER_NODE_GROUP_CENTRAL_COULMN_ORDINAL = 4;
       public static final int RED_RIGHT_NODE_GROUP_CENTRAL_COULMN_ORDINAL = 7;
-      public static final Constraints TELEOP_SCOREING_PRE_EXTEND_ALLIGN_LINEAR_CONSTRAINTS = new Constraints(2.5, 4.0);
+      public static final Constraints TELEOP_SCOREING_PRE_EXTEND_ALLIGN_LINEAR_CONSTRAINTS = new Constraints(0.075, 0.5);
       public static final Constraints TELEOP_SCOREING_PRE_EXTEND_ALLIGN_ANGULAR_CONSTRAINTS = new Constraints(DriveConstants.MAX_ANGULAR_VEL, 3.0);
       public static final Constraints TELEOP_SCOREING_POST_EXTEND_ALLIGN_CONSTRAINTS = new Constraints(0.75, 0.01);
       public static final Constraints TELEOP_SCOREING_POST_EXTEND_ALLIGN_ANGULAR_CONSTRAINTS = new Constraints(Math.toRadians(5.0), Math.toRadians(10.0));

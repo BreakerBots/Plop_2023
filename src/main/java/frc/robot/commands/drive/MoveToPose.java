@@ -39,14 +39,16 @@ public class MoveToPose extends CommandBase {
   @Override
   public void initialize() {
     timer.restart();
-    DriveConstants.BREAKER_HOLONOMIC_DRIVE_CONTROLLER.reset(drivetrain.getOdometryPoseMeters(), drivetrain.getFieldRelativeChassisSpeeds());
+    DriveConstants.BREAKER_HOLONOMIC_DRIVE_CONTROLLER.reset(drivetrain.getOdometryPoseMeters()/*, drivetrain.getFieldRelativeChassisSpeeds()*/);
     BreakerLog.getInstance().logEvent(String.format("MoveToPose command instance STARTED (tgt: %s)", goal.toString()));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    ChassisSpeeds targetSpeeds = DriveConstants.BREAKER_HOLONOMIC_DRIVE_CONTROLLER.calculate(goal, drivetrain.getOdometryPoseMeters(), linearConstraints, angularConstraints);
+    //ChassisSpeeds targetSpeeds = DriveConstants.BREAKER_HOLONOMIC_DRIVE_CONTROLLER.calculate(goal, drivetrain.getOdometryPoseMeters(), linearConstraints, angularConstraints);
+    ChassisSpeeds targetSpeeds = DriveConstants.BREAKER_HOLONOMIC_DRIVE_CONTROLLER.calculate(drivetrain.getOdometryPoseMeters(), goal, 0.1);
+    System.out.println(targetSpeeds);
     drivetrain.applyRequest(DriveConstants.MOVE_TO_POSE_REQUEST.withChassisSpeeds(targetSpeeds));
     if (timer.hasElapsed(DriveConstants.MOVE_TO_POSE_TIMEOUT_SEC)) {
       this.cancel();

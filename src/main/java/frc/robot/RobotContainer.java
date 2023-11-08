@@ -69,7 +69,7 @@ public class RobotContainer {
     private static final Vision visionSys = new Vision();
     private static final BreakerPigeon2 imuSys = new BreakerPigeon2(MiscConstants.IMU_ID, MiscConstants.CANIVORE_1);
 
-    private static final Drive drivetrainSys = new Drive(imuSys/*, visionSys*/);
+    private static final Drive drivetrainSys = new Drive(imuSys, visionSys);
     private static final Elevator elevatorSys = new Elevator();
     private static final Hand handSys = new Hand();
   

@@ -4,6 +4,8 @@
 
 package frc.robot.BreakerLib.position.odometry.vision.posefilter;
 
+import java.util.Objects;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -30,7 +32,7 @@ public class BreakerVisionPoseFilterOdometer extends SubsystemBase implements Br
 
     @Override
     public boolean isAnyTargetVisable() {
-        return visionPoseFilter.isAnyTargetVisable();
+        return visionPoseFilter.isAnyTargetVisable() && !Double.isNaN(curPose.getX()) && !Double.isNaN(curPose.getY()) && !Double.isNaN(curPose.getRotation().getRadians());
     }
 
     @Override
@@ -64,6 +66,7 @@ public class BreakerVisionPoseFilterOdometer extends SubsystemBase implements Br
 
     private void updatePose() {
         Pose2d pos = visionPoseFilter.getFilteredRobotPose();
+        if (!Double.isNaN(pos.getX()) && !Double.isNaN(pos.getY()) && !Double.isNaN(pos.getRotation().getRadians()))
         curPose = pos.transformBy(offset);
     }
 

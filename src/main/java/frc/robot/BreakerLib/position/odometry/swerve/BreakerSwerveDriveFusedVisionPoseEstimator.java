@@ -4,6 +4,8 @@
 
 package frc.robot.BreakerLib.position.odometry.swerve;
 
+import java.util.Objects;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -77,8 +79,9 @@ public class BreakerSwerveDriveFusedVisionPoseEstimator
     }
 
     private void updateOdometry() {
-        if (vision.isAnyTargetVisable()) {
-            poseEstimator.addVisionMeasurment(vision.getOdometryPoseMeters(), vision.getDataTimestamp());
+        Pose2d pos = vision.getOdometryPoseMeters();
+        if (vision.isAnyTargetVisable() && !Double.isNaN(pos.getX()) && !Double.isNaN(pos.getY()) && !Double.isNaN(pos.getRotation().getRadians())) {
+            poseEstimator.addVisionMeasurment(pos, vision.getDataTimestamp());
         }
     }
 

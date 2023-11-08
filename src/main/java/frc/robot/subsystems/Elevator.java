@@ -428,7 +428,7 @@ public class Elevator extends SubsystemBase implements BreakerLoggable {
     public static enum ElevatorTargetState {
         PLACE_HYBRID(ElevatorConstants.MIN_HEIGHT_GND_REL),
         PLACE_CONE_MID(0.655),
-        PLACE_CONE_HIGH(1.01),
+        PLACE_CONE_HIGH(1.035),
         PLACE_CUBE_MID(0.696),
         PLACE_CUBE_HIGH(1.019),
         PICKUP_GROUND_CONE(ElevatorConstants.MIN_HEIGHT_GND_REL),

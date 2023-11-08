@@ -38,6 +38,7 @@ import java.util.Optional;
 public class Drive extends BreakerSwerveDriveBase {
 
     private BreakerPigeon2 pigeon;
+    private Vision vision;
 
     private static TalonFX driveFL = new TalonFX(FL_DRIVE_ID, CANIVORE_1);
     private static TalonFX turnFL = new TalonFX(FL_TURN_ID, CANIVORE_1);
@@ -78,9 +79,9 @@ public class Drive extends BreakerSwerveDriveBase {
     private static Field2d field = new Field2d();
     
 
-    public Drive(BreakerPigeon2 pigeon/*, Vision vision*/) {
-        super(DRIVE_BASE_CONFIG,/*new BreakerSwerveOdometryConfig(vision, ENCODER_ODOMETRY_STANDARD_DEVATIONS, VISION_ODOMETRY_STANDARD_DEVATIONS),*/ pigeon, frontLeftModule, frontRightModule, backLeftModule, backRightModule);
-
+    public Drive(BreakerPigeon2 pigeon, Vision vision) {
+        super(DRIVE_BASE_CONFIG, new BreakerSwerveOdometryConfig(vision, ENCODER_ODOMETRY_STANDARD_DEVATIONS, VISION_ODOMETRY_STANDARD_DEVATIONS), pigeon, frontLeftModule, frontRightModule, backLeftModule, backRightModule);
+        this.vision = vision;
         BreakerDashboard.getMainTab().add(field);
         
         frontLeftModule.setDeviceName(" FL_Module ");
@@ -127,7 +128,11 @@ public class Drive extends BreakerSwerveDriveBase {
 
     @Override
     public void periodic() {
-        field.setRobotPose(getOdometryPoseMeters());
+        Pose2d pos = getOdometryPoseMeters();
+        if(!Double.isNaN(pos.getX()) && !Double.isNaN(pos.getY()) && !Double.isNaN(pos.getRotation().getRadians()) && vision.isAnyTargetVisable()) {
+            setAbsoluteOdometryPosition(vision.getOdometryPoseMeters());
+        }
+        field.setRobotPose(pos);
     }
 
     @Override

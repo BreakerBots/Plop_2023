@@ -201,7 +201,7 @@ public class OperatorControlPad {
                     colOrd--;
                 } else if (rightNodeSelectedTrigger.getAsBoolean()) {
                     colOrd++;
-                } else {
+                } else if (!centerNodeSelectedTrigger.getAsBoolean()) {
                     return Optional.empty();
                 }
 
@@ -220,7 +220,7 @@ public class OperatorControlPad {
                     colOrd++;
                 } else if (rightNodeSelectedTrigger.getAsBoolean()) {
                     colOrd--;
-                } else {
+                } else if (!centerNodeSelectedTrigger.getAsBoolean()) {
                     return Optional.empty();
                 }
             }

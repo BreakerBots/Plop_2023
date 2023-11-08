@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.Objects;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -23,6 +25,7 @@ public class Vision extends SubsystemBase implements BreakerGenericVisionOdomete
   /** Creates a new Vision. */
   private BreakerPhotonCamera frontCam, leftCam, rightCam, backCam;
   private BreakerPhotonVision vision;
+  private Pose2d curPose;
   public Vision() {
     frontCam = new BreakerPhotonCamera(VisionConstants.FRONT_CAMERA_NAME, VisionConstants.FRONT_CAMERA_POSE);
     // leftCam  = new BreakerPhotonCamera(VisionConstants.LEFT_CAMERA_NAME, VisionConstants.LEFT_CAMERA_POSE);
@@ -30,6 +33,7 @@ public class Vision extends SubsystemBase implements BreakerGenericVisionOdomete
     // backCam = new BreakerPhotonCamera(VisionConstants.BACK_CAMERA_NAME, VisionConstants.BACK_CAMERA_POSE);
   vision = new BreakerPhotonVision(VisionConstants.POSE_FILTER_TRUST_COEF, VisionConstants.POSE_FILTER_MAX_UNCERTANTY, VisionConstants.POSE_FILTER_DISTANCE_SCALE_FACTOR, VisionConstants.POSE_FILTER_MAX_DISTANCE, new BreakerPhotonCamera[]{frontCam/*, leftCam, rightCam, backCam*/}, VisionConstants.APRILTAG_FIELD_LAYOUT);
     BreakerLog.getInstance().registerLogable("Vision", this);
+  curPose = null;
   }
 
   @Override
@@ -39,7 +43,7 @@ public class Vision extends SubsystemBase implements BreakerGenericVisionOdomete
 
   @Override
   public Pose2d getOdometryPoseMeters() {
-    return vision.getOdometryPoseMeters();
+    return curPose;
   }
 
   @Override
@@ -64,11 +68,23 @@ public class Vision extends SubsystemBase implements BreakerGenericVisionOdomete
 
   @Override
   public boolean isAnyTargetVisable() {
-    return vision.getBaseVisionOdometer().isAnyTargetVisable();
+    return vision.getBaseVisionOdometer().isAnyTargetVisable() && Objects.nonNull(curPose);
+  }
+
+  @Override
+  public void periodic() {
+    Pose2d pos = vision.getFilteredRobotPose();
+    if (vision.getBaseVisionOdometer().isAnyTargetVisable() && Objects.nonNull(pos) && !Double.isNaN(pos.getX()) && !Double.isNaN(pos.getY()) && !Double.isNaN(pos.getRotation().getRadians())) {
+      curPose = pos;
+    } else {
+      curPose = null;
+    }
   }
 
   @Override
   public void toLog(LogTable table) {
+    table.put("nullpos", curPose==null);
+    if (curPose!=null)
     BreakerGenericVisionOdometer.super.toLog(table);
   }
 

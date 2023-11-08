@@ -25,6 +25,8 @@ public class BreakerProfiledHolonomicDriveControler {
 
     public BreakerProfiledHolonomicDriveControler(ProfiledPIDController xController, ProfiledPIDController yController, ProfiledPIDController angleController) {
         this.angleController = angleController;
+        this.xController = xController;
+        this.yController = yController;
         angleController.enableContinuousInput(-Math.PI, Math.PI);
     }
 
@@ -54,10 +56,12 @@ public class BreakerProfiledHolonomicDriveControler {
         curPose = currentPose;
         calculateHasBeenRun = true;
         setConstraints(goal, currentPose, linearConstraints, angularConstraints);
-        double xVel = xController.calculate(goal.getX(), currentPose.getX());
-        double yVel = yController.calculate(goal.getY(), currentPose.getY());
-        double aVel = angleController.calculate(goal.getRotation().getRadians(), currentPose.getRotation().getRadians());
-        return new ChassisSpeeds(xVel, yVel, aVel);
+        double xVel = xController.calculate(currentPose.getX(), goal.getX());
+        double yVel = yController.calculate(currentPose.getY(), goal.getY());
+        BreakerVector2 linVec = new BreakerVector2(xVel, yVel);
+        linVec = new BreakerVector2(linVec.getVectorRotation(), MathUtil.clamp(linVec.getMagnitude(), -linearConstraints.maxVelocity, linearConstraints.maxVelocity));
+        double aVel = angleController.calculate(currentPose.getRotation().getRadians(), goal.getRotation().getRadians());
+        return new ChassisSpeeds(linVec.getX(), linVec.getY(), aVel);
     }
 
     public boolean atTargetPose() {

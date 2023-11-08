@@ -90,7 +90,7 @@ public class BreakerVisionPoseFilter {
         for (int i = 0; i < positioningTargets.length; i++) {
             BreakerGenericFiducialTarget tgt = positioningTargets[i];
             if (tgt.isAssignedTargetVisible()) {
-                if (tgt.getPoseAmbiguity() <= maxUncertainty && (usesDistanceScaleing ? tgt.getDistance() <= maxDistance : true)) {
+                if (tgt.getPoseAmbiguity() < maxUncertainty && (usesDistanceScaleing ? tgt.getDistance() < maxDistance : true)) {
                     double weight = getWeight(tgt);
                     Pose3d pose = tgt.getRobotPose3d();
                     xAverage.addValue(pose.getX(), weight);
@@ -127,7 +127,7 @@ public class BreakerVisionPoseFilter {
         for (int i = 0; i < positioningTargets.length; i++) {
             BreakerGenericFiducialTarget tgt = positioningTargets[i];
             if (tgt.isAssignedTargetVisible()) {
-                if (tgt.getPoseAmbiguity() <= maxUncertainty && (usesDistanceScaleing ? tgt.getDistance() <= maxDistance : true)) {
+                if (tgt.getPoseAmbiguity() < maxUncertainty && (usesDistanceScaleing ? tgt.getDistance() < maxDistance : true)) {
                     double weight = getWeight(tgt);
                     Pose2d pose = tgt.getRobotPose();
                     xAverage.addValue(pose.getX(), weight);
@@ -159,7 +159,7 @@ public class BreakerVisionPoseFilter {
 
     public boolean isAnyTargetVisable() {
         for (BreakerGenericFiducialTarget tgt: positioningTargets) {
-            if (tgt.isAssignedTargetVisible()) {
+            if (tgt.isAssignedTargetVisible() && tgt.getPoseAmbiguity() < maxUncertainty && (usesDistanceScaleing ? tgt.getDistance() < maxDistance : true)) {
                 return true;
             }
         }

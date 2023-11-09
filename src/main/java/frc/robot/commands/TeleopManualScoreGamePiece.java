@@ -60,6 +60,7 @@ public class TeleopManualScoreGamePiece extends ParallelRaceGroup {
           )
         ),
         new EjectGamePiece(hand),
+        new InstantCommand(() -> new SetSuperstructurePositionState(elevator, hand, SuperstructurePositionState.STOW, false).schedule()),
         new ConditionalCommand(new InstantCommand(() -> cmdEndMsgFail()), new InstantCommand(() -> cmdEndMsgSuccess()), hand::hasGamePiece)
       )
     );

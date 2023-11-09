@@ -18,12 +18,14 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.GamePieceType;
 import frc.robot.Node;
 import frc.robot.Node.NodeHeight;
 import frc.robot.Node.NodeType;
 import frc.robot.OperatorControlPad;
 import frc.robot.RobotContainer;
+import frc.robot.BreakerLib.driverstation.gamepad.BreakerGamepadTimedRumbleCommand;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.math.BreakerMath;
@@ -50,7 +52,7 @@ public class TeleopScoreGamePiece extends CommandBase {
   private Drive drivetrain;
   private Elevator elevator;
   private Hand hand;
-  private SequentialCommandGroup scoreingSequince;
+  private SequentialCommandGroup allignSequence, ejectSequence;
   public TeleopScoreGamePiece(OperatorControlPad operatorControlPad, BreakerXboxController driverController, Drive drivetrain, Elevator elevator, Hand hand) {
     this.operatorControlPad = operatorControlPad;
     this.driverController = driverController;
@@ -91,10 +93,16 @@ public class TeleopScoreGamePiece extends CommandBase {
             //     new InstantCommand(this::postEjectCheck)
             //   );
           //} else {
-            scoreingSequince = 
+            allignSequence = 
               new SequentialCommandGroup(
+                new InstantCommand(() -> new SetSuperstructurePositionState(elevator, hand, SuperstructurePositionState.STOW, false).schedule()),
                 new MoveToPose(allignmentPose, drivetrain, 0.75),
                 new SetSuperstructurePositionState(elevator, hand, superTgt, false),
+                new InstantCommand(() -> driverController.setMixedRumble(6.0, 6.0))
+              );
+            ejectSequence = new SequentialCommandGroup(
+                //new WaitUntilCommand(driverController.getButtonB()),
+                new InstantCommand(() -> driverController.setMixedRumble(0.0, 0.0)),
                 new EjectGamePiece(hand),
                 new InstantCommand(() -> new SetSuperstructurePositionState(elevator, hand, SuperstructurePositionState.STOW, false).schedule()),
                 new InstantCommand(this::postEjectCheck)
@@ -114,8 +122,8 @@ public class TeleopScoreGamePiece extends CommandBase {
       this.cancel();
     }
 
-    if (Objects.nonNull(scoreingSequince)) {
-      scoreingSequince.schedule();
+    if (Objects.nonNull(allignSequence)) {
+      allignSequence.schedule();
     }
 
   
@@ -126,6 +134,11 @@ public class TeleopScoreGamePiece extends CommandBase {
       if (RobotContainer.globalCancel()) {
         BreakerLog.getInstance().logEvent("TeleopScoreGamePiece instance MANUALY CANCLED, command has ended");
         this.cancel();
+      }
+      if (Objects.nonNull(allignSequence) && allignSequence.isFinished() 
+        && Objects.nonNull(ejectSequence) && !ejectSequence.isScheduled() && !ejectSequence.isFinished() 
+        && driverController.getButtonB().getAsBoolean()) {
+        ejectSequence.schedule();
       }
   }
 
@@ -169,8 +182,11 @@ public class TeleopScoreGamePiece extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if (Objects.nonNull(scoreingSequince) && scoreingSequince.isScheduled())  {
-      scoreingSequince.cancel();
+    if (Objects.nonNull(allignSequence) && allignSequence.isScheduled())  {
+      allignSequence.cancel();
+    }
+    if (Objects.nonNull(ejectSequence) && ejectSequence.isScheduled()) {
+      ejectSequence.cancel();
     }
     if (interrupted) {
       new TriplePulseRumble(driverController).schedule();
@@ -182,8 +198,8 @@ public class TeleopScoreGamePiece extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (Objects.nonNull(scoreingSequince)) {
-      return scoreingSequince.isFinished();
+    if (Objects.nonNull(allignSequence) && Objects.nonNull(ejectSequence)) {
+      return allignSequence.isFinished() && ejectSequence.isFinished();
     } 
     return false;
   }

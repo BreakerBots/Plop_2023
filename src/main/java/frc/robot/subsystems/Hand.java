@@ -279,7 +279,7 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
   }
 
   public boolean atWristGoal() {
-    return BreakerMath.epsilonEquals(wristGoal.getDegrees(), getWristRotation().getDegrees(), 3.0);
+    return BreakerMath.epsilonEquals(wristGoal.getDegrees(), getWristRotation().getDegrees(), 8.0);
   }
 
   public Rotation2d getWristRotation() {

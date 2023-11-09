@@ -9,6 +9,8 @@ import java.util.HashMap;
 
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.controls.StaticBrake;
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
 
 import edu.wpi.first.hal.simulation.RoboRioDataJNI;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -18,6 +20,8 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.NetworkButton;
@@ -38,8 +42,10 @@ import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameConfig;
 import frc.robot.commands.TeleopManualScoreGamePiece;
 import frc.robot.commands.TeleopScoreGamePiece;
+import frc.robot.commands.auto.actions.BalanceChargeingStation;
 import frc.robot.commands.auto.routines.DemoPath;
 import frc.robot.commands.auto.routines.NoVisionDemoPath;
+import frc.robot.commands.auto.routines.RunPathPlannerPath;
 import frc.robot.commands.drive.MoveToPose;
 import frc.robot.commands.drive.TeleopBalanceChargingStation;
 import frc.robot.commands.drive.TeleopSnapDriveToCardinalHeading;
@@ -158,14 +164,20 @@ public class RobotContainer {
   }
 
   private void configureAutonomousActionMap() {
-    // AUTONOMOUS_ACTION_MAP.put("eject", new EjectGamePiece(handSys));
-    // AUTONOMOUS_ACTION_MAP.put("intake cone gnd", new IntakeFromGround(elevatorSys, handSys, false, GamePieceType.CUBE));
-    // AUTONOMOUS_ACTION_MAP.put("intake cube gnd", new IntakeFromGround(elevatorSys, handSys, false, GamePieceType.CUBE));
-    // AUTONOMOUS_ACTION_MAP.put("intake cone single sub", new IntakeFromSingleSubstation(elevatorSys, handSys, false, GamePieceType.CONE));
-    // AUTONOMOUS_ACTION_MAP.put("intake cube single sub", new IntakeFromSingleSubstation(elevatorSys, handSys, false, GamePieceType.CUBE));
-    // AUTONOMOUS_ACTION_MAP.put("intake cone double sub", new IntakeFromDoubleSubstation(elevatorSys, handSys, false, GamePieceType.CONE));
-    // AUTONOMOUS_ACTION_MAP.put("intake cube double sub", new IntakeFromDoubleSubstation(elevatorSys, handSys, false, GamePieceType.CUBE));
-    // AUTONOMOUS_ACTION_MAP.put("stow", new StowElevatorIntakeAssembly(elevatorSys, handSys, false));
+    AUTONOMOUS_ACTION_MAP.put("eject", new EjectGamePiece(handSys));
+    AUTONOMOUS_ACTION_MAP.put("intake cone", new IntakeFromGround(elevatorSys, handSys, true, GamePieceType.CUBE));
+    AUTONOMOUS_ACTION_MAP.put("intake cube", new IntakeFromGround(elevatorSys, handSys, true, GamePieceType.CUBE));
+    AUTONOMOUS_ACTION_MAP.put("wait for cube", new WaitUntilCommand(handSys::hasCube));
+    AUTONOMOUS_ACTION_MAP.put("wait for cone", new WaitUntilCommand(handSys::hasCone));
+    AUTONOMOUS_ACTION_MAP.put("stow", new StowElevatorIntakeAssembly(elevatorSys, handSys, false));
+    AUTONOMOUS_ACTION_MAP.put("wait 0.5", new WaitCommand(0.5));
+    AUTONOMOUS_ACTION_MAP.put("place low cube", teleopDriveController);
+    AUTONOMOUS_ACTION_MAP.put("place low cone", teleopDriveController);
+    AUTONOMOUS_ACTION_MAP.put("place mid cube", teleopDriveController);
+    AUTONOMOUS_ACTION_MAP.put("place mid cone", teleopDriveController);
+    AUTONOMOUS_ACTION_MAP.put("place high cube", teleopDriveController);
+    AUTONOMOUS_ACTION_MAP.put("place high cone", teleopDriveController);
+    AUTONOMOUS_ACTION_MAP.put("balance", new BalanceChargeingStation(drivetrainSys, imuSys, false, false));
   }
 
   private void configureRobotManager() {
@@ -182,7 +194,7 @@ public class RobotContainer {
         )
       );
       robotConfig.setLogFilePaths("/media/sda2/", "");
-   // robotConfig.setAutoPaths(new BreakerAutoPath("Demo Path", new DemoPath(drivetrainSys, visionSys, imuSys)));
+    robotConfig.setAutoPaths(new BreakerAutoPath("SUB | CUBE | BAL | (Pick 1 : Place 2)", new RunPathPlannerPath(drivetrainSys, visionSys, "Pickup_1_Place_2_Cube_Sub_Balence", new PathConstraints(3.5, 2.0))));
     BreakerRobotManager.setup(drivetrainSys, robotConfig);
   }
 

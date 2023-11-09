@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.GamePieceType;
 import frc.robot.OperatorControlPad;
@@ -43,7 +44,7 @@ public class TeleopManualScoreGamePiece extends ParallelRaceGroup {
   public TeleopManualScoreGamePiece(NodeHeight targetNodeHeight, BreakerXboxController driverController, Elevator elevator, Hand hand) {
     this.driverController = driverController;
     addCommands(
-      new WaitUntilCommand(ScoreingConstants.TELEOP_SCOREING_MANUAL_CMD_TIMEOUT)
+      new WaitCommand(ScoreingConstants.TELEOP_SCOREING_MANUAL_CMD_TIMEOUT)
       .andThen(
         new TriplePulseRumble(driverController)
         .alongWith(new InstantCommand(() -> cancleCmd("TeleopManualScoreGamePiece instance FAILED, timed out")))),

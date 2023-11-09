@@ -32,6 +32,7 @@ import static frc.robot.Constants.FieldConstants.*;
 import static frc.robot.Constants.MiscConstants.CANIVORE_1;
 import static frc.robot.Constants.PoseEstimationConstants.*;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /** Add your docs here. */
@@ -111,7 +112,7 @@ public class Drive extends BreakerSwerveDriveBase {
     @Override
     public Pose2d getOdometryPoseMeters() {
         Optional<Alliance> ally = AllianceManager.getAlliance();
-        Pose2d pose = super.getOdometryPoseMeters();
+        Pose2d pose = getAbsoluteOdometryPoseMeters();
         if (ally.get() == Alliance.Red) {
             pose =  BreakerMath.mirrorPose(pose, FIELD_LENGTH_X/2.0, MirrorSymetryAxis2d.Y, MirrorSymetryAxis2d.Y);
         }
@@ -119,7 +120,13 @@ public class Drive extends BreakerSwerveDriveBase {
     }
 
     public Pose2d getAbsoluteOdometryPoseMeters() {
-        return super.getOdometryPoseMeters();
+        Pose2d pos = super.getOdometryPoseMeters();
+        if(Objects.nonNull(vision) && !Double.isNaN(pos.getX()) && !Double.isNaN(pos.getY()) && !Double.isNaN(pos.getRotation().getRadians()) && vision.isAnyTargetVisable()) {
+            pos = vision.getOdometryPoseMeters();
+            setAbsoluteOdometryPosition(pos);
+            
+        }
+        return pos;
     }
 
     public void setAbsoluteOdometryPosition(Pose2d newPose) {

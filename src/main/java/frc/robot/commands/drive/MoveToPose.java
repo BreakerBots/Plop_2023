@@ -23,15 +23,17 @@ public class MoveToPose extends CommandBase {
   /** Creates a new MoveToPose. */
   private Pose2d goal;
   private Drive drivetrain;
-  private Constraints linearConstraints;
-  private Constraints angularConstraints;
+  // private Constraints linearConstraints;
+  // private Constraints angularConstraints;
+  private double maxLinVel;
   private final Timer timer = new Timer();
 
-  public MoveToPose(Pose2d goal, Drive drivetrain, Constraints linearConstraints, Constraints angularConstraints) {
+  public MoveToPose(Pose2d goal, Drive drivetrain, double maxLinVel) {
     this.drivetrain = drivetrain;
     this.goal = goal;
-    this.linearConstraints = linearConstraints;
-    this.angularConstraints = angularConstraints;
+    this.maxLinVel = maxLinVel;
+    // this.linearConstraints = linearConstraints;
+    // this.angularConstraints = angularConstraints;
     addRequirements(drivetrain);
   }
 
@@ -47,7 +49,7 @@ public class MoveToPose extends CommandBase {
   @Override
   public void execute() {
     //ChassisSpeeds targetSpeeds = DriveConstants.BREAKER_HOLONOMIC_DRIVE_CONTROLLER.calculate(goal, drivetrain.getOdometryPoseMeters(), linearConstraints, angularConstraints);
-    ChassisSpeeds targetSpeeds = DriveConstants.BREAKER_HOLONOMIC_DRIVE_CONTROLLER.calculate(drivetrain.getOdometryPoseMeters(), goal, 0.1);
+    ChassisSpeeds targetSpeeds = DriveConstants.BREAKER_HOLONOMIC_DRIVE_CONTROLLER.calculate(drivetrain.getOdometryPoseMeters(), goal, maxLinVel);
     System.out.println(targetSpeeds);
     drivetrain.applyRequest(DriveConstants.MOVE_TO_POSE_REQUEST.withChassisSpeeds(targetSpeeds));
     if (timer.hasElapsed(DriveConstants.MOVE_TO_POSE_TIMEOUT_SEC)) {

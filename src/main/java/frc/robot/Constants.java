@@ -184,21 +184,21 @@ public final class Constants {
       //MoveToPose command constants
     //   public static final ProfiledPIDController BHDC_X_PID = new  ProfiledPIDController(X_PID_KP, X_PID_KI, X_PID_KD, new Constraints(0.0, 0.0));
     //   public static final ProfiledPIDController BHDC_Y_PID = new  ProfiledPIDController(Y_PID_KP, Y_PID_KI, Y_PID_KD, new Constraints(0.0, 0.0));
-        public static final PIDController BHDC_LINEAR_PID = new PIDController(Math.hypot(X_PID_KP, Y_PID_KP), Math.hypot(X_PID_KI, Y_PID_KI), Math.hypot(X_PID_KD, Y_PID_KD));
-      public static final ProfiledPIDController BHDC_THETA_PID = new ProfiledPIDController(THETA_PID_KP, THETA_PID_KI, THETA_PID_KD, new Constraints(DriveConstants.MAX_ANGULAR_VEL, 1.0));
+      public static final PIDController BHDC_LINEAR_PID = new PIDController(6.5, 0.0, 0.2);
+      public static final ProfiledPIDController BHDC_THETA_PID = new ProfiledPIDController(THETA_PID_KP, THETA_PID_KI, THETA_PID_KD, new Constraints(DriveConstants.MAX_ANGULAR_VEL, 4.0));
       //public static final BreakerProfiledHolonomicDriveControler BREAKER_HOLONOMIC_DRIVE_CONTROLLER = new BreakerProfiledHolonomicDriveControler(BHDC_X_PID, BHDC_Y_PID, BHDC_THETA_PID);
       public static final BreakerHolonomicDriveController BREAKER_HOLONOMIC_DRIVE_CONTROLLER = new BreakerHolonomicDriveController(BHDC_LINEAR_PID, BHDC_THETA_PID);
 
       public static final double MOVE_TO_POSE_TIMEOUT_SEC = 25.0;
       public static final BreakerSwerveVelocityRequest MOVE_TO_POSE_REQUEST = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DISABLED, new Translation2d());
 
-      public static final double BHDC_POSE_TOL_X = 0.2;//0.03
-      public static final double BHDC_POSE_TOL_Y = 0.2;
-      public static final Rotation2d BHDC_POSE_TOL_T = Rotation2d.fromDegrees(25.0);//3.0
+      public static final double BHDC_POSE_TOL_X = 0.01;//0.03
+      public static final double BHDC_POSE_TOL_Y = 0.01;
+      public static final Rotation2d BHDC_POSE_TOL_T = Rotation2d.fromDegrees(1.0);//3.0
       public static final Pose2d BHDC_POSE_TOLERENCE = new Pose2d(BHDC_POSE_TOL_X, BHDC_POSE_TOL_Y, BHDC_POSE_TOL_T);
-      public static final double BHDC_VEL_TOL_X = 0.5;//0.005
-      public static final double BHDC_VEL_TOL_Y = 0.5;
-      public static final double BHDC_VEL_TOL_T = Math.toRadians(5.0);//5.0
+      public static final double BHDC_VEL_TOL_X = 5.0;//0.005
+      public static final double BHDC_VEL_TOL_Y = 5.0;
+      public static final double BHDC_VEL_TOL_T = Math.toRadians(25.0);//5.0
       public static final ChassisSpeeds BHDC_VELOCITY_TOLERENCE = new ChassisSpeeds(BHDC_VEL_TOL_X, BHDC_VEL_TOL_Y, BHDC_VEL_TOL_T);
 
   }
@@ -297,7 +297,7 @@ public final class Constants {
       public static final int EXTAKE_CUBE_CURENT_LIMIT = 25;
 
       public static final double CONE_TOF_MAX_DIST = 340.0;
-      public static final double CENTERED_CONE_TOF_DISTANCE = 0.0;
+      public static final double CENTERED_CONE_TOF_DISTANCE = 157.0;
 
       // command constants
       public static final double EJECT_COMMAND_CUTOFF_TRALING_DELAY = 1.0;
@@ -319,7 +319,7 @@ public final class Constants {
       public static final String RIGHT_CAMERA_NAME = "rightCam";
       public static final String BACK_CAMERA_NAME = "backCam";
 
-      public static final Transform3d FRONT_CAMERA_POSE = new Transform3d(new Translation3d(Units.inchesToMeters(11.371), 0.0, Units.inchesToMeters(6.319)), new Rotation3d(0.0, Math.toRadians(10), 0.0));
+      public static final Transform3d FRONT_CAMERA_POSE = new Transform3d(new Translation3d(Units.inchesToMeters(11.371), 0.0, Units.inchesToMeters(6.319)), new Rotation3d(0.0, Math.toRadians(10), Math.toRadians(3.5)));
       public static final Transform3d LEFT_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0.0,0.0,0.0));//20.539
       public static final Transform3d RIGHT_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0.0,0.0,0.0));
       public static final Transform3d BACK_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0.0,0.0,0.0));
@@ -363,11 +363,11 @@ public final class Constants {
   public static final class PoseEstimationConstants {
       public static final double ENCODER_ODOMETRY_STANDARD_DEVATION_X_METERS = 0.15;
       public static final double ENCODER_ODOMETRY_STANDARD_DEVATION_Y_METERS = 0.15;
-      public static final double ENCODER_ODOMETRY_STANDARD_DEVATION_HEADING_RADIANS = Math.toRadians(0.1);
+      public static final double ENCODER_ODOMETRY_STANDARD_DEVATION_HEADING_RADIANS = Math.toRadians(15.0);
       public static final double[] ENCODER_ODOMETRY_STANDARD_DEVATIONS = new double[] {ENCODER_ODOMETRY_STANDARD_DEVATION_X_METERS, ENCODER_ODOMETRY_STANDARD_DEVATION_Y_METERS, ENCODER_ODOMETRY_STANDARD_DEVATION_HEADING_RADIANS};
       public static final double VISION_ODOMETRY_STANDARD_DEVATION_X_METERS = 0.05;
       public static final double VISION_ODOMETRY_STANDARD_DEVATION_Y_METERS = 0.05;
-      public static final double VISION_ODOMETRY_STANDARD_DEVATION_HEADING_RADIANS = Math.toRadians(5.0);
+      public static final double VISION_ODOMETRY_STANDARD_DEVATION_HEADING_RADIANS = Math.toRadians(10.0);
       public static final double[] VISION_ODOMETRY_STANDARD_DEVATIONS = new double[] {VISION_ODOMETRY_STANDARD_DEVATION_X_METERS, VISION_ODOMETRY_STANDARD_DEVATION_Y_METERS, VISION_ODOMETRY_STANDARD_DEVATION_HEADING_RADIANS};
   }
 
@@ -386,12 +386,12 @@ public final class Constants {
 
       public static final double INTER_NODE_GOUP_Y_OFFSET = Units.inchesToMeters(66.0);
       public static final double INTER_NODE_Y_OFFSET = Units.inchesToMeters(22.0);
-      public static final Pose2d C0_BASE_ALLIGNMENT_POSE = new Pose2d(1.71, 0.49, Rotation2d.fromDegrees(180));
+      public static final Pose2d C0_BASE_ALLIGNMENT_POSE = new Pose2d(1.85, 0.49, Rotation2d.fromDegrees(180));
       public static final Pose2d C1_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET), new Rotation2d()));
       public static final Pose2d C2_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 2.0), new Rotation2d()));
-      public static final Pose2d C3_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 3.0), new Rotation2d()));
-      public static final Pose2d C4_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 4.0), new Rotation2d()));
-      public static final Pose2d C5_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 5.0), new Rotation2d()));
+      public static final Pose2d C3_BASE_ALLIGNMENT_POSE = new Pose2d(1.74, 2.2, Rotation2d.fromDegrees(180));//C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 3.0), new Rotation2d()));
+      public static final Pose2d C4_BASE_ALLIGNMENT_POSE = new Pose2d(1.85, 2.74, Rotation2d.fromDegrees(180));//C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 4.0), new Rotation2d()));
+      public static final Pose2d C5_BASE_ALLIGNMENT_POSE = new Pose2d(1.85, 3.29, Rotation2d.fromDegrees(180));//C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 5.0), new Rotation2d()));
       public static final Pose2d C6_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 6.0), new Rotation2d()));
       public static final Pose2d C7_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 7.0), new Rotation2d()));
       public static final Pose2d C8_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 8.0), new Rotation2d()));

@@ -18,7 +18,7 @@ import frc.robot.subsystems.Drive;
 public class NavToPathStart extends ConditionalCommand {
   /** Creates a new NavToPathStart. */
   public NavToPathStart(Drive drivetrain, PathPlannerTrajectory trajectory) {
-    super(new InstantCommand(() -> BreakerLog.getInstance().logEvent("NavPathToStart command fellthrough, robot WITHIN TOLERENCE of traj init pose")), new MoveToPose(trajectory.getInitialHolonomicPose(), drivetrain, AutonomousConstants.NAV_TO_TRAJECTORY_START_LINEAR_CONSTRAINTS, AutonomousConstants.NAV_TO_TRAJECTORY_START_ANGULAR_CONSTRAINTS), () -> {return inTolerence(drivetrain, trajectory);});
+    super(new InstantCommand(() -> BreakerLog.getInstance().logEvent("NavPathToStart command fellthrough, robot WITHIN TOLERENCE of traj init pose")), new MoveToPose(trajectory.getInitialHolonomicPose(), drivetrain, 2.5), () -> {return inTolerence(drivetrain, trajectory);});
   }
 
   private static boolean inTolerence(Drive drivetrain, PathPlannerTrajectory trajectory) {

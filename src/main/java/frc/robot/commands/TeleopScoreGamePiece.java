@@ -93,7 +93,7 @@ public class TeleopScoreGamePiece extends CommandBase {
           //} else {
             scoreingSequince = 
               new SequentialCommandGroup(
-                new MoveToPose(allignmentPose, drivetrain, ScoreingConstants.TELEOP_SCOREING_PRE_EXTEND_ALLIGN_LINEAR_CONSTRAINTS, ScoreingConstants.TELEOP_SCOREING_PRE_EXTEND_ALLIGN_ANGULAR_CONSTRAINTS),
+                new MoveToPose(allignmentPose, drivetrain, 0.75),
                 new SetSuperstructurePositionState(elevator, hand, superTgt, false),
                 new EjectGamePiece(hand),
                 new InstantCommand(() -> new SetSuperstructurePositionState(elevator, hand, SuperstructurePositionState.STOW, false).schedule()),

@@ -198,9 +198,9 @@ public class OperatorControlPad {
                 }
 
                 if (leftNodeSelectedTrigger.getAsBoolean()) {
-                    colOrd--;
-                } else if (rightNodeSelectedTrigger.getAsBoolean()) {
                     colOrd++;
+                } else if (rightNodeSelectedTrigger.getAsBoolean()) {
+                    colOrd--;
                 } else if (!centerNodeSelectedTrigger.getAsBoolean()) {
                     return Optional.empty();
                 }
@@ -217,9 +217,9 @@ public class OperatorControlPad {
                 }
 
                 if (leftNodeSelectedTrigger.getAsBoolean()) {
-                    colOrd++;
-                } else if (rightNodeSelectedTrigger.getAsBoolean()) {
                     colOrd--;
+                } else if (rightNodeSelectedTrigger.getAsBoolean()) {
+                    colOrd++;
                 } else if (!centerNodeSelectedTrigger.getAsBoolean()) {
                     return Optional.empty();
                 }

@@ -40,6 +40,7 @@ import frc.robot.commands.TeleopManualScoreGamePiece;
 import frc.robot.commands.TeleopScoreGamePiece;
 import frc.robot.commands.auto.routines.DemoPath;
 import frc.robot.commands.auto.routines.NoVisionDemoPath;
+import frc.robot.commands.drive.MoveToPose;
 import frc.robot.commands.drive.TeleopBalanceChargingStation;
 import frc.robot.commands.drive.TeleopSnapDriveToCardinalHeading;
 import frc.robot.commands.drive.TeleopSnapDriveToCardinalHeading.SwerveCardinal;
@@ -108,7 +109,7 @@ public class RobotContainer {
     //TEST
     // driverControllerSys.getButtonA().onTrue(new ElevatorMoveToHight(elevatorSys, ElevatorTargetState.ARB_TEST_HEIGHT));
     // driverControllerSys.getButtonB().onTrue(new ElevatorMoveToHight(elevatorSys, ElevatorTargetState.STOW));
-    // driverControllerSys.getButtonX().onTrue(new SetSuperstructurePositionState(elevatorSys, handSys, SuperstructurePositionState.PLACE_CUBE_MID, false));
+    //driverControllerSys.getButtonX().onTrue(new MoveToPose(new Pose2d(1.85, 2.73, Rotation2d.fromDegrees(180)), drivetrainSys, NAV_TO_TRAJECTORY_START_LINEAR_CONSTRAINTS, NAV_TO_TRAJECTORY_START_ANGULAR_CONSTRAINTS));
     // driverControllerSys.getButtonY().onTrue(new IntakeFromDoubleSubstation(elevatorSys, handSys, false, GamePieceType.CONE));
     // driverControllerSys.getButtonA().onTrue(new EjectGamePiece(handSys));
     // driverControllerSys.getButtonB().onTrue(new StowElevatorIntakeAssembly(elevatorSys, handSys, false));
@@ -120,10 +121,10 @@ public class RobotContainer {
     driverControllerSys.getDPad().getDown().onTrue(new TeleopSnapDriveToCardinalHeading(SwerveCardinal.BACK, drivetrainSys, teleopDriveController));
 
     //scoreing controls 
-    //operatorControlPadSys.getScoringCommandRequestTrigger().and(operatorControlPadSys.getScoreManualOverrideButton().negate()).onTrue(new TeleopScoreGamePiece(operatorControlPadSys, driverControllerSys ,drivetrainSys, elevatorSys, handSys));
-    operatorControlPadSys.getLeftHighNodeButton()/*.and(operatorControlPadSys.getScoreManualOverrideButton())*/.onTrue(new TeleopManualScoreGamePiece(NodeHeight.HIGH, driverControllerSys, elevatorSys, handSys));
-    operatorControlPadSys.getLeftMidNodeButton()/*.and(operatorControlPadSys.getScoreManualOverrideButton())*/.onTrue(new TeleopManualScoreGamePiece(NodeHeight.MID, driverControllerSys, elevatorSys, handSys));
-    operatorControlPadSys.getLeftLowNodeButton()/*.and(operatorControlPadSys.getScoreManualOverrideButton())*/.onTrue(new TeleopManualScoreGamePiece(NodeHeight.LOW, driverControllerSys, elevatorSys, handSys));
+    operatorControlPadSys.getScoringCommandRequestTrigger().and(operatorControlPadSys.getScoreManualOverrideButton().negate()).onTrue(new TeleopScoreGamePiece(operatorControlPadSys, driverControllerSys ,drivetrainSys, elevatorSys, handSys));
+    operatorControlPadSys.getLeftHighNodeButton().and(operatorControlPadSys.getScoreManualOverrideButton()).onTrue(new TeleopManualScoreGamePiece(NodeHeight.HIGH, driverControllerSys, elevatorSys, handSys));
+    operatorControlPadSys.getLeftMidNodeButton().and(operatorControlPadSys.getScoreManualOverrideButton()).onTrue(new TeleopManualScoreGamePiece(NodeHeight.MID, driverControllerSys, elevatorSys, handSys));
+    operatorControlPadSys.getLeftLowNodeButton().and(operatorControlPadSys.getScoreManualOverrideButton()).onTrue(new TeleopManualScoreGamePiece(NodeHeight.LOW, driverControllerSys, elevatorSys, handSys));
 
     //stow elevator (driver controls: LB / RB = stow) (operator controls: 20 = stow)
     driverControllerSys.getLeftBumper()
@@ -153,7 +154,7 @@ public class RobotContainer {
 
     //teleop autobalance
     driverControllerSys.getStartButton().toggleOnTrue(new TeleopBalanceChargingStation(drivetrainSys, imuSys, teleopDriveController, driverControllerSys, false, false));
-    driverControllerSys.getBackButton().onTrue(new InstantCommand(() -> drivetrainSys.setAbsoluteOdometryPosition(new Pose2d(drivetrainSys.getAbsoluteOdometryPoseMeters().getTranslation(), new Rotation2d()))));
+    //driverControllerSys.getBackButton().onTrue(() -> {if (visionSys.isAnyTargetVisable()) {drivetrainSys.setAbsoluteOdometryPosition(visionSys.getOdometryPoseMeters());} return null;});
   }
 
   private void configureAutonomousActionMap() {

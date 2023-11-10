@@ -192,8 +192,8 @@ public final class Constants {
       public static final double MOVE_TO_POSE_TIMEOUT_SEC = 25.0;
       public static final BreakerSwerveVelocityRequest MOVE_TO_POSE_REQUEST = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DISABLED, new Translation2d());
 
-      public static final double BHDC_POSE_TOL_X = 0.01;//0.03
-      public static final double BHDC_POSE_TOL_Y = 0.01;
+      public static final double BHDC_POSE_TOL_X = 0.02;//0.03
+      public static final double BHDC_POSE_TOL_Y = 0.02;
       public static final Rotation2d BHDC_POSE_TOL_T = Rotation2d.fromDegrees(1.0);//3.0
       public static final Pose2d BHDC_POSE_TOLERENCE = new Pose2d(BHDC_POSE_TOL_X, BHDC_POSE_TOL_Y, BHDC_POSE_TOL_T);
       public static final double BHDC_VEL_TOL_X = 5.0;//0.005
@@ -386,12 +386,12 @@ public final class Constants {
 
       public static final double INTER_NODE_GOUP_Y_OFFSET = Units.inchesToMeters(66.0);
       public static final double INTER_NODE_Y_OFFSET = Units.inchesToMeters(22.0);
-      public static final Pose2d C0_BASE_ALLIGNMENT_POSE = new Pose2d(1.85, 0.49, Rotation2d.fromDegrees(180));
+      public static final Pose2d C0_BASE_ALLIGNMENT_POSE = new Pose2d(1.87, 0.49, Rotation2d.fromDegrees(180));
       public static final Pose2d C1_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET), new Rotation2d()));
       public static final Pose2d C2_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 2.0), new Rotation2d()));
-      public static final Pose2d C3_BASE_ALLIGNMENT_POSE = new Pose2d(1.74, 2.2, Rotation2d.fromDegrees(180));//C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 3.0), new Rotation2d()));
-      public static final Pose2d C4_BASE_ALLIGNMENT_POSE = new Pose2d(1.85, 2.74, Rotation2d.fromDegrees(180));//C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 4.0), new Rotation2d()));
-      public static final Pose2d C5_BASE_ALLIGNMENT_POSE = new Pose2d(1.85, 3.29, Rotation2d.fromDegrees(180));//C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 5.0), new Rotation2d()));
+      public static final Pose2d C3_BASE_ALLIGNMENT_POSE = new Pose2d(1.87, 2.21, Rotation2d.fromDegrees(180));//C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 3.0), new Rotation2d()));
+      public static final Pose2d C4_BASE_ALLIGNMENT_POSE = new Pose2d(1.87, 2.74, Rotation2d.fromDegrees(180));//C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 4.0), new Rotation2d()));
+      public static final Pose2d C5_BASE_ALLIGNMENT_POSE = new Pose2d(1.87, 3.29, Rotation2d.fromDegrees(180));//C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 5.0), new Rotation2d()));
       public static final Pose2d C6_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 6.0), new Rotation2d()));
       public static final Pose2d C7_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 7.0), new Rotation2d()));
       public static final Pose2d C8_BASE_ALLIGNMENT_POSE = C0_BASE_ALLIGNMENT_POSE.plus(new Transform2d(new Translation2d(0.0, INTER_NODE_Y_OFFSET * 8.0), new Rotation2d()));

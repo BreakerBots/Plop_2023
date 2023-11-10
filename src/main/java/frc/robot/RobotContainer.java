@@ -55,6 +55,7 @@ import frc.robot.commands.superstructure.IntakeFromGround;
 import frc.robot.commands.superstructure.IntakeFromSingleSubstation;
 import frc.robot.commands.superstructure.SetSuperstructurePositionState;
 import frc.robot.commands.superstructure.StowElevatorIntakeAssembly;
+import frc.robot.commands.superstructure.SuperstructurePositionState;
 import frc.robot.commands.superstructure.intake.EjectGamePiece;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Hand;
@@ -171,12 +172,12 @@ public class RobotContainer {
     AUTONOMOUS_ACTION_MAP.put("wait for cone", new WaitUntilCommand(handSys::hasCone));
     AUTONOMOUS_ACTION_MAP.put("stow", new StowElevatorIntakeAssembly(elevatorSys, handSys, false));
     AUTONOMOUS_ACTION_MAP.put("wait 0.5", new WaitCommand(0.5));
-    AUTONOMOUS_ACTION_MAP.put("place low cube", teleopDriveController);
-    AUTONOMOUS_ACTION_MAP.put("place low cone", teleopDriveController);
-    AUTONOMOUS_ACTION_MAP.put("place mid cube", teleopDriveController);
-    AUTONOMOUS_ACTION_MAP.put("place mid cone", teleopDriveController);
-    AUTONOMOUS_ACTION_MAP.put("place high cube", teleopDriveController);
-    AUTONOMOUS_ACTION_MAP.put("place high cone", teleopDriveController);
+    AUTONOMOUS_ACTION_MAP.put("place low cube", new SetSuperstructurePositionState(elevatorSys, handSys, SuperstructurePositionState.PLACE_HYBRID, false));
+    AUTONOMOUS_ACTION_MAP.put("place low cone", new SetSuperstructurePositionState(elevatorSys, handSys, SuperstructurePositionState.PLACE_HYBRID, false));
+    AUTONOMOUS_ACTION_MAP.put("place mid cube", new SetSuperstructurePositionState(elevatorSys, handSys, SuperstructurePositionState.PLACE_CUBE_MID, false));
+    AUTONOMOUS_ACTION_MAP.put("place mid cone", new SetSuperstructurePositionState(elevatorSys, handSys, SuperstructurePositionState.PLACE_CONE_MID, false));
+    AUTONOMOUS_ACTION_MAP.put("place high cube", new SetSuperstructurePositionState(elevatorSys, handSys, SuperstructurePositionState.PLACE_CUBE_HIGH, false));
+    AUTONOMOUS_ACTION_MAP.put("place high cone", new SetSuperstructurePositionState(elevatorSys, handSys, SuperstructurePositionState.PLACE_CONE_HIGH, false));
     AUTONOMOUS_ACTION_MAP.put("balance", new BalanceChargeingStation(drivetrainSys, imuSys, false, false));
   }
 
@@ -209,6 +210,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new NoVisionDemoPath(drivetrainSys, elevatorSys, handSys, imuSys);//BreakerRobotManager.getSelectedAutoPath();
+    return new NoVisionDemoPath(drivetrainSys, elevatorSys, handSys, imuSys);
   }
 }

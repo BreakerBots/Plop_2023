@@ -322,17 +322,17 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
     }
 
     ControledGamePieceType curControledGamePieceType = getControledGamePieceType();
-    if (curControledGamePieceType != prevControledGamePieceType) {
-      if (curControledGamePieceType == ControledGamePieceType.CONE || curControledGamePieceType == ControledGamePieceType.CUBE) {
-        BreakerLog.getInstance().logSuperstructureEvent("ROBOT AQUIRED NEW GAME PIECE: " + curControledGamePieceType.toString());
-      } else if (curControledGamePieceType == ControledGamePieceType.NONE && prevControledGamePieceType != ControledGamePieceType.ERROR) {
-        BreakerLog.getInstance().logSuperstructureEvent("ROBOT EJECTED GAME PIECE: " + prevControledGamePieceType.toString());
-      } else if (prevControledGamePieceType == ControledGamePieceType.ERROR) {
-        BreakerLog.getInstance().logSuperstructureEvent("INTAKE BEAM BREAKS EXITED ERROR STATE, CURRENT GAME PIECE: " + curControledGamePieceType.toString());
-      } else {
-        BreakerLog.getInstance().logSuperstructureEvent("INTKAE BEAM BREAKS ENTERED ERROR STATE");
-      }
-    }
+    // if (curControledGamePieceType != prevControledGamePieceType) {
+    //   if (curControledGamePieceType == ControledGamePieceType.CONE || curControledGamePieceType == ControledGamePieceType.CUBE) {
+    //     BreakerLog.getInstance().logSuperstructureEvent("ROBOT AQUIRED NEW GAME PIECE: " + curControledGamePieceType.toString());
+    //   } else if (curControledGamePieceType == ControledGamePieceType.NONE && prevControledGamePieceType != ControledGamePieceType.ERROR) {
+    //     BreakerLog.getInstance().logSuperstructureEvent("ROBOT EJECTED GAME PIECE: " + prevControledGamePieceType.toString());
+    //   } else if (prevControledGamePieceType == ControledGamePieceType.ERROR) {
+    //     BreakerLog.getInstance().logSuperstructureEvent("INTAKE BEAM BREAKS EXITED ERROR STATE, CURRENT GAME PIECE: " + curControledGamePieceType.toString());
+    //   } else {
+    //     BreakerLog.getInstance().logSuperstructureEvent("INTKAE BEAM BREAKS ENTERED ERROR STATE");
+    //   }
+    // }
     //prevControledGamePieceType = curControledGamePieceType;
   }
 

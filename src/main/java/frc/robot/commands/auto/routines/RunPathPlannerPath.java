@@ -8,6 +8,7 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.AutonomousConstants;
 import frc.robot.commands.auto.actions.AutoHeader;
@@ -24,7 +25,8 @@ public class RunPathPlannerPath extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     PathPlannerTrajectory demoPath = PathPlanner.loadPath(pathName, constraints);
     addCommands(
-      new AutoHeader(drivetrain, vision, demoPath, true),
+      //new AutoHeader(drivetrain, vision, demoPath, false),
+      new InstantCommand(() ->  drivetrain.setAbsoluteOdometryPosition(demoPath.getInitialHolonomicPose())),
       drivetrain.followPathWithEventsCommand(demoPath, AutonomousConstants.AUTONOMOUS_ACTION_MAP)
     );
   }

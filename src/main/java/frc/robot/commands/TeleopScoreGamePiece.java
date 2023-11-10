@@ -52,7 +52,7 @@ public class TeleopScoreGamePiece extends CommandBase {
   private Drive drivetrain;
   private Elevator elevator;
   private Hand hand;
-  private SequentialCommandGroup allignSequence, ejectSequence;
+  private SequentialCommandGroup scoreingSequince;
   public TeleopScoreGamePiece(OperatorControlPad operatorControlPad, BreakerXboxController driverController, Drive drivetrain, Elevator elevator, Hand hand) {
     this.operatorControlPad = operatorControlPad;
     this.driverController = driverController;
@@ -73,8 +73,8 @@ public class TeleopScoreGamePiece extends CommandBase {
       System.out.println(selectedNodeOptional.get().toString()); 
       Optional<GamePieceType> controledGamePiece = hand.getControledGamePieceType().getGamePieceType();
 
-      if (controledGamePiece.isPresent()) {
-        if (selectedNode.getType().isGamePieceSupported(controledGamePiece.get())) {
+      // if (controledGamePiece.isPresent()) {
+      //   if (selectedNode.getType().isGamePieceSupported(controledGamePiece.get())) {
 
           SuperstructurePositionState superTgt = getSuperstructureTarget();
           Optional<Double> scoringConeOffsetY =  hand.getConeOffset();
@@ -93,15 +93,13 @@ public class TeleopScoreGamePiece extends CommandBase {
             //     new InstantCommand(this::postEjectCheck)
             //   );
           //} else {
-            allignSequence = 
+            scoreingSequince = 
               new SequentialCommandGroup(
-                new InstantCommand(() -> new SetSuperstructurePositionState(elevator, hand, SuperstructurePositionState.STOW, false).schedule()),
-                new MoveToPose(allignmentPose, drivetrain, 0.75),
+                //new InstantCommand(() -> new SetSuperstructurePositionState(elevator, hand, SuperstructurePositionState.STOW, false).schedule());
+                new MoveToPose(allignmentPose, drivetrain,  1.75).asProxy(),
                 new SetSuperstructurePositionState(elevator, hand, superTgt, false),
-                new InstantCommand(() -> driverController.setMixedRumble(6.0, 6.0))
-              );
-            ejectSequence = new SequentialCommandGroup(
-                //new WaitUntilCommand(driverController.getButtonB()),
+                new InstantCommand(() -> driverController.setMixedRumble(6.0, 6.0)),
+                new WaitUntilCommand(driverController.getButtonB()),
                 new InstantCommand(() -> driverController.setMixedRumble(0.0, 0.0)),
                 new EjectGamePiece(hand),
                 new InstantCommand(() -> new SetSuperstructurePositionState(elevator, hand, SuperstructurePositionState.STOW, false).schedule()),
@@ -112,18 +110,18 @@ public class TeleopScoreGamePiece extends CommandBase {
         //   BreakerLog.getInstance().logEvent(String.format("TeleopScoreGamePiece instance FAILED, selected node type is not compatable with currently controled game piece (node: %s) (controled game piece: %s)", selectedNode.toString(), controledGamePiece.get().toString()));
         //   this.cancel();
         // }
-      } else {
-        BreakerLog.getInstance().logEvent("TeleopScoreGamePiece instance FAILED, cannot score while robot does not control a game piece");
-        this.cancel();
-      }
+    //   } else {
+    //     BreakerLog.getInstance().logEvent("TeleopScoreGamePiece instance FAILED, cannot score while robot does not control a game piece");
+    //     this.cancel();
+    //   }
       
-    } else {
-      BreakerLog.getInstance().logEvent("TeleopScoreGamePiece instance FAILED, no node selected");
-      this.cancel();
-    }
+    // } else {
+    //   BreakerLog.getInstance().logEvent("TeleopScoreGamePiece instance FAILED, no node selected");
+    //   this.cancel();
+    // }
 
-    if (Objects.nonNull(allignSequence)) {
-      allignSequence.schedule();
+    if (Objects.nonNull(scoreingSequince)) {
+      scoreingSequince.schedule();
     }
 
   
@@ -134,11 +132,6 @@ public class TeleopScoreGamePiece extends CommandBase {
       if (RobotContainer.globalCancel()) {
         BreakerLog.getInstance().logEvent("TeleopScoreGamePiece instance MANUALY CANCLED, command has ended");
         this.cancel();
-      }
-      if (Objects.nonNull(allignSequence) && allignSequence.isFinished() 
-        && Objects.nonNull(ejectSequence) && !ejectSequence.isScheduled() && !ejectSequence.isFinished() 
-        && driverController.getButtonB().getAsBoolean()) {
-        ejectSequence.schedule();
       }
   }
 
@@ -182,11 +175,8 @@ public class TeleopScoreGamePiece extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if (Objects.nonNull(allignSequence) && allignSequence.isScheduled())  {
-      allignSequence.cancel();
-    }
-    if (Objects.nonNull(ejectSequence) && ejectSequence.isScheduled()) {
-      ejectSequence.cancel();
+    if (Objects.nonNull(scoreingSequince) && scoreingSequince.isScheduled())  {
+      scoreingSequince.cancel();
     }
     if (interrupted) {
       new TriplePulseRumble(driverController).schedule();
@@ -198,8 +188,8 @@ public class TeleopScoreGamePiece extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (Objects.nonNull(allignSequence) && Objects.nonNull(ejectSequence)) {
-      return allignSequence.isFinished() && ejectSequence.isFinished();
+    if (Objects.nonNull(scoreingSequince)) {
+      return scoreingSequince.isFinished();
     } 
     return false;
   }

@@ -31,7 +31,7 @@ public class NoVisionDemoPath extends SequentialCommandGroup {
     PathPlannerTrajectory demoPath = PathPlanner.loadPath("Demo Path", new PathConstraints(1.75, 3));
     addCommands(
     new InstantCommand(() ->  drivetrain.setAbsoluteOdometryPosition(demoPath.getInitialHolonomicPose())),
-    new SetSuperstructurePositionState(elevator, hand, SuperstructurePositionState.PLACE_HYBRID, false),
+    new SetSuperstructurePositionState(elevator, hand, SuperstructurePositionState.PLACE_CUBE_HIGH, false),
     new WaitCommand(1.0),
     new EjectGamePiece(hand),
     new SetSuperstructurePositionState(elevator, hand, SuperstructurePositionState.STOW, false),

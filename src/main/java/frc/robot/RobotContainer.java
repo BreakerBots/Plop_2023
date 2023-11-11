@@ -196,8 +196,8 @@ public class RobotContainer {
         )
       );
       robotConfig.setLogFilePaths("/media/sda2/", "");
-    robotConfig.setAutoPaths(new BreakerAutoPath("SUB | CUBE | BAL | (Pick 1 : Place 2)", new RunPathPlannerPath(drivetrainSys, visionSys, "Pickup_1_Place_2_Cube_Sub_Balence", new PathConstraints(3.5, 2.0))));
-    robotConfig.setAutoPaths(new BreakerAutoPath("CENT | CUBE | BAL | (Place 1)", new NoVisionDemoPath(drivetrainSys, elevatorSys, handSys, imuSys)));
+    robotConfig.setAutoPaths(new BreakerAutoPath("SUB | CONE:CUBE | BAL | (Pick 1 : Place 2) | (H,H)", new RunPathPlannerPath(drivetrainSys, visionSys, "Pickup_1_Place_2_Cube_Sub_Balence", new PathConstraints(4.0, 5.0))));
+    robotConfig.setAutoPaths(new BreakerAutoPath("CENT | CUBE | BAL | (Place 1) | (H)", new NoVisionDemoPath(drivetrainSys, elevatorSys, handSys, imuSys)));
     BreakerRobotManager.setup(drivetrainSys, robotConfig);
   }
 

@@ -2,68 +2,81 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.832093706983419,
-        "y": 4.974424214183664
+        "x": 1.7977873330924976,
+        "y": 1.052062132654934
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.3421818027658872,
-        "y": 4.978186936402403
+        "x": 2.797787333092498,
+        "y": 1.052062132654934
       },
-      "holonomicAngle": 0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
+        "names": [
+          "place high cube",
+          "wait 0.5",
+          "eject",
+          "stow"
+        ],
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 3.0,
-        "y": 5.0
+        "x": 6.55,
+        "y": 0.9148366370912484
       },
       "prevControl": {
-        "x": 3.0,
-        "y": 4.0
+        "x": 5.55,
+        "y": 0.9148366370912484
       },
       "nextControl": {
-        "x": 3.0,
-        "y": 4.0
+        "x": 5.55,
+        "y": 0.9148366370912484
       },
       "holonomicAngle": 0,
       "isReversal": true,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
+        "names": [
+          "intake cube",
+          "wait for cube"
+        ],
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 5.0,
-        "y": 3.0
+        "x": 1.7977873330924976,
+        "y": 1.040626674691294
       },
       "prevControl": {
-        "x": 4.0,
-        "y": 3.0
+        "x": 3.4673641957840267,
+        "y": 0.9720139269094513
       },
       "nextControl": null,
-      "holonomicAngle": 0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "place cube mid",
+          "wait 0.5",
+          "eject",
+          "stow"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0

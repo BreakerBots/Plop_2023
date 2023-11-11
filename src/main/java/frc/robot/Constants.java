@@ -322,7 +322,7 @@ public final class Constants {
       public static final Transform3d FRONT_CAMERA_POSE = new Transform3d(new Translation3d(Units.inchesToMeters(11.371), 0.0, Units.inchesToMeters(6.319)), new Rotation3d(0.0, Math.toRadians(10), Math.toRadians(3.5)));
       public static final Transform3d LEFT_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0.0,0.0,0.0));//20.539
       public static final Transform3d RIGHT_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0.0,0.0,0.0));
-      public static final Transform3d BACK_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0.0,0.0,0.0));
+      public static final Transform3d BACK_CAMERA_POSE =  new Transform3d(new Translation3d(Units.inchesToMeters(-11.371), 0.0, Units.inchesToMeters(6.319)), new Rotation3d(0.0, Math.toRadians(10), Math.toRadians(-3.5)));
       public static final double POSE_FILTER_TRUST_COEF = 2.8;
       public static final double POSE_FILTER_MAX_UNCERTANTY = 0.2;
       public static final double POSE_FILTER_DISTANCE_SCALE_FACTOR = 0.75;

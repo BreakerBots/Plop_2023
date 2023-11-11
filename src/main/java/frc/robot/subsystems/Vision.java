@@ -32,7 +32,7 @@ public class Vision extends SubsystemBase implements BreakerGenericVisionOdomete
     leftCam  = new BreakerPhotonCamera(VisionConstants.LEFT_CAMERA_NAME, VisionConstants.LEFT_CAMERA_POSE);
     //rightCam = new BreakerPhotonCamera(VisionConstants.RIGHT_CAMERA_NAME, VisionConstants.RIGHT_CAMERA_POSE);
     backCam = new BreakerPhotonCamera(VisionConstants.BACK_CAMERA_NAME, VisionConstants.BACK_CAMERA_POSE);
-    vision = new BreakerPhotonVision(VisionConstants.POSE_FILTER_TRUST_COEF, VisionConstants.POSE_FILTER_MAX_UNCERTANTY, VisionConstants.POSE_FILTER_DISTANCE_SCALE_FACTOR, VisionConstants.POSE_FILTER_MAX_DISTANCE, new BreakerPhotonCamera[]{frontCam,leftCam,rightCam, backCam}, VisionConstants.APRILTAG_FIELD_LAYOUT);
+    vision = new BreakerPhotonVision(VisionConstants.POSE_FILTER_TRUST_COEF, VisionConstants.POSE_FILTER_MAX_UNCERTANTY, VisionConstants.POSE_FILTER_DISTANCE_SCALE_FACTOR, VisionConstants.POSE_FILTER_MAX_DISTANCE, new BreakerPhotonCamera[]{frontCam,leftCam, backCam}, VisionConstants.APRILTAG_FIELD_LAYOUT);
     BreakerLog.getInstance().registerLogable("Vision", this);
   curPose = null;
   }

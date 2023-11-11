@@ -20,6 +20,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -196,6 +197,7 @@ public class RobotContainer {
       );
       robotConfig.setLogFilePaths("/media/sda2/", "");
     robotConfig.setAutoPaths(new BreakerAutoPath("SUB | CUBE | BAL | (Pick 1 : Place 2)", new RunPathPlannerPath(drivetrainSys, visionSys, "Pickup_1_Place_2_Cube_Sub_Balence", new PathConstraints(3.5, 2.0))));
+    robotConfig.setAutoPaths(new BreakerAutoPath("CENT | CUBE | BAL | (Place 1)", new NoVisionDemoPath(drivetrainSys, elevatorSys, handSys, imuSys)));
     BreakerRobotManager.setup(drivetrainSys, robotConfig);
   }
 
@@ -210,6 +212,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new NoVisionDemoPath(drivetrainSys, elevatorSys, handSys, imuSys);
+    return BreakerRobotManager.getSelectedAutoPath();
   }
 }

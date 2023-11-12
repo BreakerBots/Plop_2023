@@ -44,7 +44,7 @@ public class  BreakerSwerveDriveBase extends BreakerSwerveDrive {
         super(config, odometryConfig, gyro, swerveModules);
         this.config = config;
         lastSetHeading = getOdometryPoseMeters().getRotation();
-        pathFollowerConfig = new BreakerSwervePathFollowerConfig(this, false);
+        pathFollowerConfig = new BreakerSwervePathFollowerConfig(this, true);
     }
 
     @Override
@@ -56,8 +56,9 @@ public class  BreakerSwerveDriveBase extends BreakerSwerveDrive {
                 targetVels = ChassisSpeeds.fromFieldRelativeSpeeds(targetChassisSpeeds, curAng);
                 break;
             case FIELD_RELATIVE_WITH_OFFSET:
+                targetVels = ChassisSpeeds.fromFieldRelativeSpeeds(targetChassisSpeeds, curAng);
                 targetVels = ChassisSpeeds.fromFieldRelativeSpeeds(targetChassisSpeeds,
-                    curAng.plus(getFieldRelativeMovementOffsetAngle()));
+                   curAng.plus(getFieldRelativeMovementOffsetAngle()));
                 break;
             case ROBOT_RELATIVE:
             default:

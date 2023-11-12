@@ -59,7 +59,7 @@ public class TeleopBalanceChargingStation extends CommandBase {
     double robotRelY = DriveConstants.BALANCE_PITCH_PID.calculate(imu.getPitch(),  0.0);
     double robotRelX = DriveConstants.BALANCE_ROLL_PID.calculate(imu.getRoll(), 0.0);
     ChassisSpeeds robotRelSpeeds = new ChassisSpeeds(robotRelX, robotRelY, 0.0);
-    ChassisSpeeds fieldRelSpds = BreakerMath.fromRobotRelativeSpeeds(robotRelSpeeds, drive.getAbsoluteOdometryPoseMeters().getRotation());
+    ChassisSpeeds fieldRelSpds = BreakerMath.fromRobotRelativeSpeeds(robotRelSpeeds, drive.getOdometryPoseMeters().getRotation());
     return -fieldRelSpds.vxMetersPerSecond;
   }
 

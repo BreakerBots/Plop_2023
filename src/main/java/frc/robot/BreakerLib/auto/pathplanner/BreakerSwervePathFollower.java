@@ -67,13 +67,15 @@ public class BreakerSwervePathFollower extends CommandBase {
 
   @Override
   public void initialize() {
-    if (config.getUseAllianceColor() && trajectory.fromGUI) {
+    if (config.getUseAllianceColor() /*&& trajectory.fromGUI*/) {
       transformedTrajectory =
           PathPlannerTrajectory.transformTrajectoryForAlliance(
               trajectory, DriverStation.getAlliance());
     } else {
       transformedTrajectory = trajectory;
     }
+
+    config.drivetrain.setOdometryPosition(transformedTrajectory.getInitialHolonomicPose());
 
     if (logActiveTrajectory != null) {
       logActiveTrajectory.accept(transformedTrajectory);

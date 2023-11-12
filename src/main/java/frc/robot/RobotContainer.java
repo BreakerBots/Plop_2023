@@ -173,6 +173,7 @@ public class RobotContainer {
     AUTONOMOUS_ACTION_MAP.put("wait for cone", new WaitUntilCommand(handSys::hasCone));
     AUTONOMOUS_ACTION_MAP.put("stow", new StowElevatorIntakeAssembly(elevatorSys, handSys, false));
     AUTONOMOUS_ACTION_MAP.put("wait 0.5", new WaitCommand(0.5));
+    AUTONOMOUS_ACTION_MAP.put("wait 1.0", new WaitCommand(1.0));
     AUTONOMOUS_ACTION_MAP.put("place low cube", new SetSuperstructurePositionState(elevatorSys, handSys, SuperstructurePositionState.PLACE_HYBRID, false));
     AUTONOMOUS_ACTION_MAP.put("place low cone", new SetSuperstructurePositionState(elevatorSys, handSys, SuperstructurePositionState.PLACE_HYBRID, false));
     AUTONOMOUS_ACTION_MAP.put("place mid cube", new SetSuperstructurePositionState(elevatorSys, handSys, SuperstructurePositionState.PLACE_CUBE_MID, false));
@@ -196,8 +197,12 @@ public class RobotContainer {
         )
       );
       robotConfig.setLogFilePaths("/media/sda2/", "");
-    robotConfig.setAutoPaths(new BreakerAutoPath("SUB | CONE:CUBE | BAL | (Pick 1 : Place 2) | (H,H)", new RunPathPlannerPath(drivetrainSys, visionSys, "Pickup_1_Place_2_Cube_Sub_Balence", new PathConstraints(4.0, 5.0))));
-    robotConfig.setAutoPaths(new BreakerAutoPath("CENT | CUBE | BAL | (Place 1) | (H)", new NoVisionDemoPath(drivetrainSys, elevatorSys, handSys, imuSys)));
+    robotConfig.setAutoPaths(
+      new BreakerAutoPath("SUB | CONE:CUBE | BAL | (Pick 1 : Place 2) | (H,H)", new RunPathPlannerPath(drivetrainSys, visionSys, "Pickup_1_Place_2_Cube_Sub_Balence", new PathConstraints(4.0, 3.0))),
+      new BreakerAutoPath("CENT | CUBE | BAL | (Place 1) | (H)", new NoVisionDemoPath(drivetrainSys, elevatorSys, handSys, imuSys)),
+      new BreakerAutoPath("SUB | CONE:CUBE | (Pick 1 : Place 2) | (H:H)", new RunPathPlannerPath(drivetrainSys, visionSys, "Pickup_1_Place_2_Cone_Cube_Sub", new PathConstraints(4.0, 3.0))),
+      new BreakerAutoPath("GATE | CUBE | (Pick 1 : Place 2) | (H:M)", new RunPathPlannerPath(drivetrainSys, visionSys,"Pickup_1_Place_2_Cube_Gate_HM", new PathConstraints(4.0, 3.0)))
+    );
     BreakerRobotManager.setup(drivetrainSys, robotConfig);
   }
 

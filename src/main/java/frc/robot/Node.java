@@ -8,6 +8,8 @@ package frc.robot;
 import java.util.Optional;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 import static frc.robot.Constants.ScoreingConstants.*;
 
@@ -72,11 +74,11 @@ public enum Node {
     }
 
     public Pose2d getExtensionAllignmentPose() {
-        return new Pose2d(coulmn.getBlueBaseAllignmentPose().getX() + height.getExtensionOffset() + type.getExtensionOffset(), coulmn.getBlueBaseAllignmentPose().getY(), coulmn.getBlueBaseAllignmentPose().getRotation());
+        return new Pose2d(coulmn.getBaseAllignmentPose().getX() + height.getExtensionOffset() + type.getExtensionOffset(), coulmn.getBaseAllignmentPose().getY(), coulmn.getBaseAllignmentPose().getRotation());
     }
 
     public Pose2d getAllignmentPose() {
-        return coulmn.getBlueBaseAllignmentPose();
+        return coulmn.getBaseAllignmentPose();
     }
  
     public static Optional<Node> fromCoulmnAndHeight(NodeCoulmn tgtCoulmn, NodeHeight tgtHeight) {
@@ -103,7 +105,11 @@ public enum Node {
             this.blueBaseAllignmentPose = blueBaseAllignmentPose;
         }
 
-        public Pose2d getBlueBaseAllignmentPose() {
+        public Pose2d getBaseAllignmentPose() {
+            Optional<Alliance> ally = AllianceManager.getAlliance();
+            if (ally.isPresent() && (ally.get() == Alliance.Red)) {
+                return new Pose2d(((Constants.FieldConstants.FIELD_LENGTH_X/2.0) - blueBaseAllignmentPose.getX()) + (Constants.FieldConstants.FIELD_LENGTH_X/2.0), blueBaseAllignmentPose.getY(), Rotation2d.fromDegrees(180));
+            }
             return blueBaseAllignmentPose;
         }
 

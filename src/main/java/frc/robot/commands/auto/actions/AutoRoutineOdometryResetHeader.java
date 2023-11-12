@@ -43,7 +43,7 @@ public class AutoRoutineOdometryResetHeader extends CommandBase {
   public void execute() {
     if (!hasSetPose) {
       if (timer.hasElapsed(waitForVisionTargetTimeout) || waitForVisionTargetTimeout == 0.0) {
-        drivetrain.setAbsoluteOdometryPosition(trajectory.getInitialHolonomicPose());
+        drivetrain.setOdometryPosition(trajectory.getInitialHolonomicPose());
         hasSetPose = true;
         BreakerLog.getInstance().logEvent("Robot odometry position reset trajectory initial state, no vision targets visiable");
       } else {
@@ -54,7 +54,7 @@ public class AutoRoutineOdometryResetHeader extends CommandBase {
 
   private void visionSet() {
     if (vision.isAnyTargetVisable()) {
-      drivetrain.setAbsoluteOdometryPosition(vision.getOdometryPoseMeters());
+      drivetrain.setOdometryPosition(vision.getOdometryPoseMeters());
       hasSetPose = true;
       BreakerLog.getInstance().logEvent("Robot odometry position reset to vision measurment");
     }

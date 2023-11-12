@@ -8,6 +8,7 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -30,7 +31,7 @@ public class NoVisionDemoPath extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     PathPlannerTrajectory demoPath = PathPlanner.loadPath("Demo Path", new PathConstraints(1.75, 3));
     addCommands(
-    new InstantCommand(() ->  drivetrain.setAbsoluteOdometryPosition(demoPath.getInitialHolonomicPose())),
+    new InstantCommand(() -> drivetrain.setOdometryPosition(PathPlannerTrajectory.transformTrajectoryForAlliance(demoPath, DriverStation.getAlliance()).getInitialHolonomicPose())),
     new SetSuperstructurePositionState(elevator, hand, SuperstructurePositionState.PLACE_CUBE_HIGH, false),
     new WaitCommand(1.0),
     new EjectGamePiece(hand),

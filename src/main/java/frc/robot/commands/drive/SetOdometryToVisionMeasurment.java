@@ -39,7 +39,7 @@ public class SetOdometryToVisionMeasurment extends CommandBase {
 
   private void resetPose() {
     if (vision.isAnyTargetVisable()) {
-      drivetrain.setAbsoluteOdometryPosition(vision.getOdometryPoseMeters());
+      drivetrain.setOdometryPosition(vision.getOdometryPoseMeters());
       BreakerLog.getInstance().logEvent("Drivetrain odometry pose reset to current vision measurment");
       poseReset = true;
     } else {

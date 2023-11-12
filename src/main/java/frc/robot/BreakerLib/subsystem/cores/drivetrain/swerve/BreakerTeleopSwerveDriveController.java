@@ -9,7 +9,9 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.AllianceManager;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerGenericGamepad;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
 import frc.robot.BreakerLib.physics.vector.BreakerVector2;
@@ -276,6 +278,12 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
         chassisSpeeds.omegaRadiansPerSecond = overrideTurnSupplier.getAsDouble();
         percentSpeeds = new ChassisPercentSpeeds(chassisSpeeds, baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
       }
+    }
+
+    Optional<Alliance> ally =AllianceManager.getAlliance();
+    if (ally.isPresent() && ally.get() == Alliance.Red) {
+      percentSpeeds.vxPercentOfMax *= -1;
+      percentSpeeds.vyPercentOfMax *= -1;
     }
 
     //System.out.println(percentSpeeds.toChassisSpeeds(baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel()).toString());

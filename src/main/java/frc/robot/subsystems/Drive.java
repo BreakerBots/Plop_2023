@@ -22,6 +22,7 @@ import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.B
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.BreakerSwerveCANcoder;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.ctre.BreakerTalonFXSwerveModuleDriveMotor.TalonFXControlOutputUnits;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLogUtil;
 import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.BreakerLib.util.math.BreakerMath.MirrorSymetryAxis2d;
@@ -100,44 +101,48 @@ public class Drive extends BreakerSwerveDriveBase {
         this.pigeon = pigeon;
     }
 
-    @Override
-    public void setOdometryPosition(Pose2d newPose) {
-        Optional<Alliance> ally = AllianceManager.getAlliance();
-        if (ally.get() == Alliance.Red) {
-            newPose = BreakerMath.mirrorPose(newPose, FIELD_LENGTH_X/2.0, MirrorSymetryAxis2d.Y, MirrorSymetryAxis2d.Y);
-        } 
-        super.setOdometryPosition(newPose);
-    }
+    // @Override
+    // public void setOdometryPosition(Pose2d newPose) {
+    //     Optional<Alliance> ally = AllianceManager.getAlliance();
+    //     if (ally.get() == Alliance.Red) {
+    //         System.out.println(ally.get());
+    //         newPose = BreakerMath.mirrorPose(newPose, FIELD_LENGTH_X/2.0, MirrorSymetryAxis2d.Y, MirrorSymetryAxis2d.Y);
+    //     } 
+    //     super.setOdometryPosition(newPose);
+    // }
 
-    @Override
-    public Pose2d getOdometryPoseMeters() {
-        Optional<Alliance> ally = AllianceManager.getAlliance();
-        Pose2d pose = getAbsoluteOdometryPoseMeters();
-        if (ally.get() == Alliance.Red) {
-            pose =  BreakerMath.mirrorPose(pose, FIELD_LENGTH_X/2.0, MirrorSymetryAxis2d.Y, MirrorSymetryAxis2d.Y);
-        }
-        return pose;
-    }
-
-    public Pose2d getAbsoluteOdometryPoseMeters() {
-        Pose2d pos = super.getOdometryPoseMeters();
-        if(Objects.nonNull(vision) && !Double.isNaN(pos.getX()) && !Double.isNaN(pos.getY()) && !Double.isNaN(pos.getRotation().getRadians()) && vision.isAnyTargetVisable()) {
-            pos = vision.getOdometryPoseMeters();
-            setAbsoluteOdometryPosition(pos);
+    // @Override
+    // public Pose2d getOdometryPoseMeters() {
+    //     Optional<Alliance> ally = AllianceManager.getAlliance();
+    //     Pose2d pose = getAbsoluteOdometryPoseMeters();
+    //     // if (ally.get() == Alliance.Red) {
             
-        }
-        return pos;
-    }
+    //     //         pose =  BreakerMath.mirrorPose(pose, FIELD_LENGTH_X/2.0, MirrorSymetryAxis2d.Y, MirrorSymetryAxis2d.Y);
 
-    public void setAbsoluteOdometryPosition(Pose2d newPose) {
-        super.setOdometryPosition(newPose);
-    }
+    //     //     System.out.println(ally.get() == Alliance.Red);
+    //     // }
+    //     return pose;
+    // }
+
+    // public Pose2d getAbsoluteOdometryPoseMeters() {
+    //     Pose2d pos = super.getOdometryPoseMeters();
+    //     // if(Objects.nonNull(vision) && !Double.isNaN(pos.getX()) && !Double.isNaN(pos.getY()) && !Double.isNaN(pos.getRotation().getRadians()) && vision.isAnyTargetVisable()) {
+    //     //     pos = vision.getOdometryPoseMeters();
+    //     //     setAbsoluteOdometryPosition(pos);
+            
+    //     // }
+    //     return pos;
+    // }
+
+    // public void setAbsoluteOdometryPosition(Pose2d newPose) {
+    //     super.setOdometryPosition(newPose);
+    // }
 
     @Override
     public void periodic() {
         Pose2d pos = getOdometryPoseMeters();
         if(!Double.isNaN(pos.getX()) && !Double.isNaN(pos.getY()) && !Double.isNaN(pos.getRotation().getRadians()) && vision.isAnyTargetVisable()) {
-            setAbsoluteOdometryPosition(vision.getOdometryPoseMeters());
+            setOdometryPosition(vision.getOdometryPoseMeters());
         }
         field.setRobotPose(pos);
     }
@@ -148,5 +153,6 @@ public class Drive extends BreakerSwerveDriveBase {
         super.toLog(table);
         table.put("IMUPitchDeg", pigeon.getPitch());
         table.put("IMURollDeg", pigeon.getRoll());
+        table.put("hbuhyguyg", BreakerLogUtil.formatPose2dForLog(getOdometryPoseMeters()));
     }
 }

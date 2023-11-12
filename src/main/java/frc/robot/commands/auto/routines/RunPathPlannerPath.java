@@ -26,7 +26,7 @@ public class RunPathPlannerPath extends SequentialCommandGroup {
     PathPlannerTrajectory demoPath = PathPlanner.loadPath(pathName, constraints);
     addCommands(
       //new AutoHeader(drivetrain, vision, demoPath, false),
-      new InstantCommand(() ->  drivetrain.setAbsoluteOdometryPosition(demoPath.getInitialHolonomicPose())),
+      //new InstantCommand(() ->  drivetrain.setOdometryPosition(demoPath.getInitialHolonomicPose())),
       drivetrain.followPathWithEventsCommand(demoPath, AutonomousConstants.AUTONOMOUS_ACTION_MAP)
     );
   }

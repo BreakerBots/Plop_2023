@@ -60,7 +60,12 @@ public class BreakerSwerveDriveFusedVisionPoseEstimator
 
     @Override
     public Pose2d getOdometryPoseMeters() {
-        return poseEstimator.getOdometryPoseMeters();
+        Pose2d pos = poseEstimator.getOdometryPoseMeters();
+        if(Objects.nonNull(vision) && !Double.isNaN(pos.getX()) && !Double.isNaN(pos.getY()) && !Double.isNaN(pos.getRotation().getRadians()) && vision.isAnyTargetVisable()) {
+                pos = vision.getOdometryPoseMeters();
+                setOdometryPosition(pos);   
+            }
+        return pos;
     }
 
     @Override

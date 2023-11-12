@@ -377,8 +377,6 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
   //     System.out.println(timer.hasElapsed(timeout) || !hasGamePiece() || rollerState.getRollerStateType() == RollerStateType.EXTAKEING);
   //     return timer.hasElapsed(timeout) || !hasGamePiece() || rollerState.getRollerStateType() == RollerStateType.EXTAKEING;
   //   }
-
-    
   // }
 
   public static enum RollerState {

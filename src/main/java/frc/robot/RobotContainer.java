@@ -45,8 +45,10 @@ import frc.robot.commands.TeleopManualScoreGamePiece;
 import frc.robot.commands.TeleopScoreGamePiece;
 import frc.robot.commands.auto.actions.BalanceChargeingStation;
 import frc.robot.commands.auto.routines.DemoPath;
+import frc.robot.commands.auto.routines.GatePlaceLeave;
 import frc.robot.commands.auto.routines.NoVisionDemoPath;
 import frc.robot.commands.auto.routines.RunPathPlannerPath;
+import frc.robot.commands.auto.routines.SubPlaceLeave;
 import frc.robot.commands.drive.MoveToPose;
 import frc.robot.commands.drive.TeleopBalanceChargingStation;
 import frc.robot.commands.drive.TeleopSnapDriveToCardinalHeading;
@@ -198,10 +200,12 @@ public class RobotContainer {
       );
       robotConfig.setLogFilePaths("/media/sda2/", "");
     robotConfig.setAutoPaths(
-      new BreakerAutoPath("SUB | CONE:CUBE | BAL | (Pick 1 : Place 2) | (H,H)", new RunPathPlannerPath(drivetrainSys, visionSys, "Pickup_1_Place_2_Cube_Sub_Balence", new PathConstraints(4.0, 3.0))),
+      ///new BreakerAutoPath("SUB | CONE:CUBE | BAL | (Pick 1 : Place 2) | (H,H)", new RunPathPlannerPath(drivetrainSys, visionSys, "Pickup_1_Place_2_Cube_Sub_Balence", new PathConstraints(4.0, 3.0))),
       new BreakerAutoPath("CENT | CUBE | BAL | (Place 1) | (H)", new NoVisionDemoPath(drivetrainSys, elevatorSys, handSys, imuSys)),
-      new BreakerAutoPath("SUB | CONE:CUBE | (Pick 1 : Place 2) | (H:H)", new RunPathPlannerPath(drivetrainSys, visionSys, "Pickup_1_Place_2_Cone_Cube_Sub", new PathConstraints(4.0, 3.0))),
-      new BreakerAutoPath("GATE | CUBE | (Pick 1 : Place 2) | (H:M)", new RunPathPlannerPath(drivetrainSys, visionSys,"Pickup_1_Place_2_Cube_Gate_HM", new PathConstraints(4.0, 3.0)))
+      new BreakerAutoPath("SUB | CUBE | (Place 1) | (H)", new SubPlaceLeave(drivetrainSys, elevatorSys, handSys, imuSys)),
+      new BreakerAutoPath("GATE | CUBE | (Place 1) | (H)", new GatePlaceLeave(drivetrainSys, elevatorSys, handSys, imuSys))
+      //new BreakerAutoPath("SUB | CONE:CUBE | (Pick 1 : Place 2) | (H:H)", new RunPathPlannerPath(drivetrainSys, visionSys, "Pickup_1_Place_2_Cone_Cube_Sub", new PathConstraints(4.0, 3.0))),
+      //new BreakerAutoPath("GATE | CUBE | (Pick 1 : Place 2) | (H:M)", new RunPathPlannerPath(drivetrainSys, visionSys,"Pickup_1_Place_2_Cube_Gate_HM", new PathConstraints(4.0, 3.0)))
     );
     BreakerRobotManager.setup(drivetrainSys, robotConfig);
   }

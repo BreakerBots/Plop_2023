@@ -15,7 +15,7 @@ import frc.robot.commands.auto.actions.AutoHeader;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Vision;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
+// NOTE: Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class RunPathPlannerPath extends SequentialCommandGroup {

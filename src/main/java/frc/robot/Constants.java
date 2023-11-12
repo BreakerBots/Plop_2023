@@ -267,9 +267,9 @@ public final class Constants {
 
       //Feedfoward Constants
       public static final double WRIST_KS = 0.00;
-      public static final double WRIST_KG = 0.64;//64
-      public static final double WRIST_KV = 0.45;//4
-      public static final double WRIST_KA = 0.02;//25
+      public static final double WRIST_KG = 0.84;//64
+      public static final double WRIST_KV = 0.36;//45
+      public static final double WRIST_KA = 0.03;//02
 
       //Trapezodial Profile Constants
      public static final double WRIST_MAX_VELOCITY_RADS = 3;

@@ -16,6 +16,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -261,7 +262,7 @@ public final class Constants {
       public static final double WRIST_CURRENT_LIMIT_TIME = 0.5;
 
 
-      public static final double WRIST_KP = 2.25;
+      public static final double WRIST_KP = 1.75;
       public static final double WRIST_KI = 0.00;
       public static final double WRIST_KD = 0.0;
 
@@ -323,10 +324,10 @@ public final class Constants {
       public static final Transform3d LEFT_CAMERA_POSE = new Transform3d(new Translation3d(Units.inchesToMeters(2.987), Units.inchesToMeters(12.639), Units.inchesToMeters(20.539)), new Rotation3d(0.0,0.0, Math.toRadians(-90.0)));
       public static final Transform3d RIGHT_CAMERA_POSE = new Transform3d(new Translation3d(Units.inchesToMeters(2.987), Units.inchesToMeters(-12.639), Units.inchesToMeters(20.539)), new Rotation3d(0.0,0.0, Math.toRadians(-90.0)));
       public static final Transform3d BACK_CAMERA_POSE =  new Transform3d(new Translation3d(Units.inchesToMeters(-11.371), 0.0, Units.inchesToMeters(6.319)), new Rotation3d(0.0, Math.toRadians(10), Math.toRadians(-176.5)));
-      public static final double POSE_FILTER_TRUST_COEF = 2.8;
-      public static final double POSE_FILTER_MAX_UNCERTANTY = 0.2;
+      public static final double POSE_FILTER_TRUST_COEF = 5.8;
+      public static final double POSE_FILTER_MAX_UNCERTANTY = 0.1;
       public static final double POSE_FILTER_DISTANCE_SCALE_FACTOR = 0.75;
-      public static final double POSE_FILTER_MAX_DISTANCE = 2.5;
+      public static final double POSE_FILTER_MAX_DISTANCE = 2.0;
 
       public static final AprilTagFieldLayout APRILTAG_FIELD_LAYOUT = exceptionSafeReadApriltags();
       public static final AprilTagFieldLayout APRILTAG_TEST_LAYOUT = new AprilTagFieldLayout(new ArrayList<AprilTag>(), FieldConstants.FIELD_LENGTH_X, 8.001);
@@ -361,13 +362,13 @@ public final class Constants {
   }
 
   public static final class PoseEstimationConstants {
-      public static final double ENCODER_ODOMETRY_STANDARD_DEVATION_X_METERS = 0.15;
-      public static final double ENCODER_ODOMETRY_STANDARD_DEVATION_Y_METERS = 0.15;
-      public static final double ENCODER_ODOMETRY_STANDARD_DEVATION_HEADING_RADIANS = Math.toRadians(8.0);
+      public static final double ENCODER_ODOMETRY_STANDARD_DEVATION_X_METERS = 0.1;
+      public static final double ENCODER_ODOMETRY_STANDARD_DEVATION_Y_METERS = 0.1;
+      public static final double ENCODER_ODOMETRY_STANDARD_DEVATION_HEADING_RADIANS = 0.1;
       public static final double[] ENCODER_ODOMETRY_STANDARD_DEVATIONS = new double[] {ENCODER_ODOMETRY_STANDARD_DEVATION_X_METERS, ENCODER_ODOMETRY_STANDARD_DEVATION_Y_METERS, ENCODER_ODOMETRY_STANDARD_DEVATION_HEADING_RADIANS};
-      public static final double VISION_ODOMETRY_STANDARD_DEVATION_X_METERS = 0.05;
-      public static final double VISION_ODOMETRY_STANDARD_DEVATION_Y_METERS = 0.05;
-      public static final double VISION_ODOMETRY_STANDARD_DEVATION_HEADING_RADIANS = Math.toRadians(2.0);
+      public static final double VISION_ODOMETRY_STANDARD_DEVATION_X_METERS = 0.9;
+      public static final double VISION_ODOMETRY_STANDARD_DEVATION_Y_METERS = 0.9;
+      public static final double VISION_ODOMETRY_STANDARD_DEVATION_HEADING_RADIANS = 0.9;
       public static final double[] VISION_ODOMETRY_STANDARD_DEVATIONS = new double[] {VISION_ODOMETRY_STANDARD_DEVATION_X_METERS, VISION_ODOMETRY_STANDARD_DEVATION_Y_METERS, VISION_ODOMETRY_STANDARD_DEVATION_HEADING_RADIANS};
   }
 

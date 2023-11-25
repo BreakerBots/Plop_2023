@@ -262,7 +262,7 @@ public final class Constants {
       public static final double WRIST_CURRENT_LIMIT_TIME = 0.5;
 
 
-      public static final double WRIST_KP = 1.75;
+      public static final double WRIST_KP = 2.25;
       public static final double WRIST_KI = 0.00;
       public static final double WRIST_KD = 0.0;
 
@@ -321,7 +321,7 @@ public final class Constants {
       public static final String BACK_CAMERA_NAME = "backCam";
 
       public static final Transform3d FRONT_CAMERA_POSE = new Transform3d(new Translation3d(Units.inchesToMeters(11.371), 0.0, Units.inchesToMeters(6.319)), new Rotation3d(0.0, Math.toRadians(10), Math.toRadians(3.5)));
-      public static final Transform3d LEFT_CAMERA_POSE = new Transform3d(new Translation3d(Units.inchesToMeters(2.987), Units.inchesToMeters(12.639), Units.inchesToMeters(20.539)), new Rotation3d(0.0,0.0, Math.toRadians(-90.0)));
+      public static final Transform3d LEFT_CAMERA_POSE = new Transform3d(new Translation3d(Units.inchesToMeters(2.987), Units.inchesToMeters(12.639), Units.inchesToMeters(20.539)), new Rotation3d(0.0,0.0, Math.toRadians(90.0)));
       public static final Transform3d RIGHT_CAMERA_POSE = new Transform3d(new Translation3d(Units.inchesToMeters(2.987), Units.inchesToMeters(-12.639), Units.inchesToMeters(20.539)), new Rotation3d(0.0,0.0, Math.toRadians(-90.0)));
       public static final Transform3d BACK_CAMERA_POSE =  new Transform3d(new Translation3d(Units.inchesToMeters(-11.371), 0.0, Units.inchesToMeters(6.319)), new Rotation3d(0.0, Math.toRadians(10), Math.toRadians(-176.5)));
       public static final double POSE_FILTER_TRUST_COEF = 5.8;

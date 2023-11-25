@@ -452,7 +452,7 @@ public class Hand extends SubsystemBase implements BreakerLoggable {
     PLACE_CONE_HIGH(WristGoalType.PLACE, Rotation2d.fromDegrees(56.7)),
     PLACE_CUBE_MID(WristGoalType.PLACE, Rotation2d.fromDegrees(51.5)),
     PLACE_CUBE_HIGH(WristGoalType.PLACE, Rotation2d.fromDegrees(67.5)),
-    PICKUP_GROUND_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(7.0)),
+    PICKUP_GROUND_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(5.0)),
     PICKUP_GROUND_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(-7.0)),
     PICKUP_SINGLE_SUBSTATION_CONE(WristGoalType.PICKUP, Rotation2d.fromDegrees(80.0)),
     PICKUP_SINGLE_SUBSTATION_CUBE(WristGoalType.PICKUP, Rotation2d.fromDegrees(94.0)),

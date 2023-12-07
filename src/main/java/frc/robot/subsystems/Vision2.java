@@ -25,6 +25,7 @@ import frc.robot.BreakerLib.position.odometry.swerve.BreakerSwerveDrivePoseEstim
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive;
 import frc.robot.BreakerLib.util.vendorutil.LimelightHelpers;
 import frc.robot.BreakerLib.util.vendorutil.LimelightHelpers.LimelightResults;
+import frc.robot.BreakerLib.util.vendorutil.LimelightHelpers.LimelightTarget_Fiducial;
 
 /** Add your docs here. */
 public class Vision2 extends BreakerSwerveDrivePoseEstimator {
@@ -82,8 +83,10 @@ public class Vision2 extends BreakerSwerveDrivePoseEstimator {
        
     //     return;
     // }
+
     
-    public Matrix<N3, N1> getEstimationStdDevs(EstimatedRobotPose estimatedPose) {
+    
+    public Matrix<N3, N1> getEstimationStdDevsPV(EstimatedRobotPose estimatedPose) {
         var estStdDevs = kSingleTagStdDevs;
         var targets = estimatedPose.targetsUsed;
         int numTags = 0;
@@ -94,6 +97,30 @@ public class Vision2 extends BreakerSwerveDrivePoseEstimator {
             numTags++;
             avgDist +=
                     tagPose.get().toPose2d().getTranslation().getDistance(estimatedPose.estimatedPose.getTranslation().toTranslation2d());
+        }
+        if (numTags == 0) return estStdDevs;
+        avgDist /= numTags;
+        // Decrease std devs if multiple targets are visible
+        if (numTags > 1) estStdDevs = kMultiTagStdDevs;
+        // Increase std devs based on (average) distance
+        if (numTags == 1 && avgDist > 4)
+            estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+        else estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30));
+
+        return estStdDevs;
+    }
+
+    public Matrix<N3, N1> getEstimationStdDevsLL(Pose2d estBotPose, LimelightTarget_Fiducial... fiducialTargets) {
+        var estStdDevs = kSingleTagStdDevs;
+        var targets = fiducialTargets;
+        int numTags = 0;
+        double avgDist = 0;
+        for (var tgt : targets) {
+            var tagPose = Constants.VisionConstants.APRILTAG_FIELD_LAYOUT.getTagPose((int) tgt.fiducialID);
+            if (tagPose.isEmpty()) continue;
+            numTags++;
+            avgDist +=
+                    tagPose.get().toPose2d().getTranslation().getDistance(estBotPose.getTranslation());
         }
         if (numTags == 0) return estStdDevs;
         avgDist /= numTags;

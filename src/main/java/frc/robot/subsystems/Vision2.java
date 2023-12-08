@@ -33,7 +33,7 @@ public class Vision2 extends BreakerSwerveDrivePoseEstimator {
     private PhotonPoseEstimator frontEst, leftEst, backEst;
     private BreakerSwerveDrivePoseEstimator poseEst;
     private double frontLastTs, leftLastTs, backLastTs, llLastTs;
-    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(8, 8, 8);
     public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
     private boolean odomSeeded = false;
     
@@ -71,18 +71,17 @@ public class Vision2 extends BreakerSwerveDrivePoseEstimator {
         return visionEst;
     }
 
-    // public Optional<EstimatedRobotPose> getLimelightEstPose() {
-    //     LimelightResults results = LimelightHelpers.getLatestResults("limelight");
-    //     double latestTs = results.targetingResults.timestamp_LIMELIGHT_publish;
-    //     boolean newResult = Math.abs(latestTs - llLastTs) > 1e-5;
-    //     Optional<EstimatedRobotPose> estPose = Optional.empty();
-    //     if (newResult) {
-    //         llLastTs = latestTs;
-    //         estPose = Optional.of
-    //     }
-       
-    //     return;
-    // }
+    public Optional<LimelightResults> getLimelightEstPose() {
+        LimelightResults results = LimelightHelpers.getLatestResults("limelight");
+        double latestTs = results.targetingResults.timestamp_LIMELIGHT_publish;
+        boolean newResult = Math.abs(latestTs - llLastTs) > 1e-5;
+        Optional<LimelightResults> estPose = Optional.empty();
+        if (newResult && results.targetingResults.valid && results.targetingResults.targets_Fiducials.length > 0) {
+            llLastTs = latestTs;
+            estPose = Optional.of(results);
+        }
+        return estPose;
+    }
 
     
     
@@ -134,11 +133,22 @@ public class Vision2 extends BreakerSwerveDrivePoseEstimator {
         return estStdDevs;
     }
 
+    private void addVisionMeasurementLL(Optional<LimelightResults> estPoseOpt) {
+        if (estPoseOpt.isPresent()) {
+            if (odomSeeded) {
+                LimelightResults estPose = estPoseOpt.get();
+                addVisionMeasurment(estPose.targetingResults.getBotPose2d_wpiBlue(), estPose.targetingResults.timestamp_LIMELIGHT_publish, getEstimationStdDevsLL(estPose.targetingResults.getBotPose2d_wpiBlue(), estPose.targetingResults.targets_Fiducials)); 
+            } else {
+                setOdometryPosition(estPoseOpt.get().targetingResults.getBotPose2d_wpiBlue());
+            }
+        }
+    }
+
     private void addVisionMeasurement( Optional<EstimatedRobotPose> estPoseOpt) {
         if (estPoseOpt.isPresent()) {
             if (odomSeeded) {
                 EstimatedRobotPose estPose = estPoseOpt.get();
-                addVisionMeasurment(estPose.estimatedPose.toPose2d(), estPose.timestampSeconds, getEstimationStdDevs(estPose)); 
+                addVisionMeasurment(estPose.estimatedPose.toPose2d(), estPose.timestampSeconds, getEstimationStdDevsPV(estPose)); 
             } else {
                 setOdometryPosition(estPoseOpt.get().estimatedPose.toPose2d());
             }
@@ -151,6 +161,7 @@ public class Vision2 extends BreakerSwerveDrivePoseEstimator {
         addVisionMeasurement(getFrontEstimatedGlobalPose());
         addVisionMeasurement(getLeftEstimatedGlobalPose());
         addVisionMeasurement(getBackEstimatedGlobalPose());
+        addVisionMeasurementLL(getLimelightEstPose());
         
 
     }

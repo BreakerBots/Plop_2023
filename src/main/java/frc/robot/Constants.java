@@ -193,8 +193,8 @@ public final class Constants {
       public static final double MOVE_TO_POSE_TIMEOUT_SEC = 25.0;
       public static final BreakerSwerveVelocityRequest MOVE_TO_POSE_REQUEST = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DISABLED, new Translation2d());
 
-      public static final double BHDC_POSE_TOL_X = 0.02;//0.03
-      public static final double BHDC_POSE_TOL_Y = 0.02;
+      public static final double BHDC_POSE_TOL_X = 0.01;//0.03
+      public static final double BHDC_POSE_TOL_Y = 0.01;
       public static final Rotation2d BHDC_POSE_TOL_T = Rotation2d.fromDegrees(1.0);//3.0
       public static final Pose2d BHDC_POSE_TOLERENCE = new Pose2d(BHDC_POSE_TOL_X, BHDC_POSE_TOL_Y, BHDC_POSE_TOL_T);
       public static final double BHDC_VEL_TOL_X = 5.0;//0.005

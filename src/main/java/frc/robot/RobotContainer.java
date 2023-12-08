@@ -145,6 +145,7 @@ public class RobotContainer {
     //intake from ground, (driver controls: X = cube, Y = cone) (operator controls: 14 = cube, 15 = cone)
     driverControllerSys.getButtonY().or(operatorControlPadSys.getIntakeGroundConeButton()).onTrue(new IntakeFromGround(elevatorSys, handSys, false, GamePieceType.CONE));
     driverControllerSys.getButtonX().or(operatorControlPadSys.getIntakeGroundCubeButton()).onTrue(new IntakeFromGround(elevatorSys, handSys, false, GamePieceType.CUBE));
+    driverControllerSys.getButtonA().onTrue(new MoveToPose(new Pose2d(2.6, 2.8, Rotation2d.fromDegrees(0.0)), drivetrainSys, 2.0));
 
     //intake from single sub, (operator controls: 9 = cube, 10 = cone)
     operatorControlPadSys.getIntakeSingleSubstationConeButton().onTrue(new IntakeFromSingleSubstation(elevatorSys, handSys, false, GamePieceType.CONE));

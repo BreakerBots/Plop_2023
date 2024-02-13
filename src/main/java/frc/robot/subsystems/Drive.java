@@ -220,7 +220,7 @@ public class Drive extends BreakerSwerveDriveBase {
         // var turnBRCurrent = turnBR.getSupplyCurrent().getValue();
         
         var uhoh = false;
-        
+
         for (var motor : motorMap.entrySet()) {
             var current = motor.getValue().getSupplyCurrent().getValue();
             if (current >= MAX_CURRENT) {
@@ -297,9 +297,9 @@ public class Drive extends BreakerSwerveDriveBase {
                 overCurrentStarted = true;
                 overCurrentTimer.restart();
             }
-            System.out.print("~!~ CURRENT WARNINGS ~!~\n");
-            System.out.print(warningBuilder.toString());
-            System.out.flush();
+            System.err.print("~!~ CURRENT WARNINGS ~!~\n");
+            System.err.print(warningBuilder.toString());
+            System.err.flush();
 
         } else {
             if (prevOverCurrentState == true) {
@@ -317,7 +317,6 @@ public class Drive extends BreakerSwerveDriveBase {
 
     @Override
     public void toLog(LogTable table) {
-        // TODO Auto-generated method stub
         super.toLog(table);
         table.put("IMUPitchDeg", pigeon.getPitch());
         table.put("IMURollDeg", pigeon.getRoll());

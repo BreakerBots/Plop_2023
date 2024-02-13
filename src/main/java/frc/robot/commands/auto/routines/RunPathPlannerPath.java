@@ -8,10 +8,8 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.AutonomousConstants;
-import frc.robot.commands.auto.actions.AutoHeader;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Vision;
 

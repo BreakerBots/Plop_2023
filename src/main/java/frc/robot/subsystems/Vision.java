@@ -7,20 +7,15 @@ package frc.robot.subsystems;
 import java.util.Objects;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.BreakerLib.devices.vision.photon.BreakerPhotonCamera;
 import frc.robot.BreakerLib.devices.vision.photon.BreakerPhotonVision;
 import frc.robot.BreakerLib.position.movement.BreakerMovementState2d;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerGenericVisionOdometer;
-import frc.robot.BreakerLib.position.odometry.vision.posefilter.BreakerVisionPoseFilterOdometer;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
-import frc.robot.Constants.VisionConstants;
 
 public class Vision extends SubsystemBase implements BreakerGenericVisionOdometer {
   /** Creates a new Vision. */

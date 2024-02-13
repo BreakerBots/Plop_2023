@@ -6,7 +6,6 @@ package frc.robot.BreakerLib.devices;
 
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLoggable;
 import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
-import frc.robot.BreakerLib.util.power.BreakerPowerManageable;
 import frc.robot.BreakerLib.util.test.selftest.BreakerSelfTestableBase;
 import frc.robot.BreakerLib.util.test.selftest.SelfTest;
 

@@ -7,14 +7,11 @@ package frc.robot;
 
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.MiscConstants;
-import frc.robot.Constants.OperatorConstants;
 import frc.robot.BreakerLib.devices.sensors.imu.ctre.BreakerPigeon2;
 import frc.robot.BreakerLib.driverstation.gamepad.components.BreakerGamepadAnalogDeadbandConfig;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
@@ -23,10 +20,6 @@ import frc.robot.BreakerLib.util.robot.BreakerRobotConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotManager;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameConfig;
-import frc.robot.commands.drive.MoveToPose;
-import frc.robot.commands.drive.TeleopBalanceChargingStation;
-import frc.robot.commands.drive.TeleopSnapDriveToCardinalHeading;
-import frc.robot.commands.drive.TeleopSnapDriveToCardinalHeading.SwerveCardinal;
 import frc.robot.subsystems.Drive;
 
 /**
@@ -93,6 +86,9 @@ public class RobotContainer {
     // driverControllerSys.getButtonY().onTrue(new IntakeFromDoubleSubstation(elevatorSys, handSys, false, GamePieceType.CONE));
     // driverControllerSys.getButtonA().onTrue(new EjectGamePiece(handSys));
     // driverControllerSys.getButtonB().onTrue(new StowElevatorIntakeAssembly(elevatorSys, handSys, false));
+
+    driverControllerSys.getButtonY().onTrue(new InstantCommand(drivetrainSys::resetOdometryRotation));
+    
 
     driverControllerSys.getDPad().getRight().onTrue(new InstantCommand(() -> {
       if (speedCoefficient == MAX) {

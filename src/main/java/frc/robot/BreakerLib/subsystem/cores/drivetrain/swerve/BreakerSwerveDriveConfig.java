@@ -4,10 +4,6 @@
 
 package frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve;
 
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider;
-
 /** Config class for {@link BreakerLegacySwerveDrive}. */
 public class BreakerSwerveDriveConfig {
 

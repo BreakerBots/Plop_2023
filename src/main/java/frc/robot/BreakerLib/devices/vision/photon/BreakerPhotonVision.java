@@ -4,12 +4,8 @@
 
 package frc.robot.BreakerLib.devices.vision.photon;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
-
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;

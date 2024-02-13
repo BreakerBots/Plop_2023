@@ -256,30 +256,38 @@ public class BreakerPowerDistribution extends BreakerGenericDevice implements Se
 
     @Override
     public void toLog(LogTable table) {
-      table.put("Temperature", pdpTemperature);
-      table.put("Voltage", pdpVoltage);
-      table.put("ChannelCurrent", pdpChannelCurrents);
-      table.put("TotalCurrent", pdpTotalCurrent);
-      table.put("TotalPower", pdpTotalPower);
-      table.put("TotalEnergy", pdpTotalEnergy);
+      // table.put("Temperature", pdpTemperature);
+      // table.put("Voltage", pdpVoltage);
+      // table.put("ChannelCurrent", pdpChannelCurrents);
+      // table.put("TotalCurrent", pdpTotalCurrent);
+      // table.put("TotalPower", pdpTotalPower);
+      // table.put("TotalEnergy", pdpTotalEnergy);
 
-      table.put("ChannelCount", channelCount);
-      table.put("Faults", (int) faults);
-      table.put("StickyFaults", (int) stickyFaults);
+      // table.put("ChannelCount", channelCount);
+      // table.put("Faults", (int) faults);
+      // table.put("StickyFaults", (int) stickyFaults);
     }
   }
 
   public void periodic() {
     // Update inputs from conduit
       pdpInputs.pdpTemperature = getTemperature();
-      pdpInputs.pdpVoltage = getVoltage();
+      // pdpInputs.pdpVoltage = getVoltage();
+      pdpInputs.pdpVoltage = 0;
+
       for (int i = 0; i < 24; i++) {
-        pdpInputs.pdpChannelCurrents[i] = getCurrent(i);
+        // pdpInputs.pdpChannelCurrents[i] = getCurrent(i);
+        pdpInputs.pdpChannelCurrents[i] = 0;
       }
-      pdpInputs.pdpTotalCurrent = getTotalCurrent();
-      pdpInputs.pdpTotalPower = getTotalPower();
-      pdpInputs.pdpTotalEnergy = getTotalEnergy();
-      pdpInputs.channelCount = getNumChannels();
+      // pdpInputs.pdpTotalCurrent = getTotalCurrent();
+      // pdpInputs.pdpTotalPower = getTotalPower();
+      // pdpInputs.pdpTotalEnergy = getTotalEnergy();
+      // pdpInputs.channelCount = getNumChannels();
+      pdpInputs.pdpTotalCurrent = 0;
+      pdpInputs.pdpTotalPower = 0;
+      pdpInputs.pdpTotalEnergy = 0;
+      pdpInputs.channelCount = 0;
+
       pdpInputs.type = getType().value;
       pdpInputs.moduleId = getModule();
       pdpInputs.faults = PowerDistributionJNI.getFaultsNative(handle);

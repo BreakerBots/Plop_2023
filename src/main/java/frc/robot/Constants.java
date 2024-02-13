@@ -136,8 +136,8 @@ public final class Constants {
       public static final PIDController THETA_PID = new PIDController(THETA_PID_KP, THETA_PID_KI, THETA_PID_KD);
 
       //Slow mode constants
-      public static final double SLOW_MODE_LINEAR_MULTIPLIER = 0.5;
-      public static final double SLOW_MODE_TURN_MULTIPLIER = 0.5;
+      public static final double SLOW_MODE_LINEAR_MULTIPLIER = 0.7;
+      public static final double SLOW_MODE_TURN_MULTIPLIER = 0.7;
 
       //Physical Robot Constants
       public static final double MAX_ANGULAR_VEL = ((FL_TRANSLATION.getNorm() * 2.0 * Math.PI) / MAX_ATTAINABLE_MODULE_WHEEL_SPEED) * (2.0 * Math.PI); 

@@ -180,7 +180,8 @@ public class BreakerLog {
       long saveDataStart = getRealTimestamp();
       LoggedDriverStation.getInstance().periodic();
       LoggedSystemStats.getInstance().periodic();
-      BreakerPowerDistribution loggedPowerDistribution = BreakerPowerDistribution.getInstance();
+      // BreakerPowerDistribution loggedPowerDistribution = BreakerPowerDistribution.getInstance();
+      BreakerPowerDistribution loggedPowerDistribution = null;
       if (loggedPowerDistribution != null) {
         loggedPowerDistribution.periodic();
       }

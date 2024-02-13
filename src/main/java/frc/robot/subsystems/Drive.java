@@ -4,15 +4,37 @@
 
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.DriveConstants.BL_DRIVE_ID;
+import static frc.robot.Constants.DriveConstants.BL_ENCODER_ID;
+import static frc.robot.Constants.DriveConstants.BL_ENCODER_OFFSET;
+import static frc.robot.Constants.DriveConstants.BL_TRANSLATION;
+import static frc.robot.Constants.DriveConstants.BL_TURN_ID;
+import static frc.robot.Constants.DriveConstants.BR_DRIVE_ID;
+import static frc.robot.Constants.DriveConstants.BR_ENCODER_ID;
+import static frc.robot.Constants.DriveConstants.BR_ENCODER_OFFSET;
+import static frc.robot.Constants.DriveConstants.BR_TRANSLATION;
+import static frc.robot.Constants.DriveConstants.BR_TURN_ID;
+import static frc.robot.Constants.DriveConstants.DRIVE_BASE_CONFIG;
+import static frc.robot.Constants.DriveConstants.FL_DRIVE_ID;
+import static frc.robot.Constants.DriveConstants.FL_ENCODER_ID;
+import static frc.robot.Constants.DriveConstants.FL_ENCODER_OFFSET;
+import static frc.robot.Constants.DriveConstants.FL_TRANSLATION;
+import static frc.robot.Constants.DriveConstants.FL_TURN_ID;
+import static frc.robot.Constants.DriveConstants.FR_DRIVE_ID;
+import static frc.robot.Constants.DriveConstants.FR_ENCODER_ID;
+import static frc.robot.Constants.DriveConstants.FR_ENCODER_OFFSET;
+import static frc.robot.Constants.DriveConstants.FR_TRANSLATION;
+import static frc.robot.Constants.DriveConstants.FR_TURN_ID;
+import static frc.robot.Constants.DriveConstants.MODULE_CONFIG;
+import static frc.robot.Constants.MiscConstants.CANIVORE_1;
+
+import java.util.Map;
+
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import frc.robot.AllianceManager;
 import frc.robot.BreakerLib.devices.sensors.imu.ctre.BreakerPigeon2;
 import frc.robot.BreakerLib.driverstation.dashboard.BreakerDashboard;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDriveBase;
@@ -24,17 +46,6 @@ import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.dri
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLogUtil;
 import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
-import frc.robot.BreakerLib.util.math.BreakerMath;
-import frc.robot.BreakerLib.util.math.BreakerMath.MirrorSymetryAxis2d;
-import frc.robot.Constants.FieldConstants;
-
-import static frc.robot.Constants.DriveConstants.*;
-import static frc.robot.Constants.FieldConstants.*;
-import static frc.robot.Constants.MiscConstants.CANIVORE_1;
-import static frc.robot.Constants.PoseEstimationConstants.*;
-
-import java.util.Objects;
-import java.util.Optional;
 
 /** Add your docs here. */
 public class Drive extends BreakerSwerveDriveBase {
@@ -79,13 +90,27 @@ public class Drive extends BreakerSwerveDriveBase {
         .createSwerveModule(BR_TRANSLATION);
 
     private static Field2d field = new Field2d();
+
+    private static Timer overCurrentTimer = new Timer();
+    private static boolean overCurrentStarted = false;
+
+    private static Map<String, TalonFX> motorMap = Map.of(
+        "DRIVE_FL", driveFL,
+        "TURN_FL", turnFL,
+        "DRIVE_FR", driveFR,
+        "TURN_FR", turnFR,
+        "DRIVE_BL", driveBL,
+        "TURN_BL", turnBL,
+        "DRIVE_BR", driveBR,
+        "TURN_BR", turnBR
+    );
     
 
     public Drive(BreakerPigeon2 pigeon/*, Vision vision*/) {
         super(DRIVE_BASE_CONFIG, new BreakerSwerveOdometryConfig(), pigeon, frontLeftModule, frontRightModule, backLeftModule, backRightModule);
         //this.vision = vision;
-        Vision2 vision = new Vision2(this);
-        setOdometer(vision);
+        // Vision2 vision = new Vision2(this);
+        // setOdometer(vision);
         BreakerDashboard.getMainTab().add(field);
         
         frontLeftModule.setDeviceName(" FL_Module ");
@@ -101,6 +126,28 @@ public class Drive extends BreakerSwerveDriveBase {
         BreakerLog.getInstance().registerLogable("Drive", this);
 
         this.pigeon = pigeon;
+    }
+
+    public void spitOutTemps() {
+        var driveFLTemp = driveFL.getDeviceTemp();
+        var driveFLTurnTemp = turnFL.getDeviceTemp();
+        var driveFRTemp = driveFR.getDeviceTemp();
+        var driveFRTurn = turnFR.getDeviceTemp();
+        var driveBLTemp = driveBL.getDeviceTemp();
+        var driveBLTurnTemp = turnBL.getDeviceTemp();
+        var driveBRTemp = driveBR.getDeviceTemp();
+        var driveBRTurnTemp = turnBR.getDeviceTemp();
+
+        System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+        System.out.println("DRIVE FL TEMP: " + driveFLTemp);
+        System.out.println("TURN FL TEMP: " + driveFLTurnTemp);
+        System.out.println("DRIVE FR TEMP: " + driveFRTemp);
+        System.out.println("TURN FR TEMP: " + driveFRTurn);
+        System.out.println("DRIVE BL TEMP: " + driveBLTemp);
+        System.out.println("TURN BL TEMP: " + driveBLTurnTemp);
+        System.out.println("DRIVE BR TEMP: " + driveBRTemp);
+        System.out.println("TURN BR TEMP: " + driveBRTurnTemp);
+        System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-");
     }
 
     // @Override
@@ -140,13 +187,126 @@ public class Drive extends BreakerSwerveDriveBase {
     //     super.setOdometryPosition(newPose);
     // }
 
+    private boolean prevOverCurrentState = false; // lol cry about it
+
     @Override
-    public void periodic() {
+    public void periodic() { // brace yourself,  I didn't feel like writing better code :)
         //Pose2d pos = getOdometryPoseMeters();
         // if(!Double.isNaN(pos.getX()) && !Double.isNaN(pos.getY()) && !Double.isNaN(pos.getRotation().getRadians()) && vision.isAnyTargetVisable()) {
         //     setOdometryPosition(vision.getOdometryPoseMeters());
         // }
         //field.setRobotPose(pos);
+        
+        final double MAX_CURRENT = 70; // womp womp
+
+        StringBuilder warningBuilder = new StringBuilder();
+        
+        // var driveFLCurrent = driveFL.getSupplyCurrent().getValue();
+        // var turnFLCurrent = turnFL.getSupplyCurrent().getValue();
+
+        // var driveFRCurrent = driveFR.getSupplyCurrent().getValue();
+        // var turnFRCurrent = turnFR.getSupplyCurrent().getValue();
+
+        // var driveBLCurrent = driveBL.getSupplyCurrent().getValue();
+        // var turnBLCurrent = turnBL.getSupplyCurrent().getValue();
+
+        // var driveBRCurrent = driveBR.getSupplyCurrent().getValue();
+        // var turnBRCurrent = turnBR.getSupplyCurrent().getValue();
+        
+        var uhoh = false;
+        
+        for (var motor : motorMap.entrySet()) {
+            var current = motor.getValue().getSupplyCurrent().getValue();
+            if (current >= MAX_CURRENT) {
+                warningBuilder
+                    .append("~")
+                    .append(motor.getKey())
+                    .append(" CURRENT WARNING: ")
+                    .append(current)
+                    .append("\n");
+                uhoh = true;
+            }
+        }
+
+        // if (driveFLCurrent >= MAX_CURRENT) {
+        //     warningBuilder.append("~DRIVE FL CURRENT WARNING: " + driveFLCurrent + "\n");
+        //     uhoh = true;
+        // }
+        // if (turnFLCurrent >= MAX_CURRENT) {
+        //     warningBuilder.append("~TURN FL CURRENT WARNING: " + turnFLCurrent + "\n");
+        //     uhoh = true;
+        // }
+        // if (driveFRCurrent >= MAX_CURRENT) {
+        //     warningBuilder.append("~TURN FR CURRENT WARNING: " + driveFRCurrent + "\n");
+        //     uhoh = true;
+        // }
+        // if (turnFRCurrent >= MAX_CURRENT) {
+        //     warningBuilder.append("~TURN FR CURRENT WARNING: " + turnFRCurrent + "\n");
+        //     uhoh = true;
+        // }
+        
+        // if (driveBLCurrent >= MAX_CURRENT) {
+        //     warningBuilder.append("~DRIVE BL CURRENT WARNING: " + driveBLCurrent + "\n");
+        //     uhoh = true;
+        // }
+        // if (turnBLCurrent >= MAX_CURRENT) {
+        //     warningBuilder.append("~TURN BL CURRENT WARNING: " + turnBLCurrent + "\n");
+        //     uhoh = true;
+        // }
+        // if (driveBRCurrent >= MAX_CURRENT) {
+        //     warningBuilder.append("~DRIVE BR CURRENT WARNING: " + driveBRCurrent + "\n");
+        //     uhoh = true;
+        // }
+        // if (turnBRCurrent >= MAX_CURRENT) {
+        //     warningBuilder.append("~TURN BR CURRENT WARNING: " + turnBRCurrent + "\n");
+        //     uhoh = true;
+        // }
+
+        var overCurrentDuration = overCurrentTimer.get();
+        if (overCurrentStarted) {
+            
+            if (overCurrentDuration > 1.2) {
+                for (int i = 0; i < 3; i++) {
+                    warningBuilder
+                        .append("~!!!!!!!!~ AHHHH OVERCURRENT: ")
+                        .append(overCurrentDuration)
+                        .append("\n");
+                }
+            }
+            else if (overCurrentDuration > 0.7) {
+                warningBuilder
+                    .append("~!!!~ OVERCURRENT DURATION: ")
+                    .append(overCurrentDuration)
+                    .append("\n");
+            } else {
+                warningBuilder
+                    .append("~~OVERCURRENT DURATION: ")
+                    .append(overCurrentDuration)
+                    .append("\n");
+            }
+        }
+
+        if (uhoh) {
+            if (!overCurrentStarted) {
+                overCurrentStarted = true;
+                overCurrentTimer.restart();
+            }
+            System.out.print("~!~ CURRENT WARNINGS ~!~\n");
+            System.out.print(warningBuilder.toString());
+            System.out.flush();
+
+        } else {
+            if (prevOverCurrentState == true) {
+                System.out.println(" ~~~!!!~~~ !!! ~~~!!!~~~ ");
+                System.out.println("~~~ OVERCURRENT DONE ~~~");
+                System.out.println("DURATION: " + overCurrentDuration);
+            }
+            overCurrentStarted = false;
+            overCurrentTimer.reset();
+            overCurrentTimer.stop();
+        }
+
+        prevOverCurrentState = uhoh;
     }
 
     @Override

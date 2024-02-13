@@ -129,25 +129,31 @@ public class Drive extends BreakerSwerveDriveBase {
     }
 
     public void spitOutTemps() {
-        var driveFLTemp = driveFL.getDeviceTemp();
-        var driveFLTurnTemp = turnFL.getDeviceTemp();
-        var driveFRTemp = driveFR.getDeviceTemp();
-        var driveFRTurn = turnFR.getDeviceTemp();
-        var driveBLTemp = driveBL.getDeviceTemp();
-        var driveBLTurnTemp = turnBL.getDeviceTemp();
-        var driveBRTemp = driveBR.getDeviceTemp();
-        var driveBRTurnTemp = turnBR.getDeviceTemp();
+        // var driveFLTemp = driveFL.getDeviceTemp();
+        // var driveFLTurnTemp = turnFL.getDeviceTemp();
+        // var driveFRTemp = driveFR.getDeviceTemp();
+        // var driveFRTurn = turnFR.getDeviceTemp();
+        // var driveBLTemp = driveBL.getDeviceTemp();
+        // var driveBLTurnTemp = turnBL.getDeviceTemp();
+        // var driveBRTemp = driveBR.getDeviceTemp();
+        // var driveBRTurnTemp = turnBR.getDeviceTemp();
 
-        System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-        System.out.println("DRIVE FL TEMP: " + driveFLTemp);
-        System.out.println("TURN FL TEMP: " + driveFLTurnTemp);
-        System.out.println("DRIVE FR TEMP: " + driveFRTemp);
-        System.out.println("TURN FR TEMP: " + driveFRTurn);
-        System.out.println("DRIVE BL TEMP: " + driveBLTemp);
-        System.out.println("TURN BL TEMP: " + driveBLTurnTemp);
-        System.out.println("DRIVE BR TEMP: " + driveBRTemp);
-        System.out.println("TURN BR TEMP: " + driveBRTurnTemp);
-        System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+        System.out.print(("-=-=-=-=-=-=-=-=-=-=-=-=-=-\n"));
+        for (Map.Entry<String, TalonFX> motor : motorMap.entrySet()) {
+            System.out.print(motor.getKey() + " TEMP: " + motor.getValue().getDeviceTemp().getValue() + " C\n");
+        }
+        System.out.println(("-=-=-=-=-=-=-=-=-=-=-=-=-=-"));
+
+        // System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+        // System.out.println("DRIVE FL TEMP: " + driveFLTemp);
+        // System.out.println("TURN FL TEMP: " + driveFLTurnTemp);
+        // System.out.println("DRIVE FR TEMP: " + driveFRTemp);
+        // System.out.println("TURN FR TEMP: " + driveFRTurn);
+        // System.out.println("DRIVE BL TEMP: " + driveBLTemp);
+        // System.out.println("TURN BL TEMP: " + driveBLTurnTemp);
+        // System.out.println("DRIVE BR TEMP: " + driveBRTemp);
+        // System.out.println("TURN BR TEMP: " + driveBRTurnTemp);
+        // System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-");
     }
 
     // @Override

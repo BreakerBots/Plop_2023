@@ -87,8 +87,7 @@ public class RobotContainer {
     // driverControllerSys.getButtonA().onTrue(new EjectGamePiece(handSys));
     // driverControllerSys.getButtonB().onTrue(new StowElevatorIntakeAssembly(elevatorSys, handSys, false));
 
-    driverControllerSys.getButtonY().onTrue(new InstantCommand(drivetrainSys::resetOdometryRotation));
-    
+    driverControllerSys.getButtonA().onTrue(new InstantCommand(drivetrainSys::resetOdometryRotation));
 
     driverControllerSys.getDPad().getRight().onTrue(new InstantCommand(() -> {
       if (speedCoefficient == MAX) {
@@ -101,7 +100,7 @@ public class RobotContainer {
       }
     }));
 
-    driverControllerSys.getButtonA().onTrue(new InstantCommand(() -> {
+    driverControllerSys.getButtonY().onTrue(new InstantCommand(() -> {
       drivetrainSys.spitOutTemps();
     }));
 

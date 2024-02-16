@@ -223,7 +223,7 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
     }
 
     var currentVec = new BreakerVector2(percentSpeeds.vxPercentOfMax, percentSpeeds.vyPercentOfMax);
-    var delta = 0.05;
+    double delta = 0.05;
 
     lastInput = lastInput.interpolate(currentVec, delta);
     if (Math.abs(currentVec.getX()) < Math.abs(lastInput.getX())) {
@@ -238,34 +238,34 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
     
 
     // Speed curves are applied if overrides are not active.
-    if (usesCurves) {
-      if (speedCurveUnits == AppliedModifierUnits.PERCENT_OF_MAX) {
-        BreakerVector2 vec = new BreakerVector2(percentSpeeds.vyPercentOfMax, percentSpeeds.vxPercentOfMax);
-        BreakerVector2 corVec = new BreakerVector2(vec.getVectorRotation(),  linearSpeedCurve.getSignRelativeValueAtX(vec.getMagnitude()));
-        percentSpeeds.vxPercentOfMax = corVec.getY();
-        percentSpeeds.vyPercentOfMax = corVec.getX();
-        percentSpeeds.omegaPercentOfMax = turnSpeedCurve.getSignRelativeValueAtX(percentSpeeds.omegaPercentOfMax);
-      } else {
-        ChassisSpeeds chassisSpeeds = percentSpeeds.toChassisSpeeds(baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
-        BreakerVector2 vec = new BreakerVector2(chassisSpeeds.vyMetersPerSecond, chassisSpeeds.vxMetersPerSecond);
-        BreakerVector2 corVec = new BreakerVector2(vec.getVectorRotation(),  linearSpeedCurve.getSignRelativeValueAtX(vec.getMagnitude()));
-        chassisSpeeds.vxMetersPerSecond = corVec.getY();
-        chassisSpeeds.vyMetersPerSecond = corVec.getX();
-        chassisSpeeds.omegaRadiansPerSecond = turnSpeedCurve.getSignRelativeValueAtX(percentSpeeds.omegaPercentOfMax);
-        percentSpeeds = new ChassisPercentSpeeds(chassisSpeeds, baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
-      }
+    // if (usesCurves) {
+    //   if (speedCurveUnits == AppliedModifierUnits.PERCENT_OF_MAX) {
+    //     BreakerVector2 vec = new BreakerVector2(percentSpeeds.vyPercentOfMax, percentSpeeds.vxPercentOfMax);
+    //     BreakerVector2 corVec = new BreakerVector2(vec.getVectorRotation(),  linearSpeedCurve.getSignRelativeValueAtX(vec.getMagnitude()));
+    //     percentSpeeds.vxPercentOfMax = corVec.getY();
+    //     percentSpeeds.vyPercentOfMax = corVec.getX();
+    //     percentSpeeds.omegaPercentOfMax = turnSpeedCurve.getSignRelativeValueAtX(percentSpeeds.omegaPercentOfMax);
+    //   } else {
+    //     ChassisSpeeds chassisSpeeds = percentSpeeds.toChassisSpeeds(baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
+    //     BreakerVector2 vec = new BreakerVector2(chassisSpeeds.vyMetersPerSecond, chassisSpeeds.vxMetersPerSecond);
+    //     BreakerVector2 corVec = new BreakerVector2(vec.getVectorRotation(),  linearSpeedCurve.getSignRelativeValueAtX(vec.getMagnitude()));
+    //     chassisSpeeds.vxMetersPerSecond = corVec.getY();
+    //     chassisSpeeds.vyMetersPerSecond = corVec.getX();
+    //     chassisSpeeds.omegaRadiansPerSecond = turnSpeedCurve.getSignRelativeValueAtX(percentSpeeds.omegaPercentOfMax);
+    //     percentSpeeds = new ChassisPercentSpeeds(chassisSpeeds, baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
+    //   }
      
-    }
+    // }
 
-    if (usesRateLimiter) {
-      if (slewRateUnits == AppliedModifierUnits.PERCENT_OF_MAX) {
-        percentSpeeds = slewRateLimiter.calculate(new UnitlessChassisSpeeds(percentSpeeds)).getChassisPercentSpeeds();
-      } else {
-        ChassisSpeeds chassisSpeeds = percentSpeeds.toChassisSpeeds(baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
-        chassisSpeeds = slewRateLimiter.calculate(new UnitlessChassisSpeeds(chassisSpeeds)).getChassisSpeeds();
-        percentSpeeds = new ChassisPercentSpeeds(chassisSpeeds, baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
-      }
-    }
+    // if (usesRateLimiter) {
+    //   if (slewRateUnits == AppliedModifierUnits.PERCENT_OF_MAX) {
+    //     percentSpeeds = slewRateLimiter.calculate(new UnitlessChassisSpeeds(percentSpeeds)).getChassisPercentSpeeds();
+    //   } else {
+    //     ChassisSpeeds chassisSpeeds = percentSpeeds.toChassisSpeeds(baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
+    //     chassisSpeeds = slewRateLimiter.calculate(new UnitlessChassisSpeeds(chassisSpeeds)).getChassisSpeeds();
+    //     percentSpeeds = new ChassisPercentSpeeds(chassisSpeeds, baseDrivetrain.getConfig().getMaxLinearVel(), baseDrivetrain.getConfig().getMaxAngleVel());
+    //   }
+    // }
 
     if (forwardOverride) {
       if (overrideFwdUnits == AppliedModifierUnits.PERCENT_OF_MAX) {

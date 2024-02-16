@@ -39,6 +39,8 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
   private AppliedModifierUnits overrideFwdUnits, overrideHorizUnits, overrideTurnUnits;
   private BreakerSwerveDriveBasePercentSpeedRequest percentSpeedRequest;
 
+  private BreakerVector2 lastInput = new BreakerVector2();
+
   /**
    * Creates a BreakerSwerveDriveController which only utilizes HID input.
    * 
@@ -218,6 +220,11 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
       percentSpeeds.vyPercentOfMax = controller.getLeftThumbstick().getX();
       percentSpeeds.omegaPercentOfMax = controller.getRightThumbstick().getX();
     }
+
+    lastInput = lastInput.interpolate(new BreakerVector2(percentSpeeds.vxPercentOfMax, percentSpeeds.vyPercentOfMax), 0.05);
+    percentSpeeds.vxPercentOfMax = lastInput.getX();
+    percentSpeeds.vyPercentOfMax = lastInput.getY();
+    
 
     // Speed curves are applied if overrides are not active.
     if (usesCurves) {

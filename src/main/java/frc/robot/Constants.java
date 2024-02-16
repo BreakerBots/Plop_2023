@@ -64,7 +64,7 @@ public final class Constants {
       public static final double FL_ENCODER_OFFSET = -0.4189453125;
       public static final double FR_ENCODER_OFFSET = -0.238037;
       public static final double BL_ENCODER_OFFSET = 0.11865234375;
-      public static final double BR_ENCODER_OFFSET = 0.33837890625;
+      public static final double BR_ENCODER_OFFSET = 0.305664;
 
       //Module wheel centerpoint locations relative to robot origin (center)
       public static final Translation2d FL_TRANSLATION = new Translation2d(0.2635, 0.2635);

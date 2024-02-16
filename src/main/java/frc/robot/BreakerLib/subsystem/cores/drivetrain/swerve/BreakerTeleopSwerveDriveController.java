@@ -7,6 +7,7 @@ package frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -221,7 +222,17 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
       percentSpeeds.omegaPercentOfMax = controller.getRightThumbstick().getX();
     }
 
-    lastInput = lastInput.interpolate(new BreakerVector2(percentSpeeds.vxPercentOfMax, percentSpeeds.vyPercentOfMax), 0.05);
+    var currentVec = new BreakerVector2(percentSpeeds.vxPercentOfMax, percentSpeeds.vyPercentOfMax);
+    var delta = 0.05;
+
+    lastInput = lastInput.interpolate(currentVec, delta);
+    if (Math.abs(currentVec.getX()) < Math.abs(lastInput.getX())) {
+      lastInput = new BreakerVector2(currentVec.getX(), lastInput.getY());
+    }
+    if (Math.abs(currentVec.getY()) < Math.abs(lastInput.getY())) {
+      lastInput = new BreakerVector2(lastInput.getX(), currentVec.getY());
+    }
+    
     percentSpeeds.vxPercentOfMax = lastInput.getX();
     percentSpeeds.vyPercentOfMax = lastInput.getY();
     

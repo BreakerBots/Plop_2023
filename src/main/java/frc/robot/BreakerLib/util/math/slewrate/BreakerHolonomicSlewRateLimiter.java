@@ -105,7 +105,7 @@ public class BreakerHolonomicSlewRateLimiter {
         }
 
         public ChassisPercentSpeeds getChassisPercentSpeeds() {
-            return new ChassisPercentSpeeds(x, x, omega);
+            return new ChassisPercentSpeeds(x, y, omega);
         }
 
 

@@ -223,7 +223,7 @@ public class BreakerTeleopSwerveDriveController extends CommandBase {
     }
 
     var currentVec = new BreakerVector2(percentSpeeds.vxPercentOfMax, percentSpeeds.vyPercentOfMax);
-    double delta = 0.05;
+    double delta = 0.1;
 
     lastInput = lastInput.interpolate(currentVec, delta);
     if (Math.abs(currentVec.getX()) < Math.abs(lastInput.getX())) {
